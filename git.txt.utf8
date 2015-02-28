@@ -1,0 +1,48 @@
+git安装：
+windows下默认安装即可
+在写姓名和email的时候请填写各位的名字的拼音，如tangyuhao，email写常用的
+
+git命令：
+文件操作基础（和linux一样）：cd改变目录，ls查看当前目录下的文件，mkdir创建文件夹，cat打开文件具体上网看用法
+步骤：装好git后打开git bash
+1、用cd命令改到你的project目录，或者直接新建个目录
+如：
+cd /d/
+2、创建个文件夹（可以用命令行也可以省略这步用图形界面创建）
+mkdir git_project
+注：mkdir后面是文件夹名称
+3、cd git_project
+4、git init(这个命令是将当前目录变为git版本库
+这样会产生个.git文件夹，请不要动不然出bug
+之后再这个文件夹
+
+
+常用命令
+git add <文件名>：将当前目录下的文件加入到版本库中
+git status 查看状态
+git commit -m "说明"：commit 这个命令作用是提交，-m 参数后面的双引号里面是本次提交的说明，请大家每次提交一定要写说明
+git log :可以查看提交历史，以便确定要回退到哪个版本。
+git reset --hard commit_id:commit_id: commit_id 就是log查看的id，这里不用写全，写前5到6位即可（自动寻找）；另外也可以用HEAD^表示上一个版本，HEAD^^表示上两个，HEAD~100表示上100个版本
+git reflog 查看命令的历史，以便撤销之前回到过去的操作
+git checkout -- <文件名> ：撤销没有add 或commit的一切文件内容的修改（出现在你改动了文件保存了，但是没有用add的情况向恢复成之前的版本）—
+git reset HEAD file ：这种情况指add了文件但没有commit，这时候线使用这条命令，然后使用get checkout <文件名>
+git rm :你之前删除了某个文件，用这个命令来确认你的删除（命令执行后该文件将从版本库移除）
+git checkout -- <文件名> ：如果你是误删的，你可以用git checkout -- <文件名> 来讲刚刚误删的文件恢复
+查看分支：git branch
+创建分支：git branch <name>
+切换分支：git checkout <name>
+创建+切换分支：git checkout -b <name>
+合并某分支到当前分支：git merge <name>
+删除分支：git branch -d <name>
+强行删除未合并的分支：git branch -D <name>
+合并分支时，加上--no-ff参数就可以用普通模式合并，合并后的历史有分支，能看出来曾经做过合并，而fast forward合并就看不出来曾经做过合并。
+如：git merge --no-ff -m "merge with no-ff" dev
+
+多人协作命令（重要）
+远程仓库的默认master的名称为origin
+git remote：查看远程库信息
+git remote -v：查看更加详细的信息
+git remote add origin git@github.com:michaelliao/learngit.git 添加远程库
+git clone git@github.com:michaelliao/learngit.git 克隆库
+git push origin kkk 把当前库的内容push到远程库的kkk分支上
+git pull ：对于指定了连接的本地库和远程库用这个命令直接从远程库的相应分支更新本地库
