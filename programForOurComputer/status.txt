@@ -1,0 +1,474 @@
+Counters: Slave:0 MasterIn:[1169] FGearOut:0 FGearIn:0 MasterOut:17 
+MAV Errors: 0
+None
+45: AHRS {omegaIx : -0.000172684638528, omegaIy : -0.00451189652085, omegaIz : 0.00255465088412, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.00076143926708, error_yaw : 0.00460837362334}
+45: ATTITUDE {time_boot_ms : 4288130, roll : 5.1993301895e-05, pitch : 0.000317371246638, yaw : 0.775626122952, rollspeed : 0.00324838794768, pitchspeed : 0.00579846510664, yawspeed : -0.00225256755948}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+45: GLOBAL_POSITION_INT {time_boot_ms : 4288110, lat : 0, lon : 0, alt : 113390, relative_alt : -250, vx : 0, vy : 0, vz : 0, hdg : 4444}
+45: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 36820059, lon : 975069006, alt : 113390, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+18: HEARTBEAT {type : 2, autopilot : 3, base_mode : 81, custom_mode : 0, system_status : 3, mavlink_version : 3}
+45: HWSTATUS {Vcc : 5231, I2Cerr : 0}
+45: MEMINFO {brkval : 0, freemem : 65535}
+45: MISSION_CURRENT {seq : 0}
+45: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.0, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM_VALUE {param_id : RC2_TRIM, param_value : 1511.0, param_type : 4, param_count : 331, param_index : 65535}
+18: RADIO {rssi : 152, remrssi : 173, txbuf : 100, noise : 54, remnoise : 44, rxerrors : 3, fixed : 0}
+18: RADIO_STATUS {rssi : 152, remrssi : 173, txbuf : 100, noise : 54, remnoise : 44, rxerrors : 3, fixed : 0}
+46: RAW_IMU {time_usec : 4285317488, xacc : 1, yacc : -2, zacc : -1002, xgyro : -5, ygyro : 3, zgyro : -3, xmag : 226, ymag : -219, zmag : 280}
+45: RC_CHANNELS_RAW {time_boot_ms : 4287970, port : 0, chan1_raw : 1516, chan2_raw : 1511, chan3_raw : 1100, chan4_raw : 1508, chan5_raw : 0, chan6_raw : 0, chan7_raw : 0, chan8_raw : 0, rssi : 0}
+45: SCALED_IMU2 {time_boot_ms : 4287931, xacc : 1, yacc : -1, zacc : -992, xgyro : 8, ygyro : 5, zgyro : 0, xmag : 208, ymag : -208, zmag : 243}
+45: SCALED_PRESSURE {time_boot_ms : 4287931, press_abs : 1013.02416992, press_diff : -0.00578125007451, temperature : 4054}
+45: SENSOR_OFFSETS {mag_ofs_x : -120, mag_ofs_y : -17, mag_ofs_z : -90, mag_declination : 0.0, raw_press : 101302, raw_temp : 4054, gyro_cal_x : -0.0125772515312, gyro_cal_y : -0.00548768602312, gyro_cal_z : -0.0510105863214, accel_cal_x : 0.165476977825, accel_cal_y : -0.389114320278, accel_cal_z : -0.774037361145}
+45: SERVO_OUTPUT_RAW {time_usec : 4285097394, port : 0, servo1_raw : 1101, servo2_raw : 1101, servo3_raw : 1101, servo4_raw : 1101, servo5_raw : 0, servo6_raw : 0, servo7_raw : 0, servo8_raw : 0}
+7: STATUSTEXT {severity : 1, text : barometer calibration complete}
+45: SYSTEM_TIME {time_unix_usec : 0, time_boot_ms : 4287931}
+48: SYS_STATUS {onboard_control_sensors_present : 64559, onboard_control_sensors_enabled : 39983, onboard_control_sensors_health : 64559, load : 94, voltage_battery : 0, current_battery : -1, battery_remaining : -1, drop_rate_comm : 0, errors_comm : 0, errors_count1 : 0, errors_count2 : 0, errors_count3 : 0, errors_count4 : 0}
+44: VFR_HUD {airspeed : 0.0, groundspeed : 0.0, heading : 44, throttle : 0, alt : -0.340000003576, climb : 0.409999996424}
+Counters: Slave:0 MasterIn:[1547] FGearOut:0 FGearIn:0 MasterOut:22 
+MAV Errors: 0
+None
+66: AHRS {omegaIx : -0.00017228643992, omegaIy : -0.00451154774055, omegaIz : 0.0024550431408, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.000978365773335, error_yaw : 0.00564790889621}
+66: ATTITUDE {time_boot_ms : 4293630, roll : -0.000135747643071, pitch : -0.000338842510246, yaw : 0.775637030602, rollspeed : 0.00626741303131, pitchspeed : 0.00400242442265, yawspeed : -0.00338856875896}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+66: GLOBAL_POSITION_INT {time_boot_ms : 4293610, lat : 0, lon : 0, alt : 111490, relative_alt : 1010, vx : 0, vy : 0, vz : 0, hdg : 4444}
+66: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 36431772, lon : 975107546, alt : 111490, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+23: HEARTBEAT {type : 2, autopilot : 3, base_mode : 209, custom_mode : 0, system_status : 4, mavlink_version : 3}
+66: HWSTATUS {Vcc : 5231, I2Cerr : 0}
+66: MEMINFO {brkval : 0, freemem : 65535}
+66: MISSION_CURRENT {seq : 0}
+67: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.0, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM_VALUE {param_id : RC2_TRIM, param_value : 1511.0, param_type : 4, param_count : 331, param_index : 65535}
+23: RADIO {rssi : 152, remrssi : 173, txbuf : 98, noise : 53, remnoise : 45, rxerrors : 3, fixed : 0}
+23: RADIO_STATUS {rssi : 152, remrssi : 173, txbuf : 98, noise : 53, remnoise : 45, rxerrors : 3, fixed : 0}
+67: RAW_IMU {time_usec : 4290777197, xacc : -3, yacc : -1, zacc : -1000, xgyro : 0, ygyro : 6, zgyro : -2, xmag : 225, ymag : -219, zmag : 281}
+66: RC_CHANNELS_RAW {time_boot_ms : 4293470, port : 0, chan1_raw : 1516, chan2_raw : 1511, chan3_raw : 1180, chan4_raw : 1508, chan5_raw : 0, chan6_raw : 0, chan7_raw : 0, chan8_raw : 0, rssi : 0}
+67: SCALED_IMU2 {time_boot_ms : 4293650, xacc : -1, yacc : 0, zacc : -996, xgyro : 6, ygyro : 9, zgyro : 6, xmag : 214, ymag : -208, zmag : 242}
+67: SCALED_PRESSURE {time_boot_ms : 4293650, press_abs : 1013.02825928, press_diff : 0.00124999997206, temperature : 4054}
+67: SENSOR_OFFSETS {mag_ofs_x : -120, mag_ofs_y : -17, mag_ofs_z : -90, mag_declination : 0.0, raw_press : 101302, raw_temp : 4054, gyro_cal_x : -0.0125772515312, gyro_cal_y : -0.00548768602312, gyro_cal_z : -0.0510105863214, accel_cal_x : 0.165476977825, accel_cal_y : -0.389114320278, accel_cal_z : -0.774037361145}
+66: SERVO_OUTPUT_RAW {time_usec : 4290597159, port : 0, servo1_raw : 1275, servo2_raw : 1275, servo3_raw : 1273, servo4_raw : 1273, servo5_raw : 0, servo6_raw : 0, servo7_raw : 0, servo8_raw : 0}
+9: STATUSTEXT {severity : 1, text : barometer calibration complete}
+66: SYSTEM_TIME {time_unix_usec : 0, time_boot_ms : 4293431}
+69: SYS_STATUS {onboard_control_sensors_present : 64559, onboard_control_sensors_enabled : 39983, onboard_control_sensors_health : 64559, load : 94, voltage_battery : 0, current_battery : -1, battery_remaining : -1, drop_rate_comm : 0, errors_comm : 0, errors_count1 : 0, errors_count2 : 0, errors_count3 : 0, errors_count4 : 0}
+65: VFR_HUD {airspeed : 0.0, groundspeed : 0.0, heading : 44, throttle : 21, alt : 1.00999999046, climb : 0.519999980927}
+Counters: Slave:0 MasterIn:[1616] FGearOut:0 FGearIn:0 MasterOut:23 
+MAV Errors: 0
+None
+70: AHRS {omegaIx : -0.00017228643992, omegaIy : -0.00451154774055, omegaIz : 0.0024550431408, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.000360108911991, error_yaw : 0.0130128553137}
+69: ATTITUDE {time_boot_ms : 4294470, roll : 4.10970387748e-05, pitch : -0.00034229279845, yaw : 0.775084257126, rollspeed : 0.0019779196009, pitchspeed : 0.00696538668126, yawspeed : -0.00349279120564}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+70: GLOBAL_POSITION_INT {time_boot_ms : 4294690, lat : 0, lon : 0, alt : 124350, relative_alt : 950, vx : 0, vy : 0, vz : 0, hdg : 4439}
+70: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 38857273, lon : 973673071, alt : 124280, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+24: HEARTBEAT {type : 2, autopilot : 3, base_mode : 209, custom_mode : 0, system_status : 4, mavlink_version : 3}
+70: HWSTATUS {Vcc : 5236, I2Cerr : 0}
+70: MEMINFO {brkval : 0, freemem : 65535}
+70: MISSION_CURRENT {seq : 0}
+70: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.0, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM_VALUE {param_id : RC2_TRIM, param_value : 1511.0, param_type : 4, param_count : 331, param_index : 65535}
+24: RADIO {rssi : 152, remrssi : 173, txbuf : 100, noise : 55, remnoise : 42, rxerrors : 3, fixed : 0}
+24: RADIO_STATUS {rssi : 152, remrssi : 173, txbuf : 100, noise : 55, remnoise : 42, rxerrors : 3, fixed : 0}
+71: RAW_IMU {time_usec : 4291817269, xacc : 1, yacc : 0, zacc : -1002, xgyro : 0, ygyro : 5, zgyro : -3, xmag : 225, ymag : -218, zmag : 280}
+70: RC_CHANNELS_RAW {time_boot_ms : 4294571, port : 0, chan1_raw : 1516, chan2_raw : 1511, chan3_raw : 1220, chan4_raw : 1508, chan5_raw : 0, chan6_raw : 0, chan7_raw : 0, chan8_raw : 0, rssi : 0}
+71: SCALED_IMU2 {time_boot_ms : 4294690, xacc : 3, yacc : -2, zacc : -993, xgyro : 2, ygyro : 4, zgyro : -5, xmag : 214, ymag : -211, zmag : 240}
+71: SCALED_PRESSURE {time_boot_ms : 4294690, press_abs : 1013.02850342, press_diff : 0.00148437498137, temperature : 4054}
+71: SENSOR_OFFSETS {mag_ofs_x : -120, mag_ofs_y : -17, mag_ofs_z : -90, mag_declination : 0.0, raw_press : 101302, raw_temp : 4054, gyro_cal_x : -0.0125772515312, gyro_cal_y : -0.00548768602312, gyro_cal_z : -0.0510105863214, accel_cal_x : 0.165476977825, accel_cal_y : -0.389114320278, accel_cal_z : -0.774037361145}
+70: SERVO_OUTPUT_RAW {time_usec : 4291697816, port : 0, servo1_raw : 1334, servo2_raw : 1334, servo3_raw : 1332, servo4_raw : 1332, servo5_raw : 0, servo6_raw : 0, servo7_raw : 0, servo8_raw : 0}
+9: STATUSTEXT {severity : 1, text : barometer calibration complete}
+70: SYSTEM_TIME {time_unix_usec : 0, time_boot_ms : 4294550}
+73: SYS_STATUS {onboard_control_sensors_present : 64559, onboard_control_sensors_enabled : 39983, onboard_control_sensors_health : 64559, load : 97, voltage_battery : 0, current_battery : -1, battery_remaining : -1, drop_rate_comm : 0, errors_comm : 0, errors_count1 : 0, errors_count2 : 0, errors_count3 : 0, errors_count4 : 0}
+69: VFR_HUD {airspeed : 0.0, groundspeed : 0.0, heading : 44, throttle : 28, alt : 0.959999978542, climb : 0.469999998808}
+Counters: Slave:0 MasterIn:[1688] FGearOut:0 FGearIn:0 MasterOut:24 
+MAV Errors: 0
+None
+74: AHRS {omegaIx : -0.00017228643992, omegaIy : -0.00451154774055, omegaIz : 0.0024550431408, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.000966168649029, error_yaw : 0.00702369213104}
+73: ATTITUDE {time_boot_ms : 4295850, roll : 7.95752930571e-05, pitch : -0.00046961728367, yaw : 0.773760795593, rollspeed : 0.000264990143478, pitchspeed : 0.00360496505164, yawspeed : -0.0033625587821}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+74: GLOBAL_POSITION_INT {time_boot_ms : 4295810, lat : 0, lon : 0, alt : 123920, relative_alt : 890, vx : 0, vy : 0, vz : 0, hdg : 4433}
+74: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 38787962, lon : 973679979, alt : 123920, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+26: HEARTBEAT {type : 2, autopilot : 3, base_mode : 209, custom_mode : 0, system_status : 4, mavlink_version : 3}
+74: HWSTATUS {Vcc : 5231, I2Cerr : 0}
+74: MEMINFO {brkval : 0, freemem : 65535}
+74: MISSION_CURRENT {seq : 0}
+74: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.0, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM_VALUE {param_id : RC2_TRIM, param_value : 1511.0, param_type : 4, param_count : 331, param_index : 65535}
+25: RADIO {rssi : 152, remrssi : 173, txbuf : 100, noise : 52, remnoise : 44, rxerrors : 3, fixed : 0}
+25: RADIO_STATUS {rssi : 152, remrssi : 173, txbuf : 100, noise : 52, remnoise : 44, rxerrors : 3, fixed : 0}
+75: RAW_IMU {time_usec : 4292857161, xacc : -1, yacc : -1, zacc : -1002, xgyro : -2, ygyro : 2, zgyro : -2, xmag : 233, ymag : -218, zmag : 280}
+74: RC_CHANNELS_RAW {time_boot_ms : 4295670, port : 0, chan1_raw : 1516, chan2_raw : 1511, chan3_raw : 1260, chan4_raw : 1508, chan5_raw : 0, chan6_raw : 0, chan7_raw : 0, chan8_raw : 0, rssi : 0}
+75: SCALED_IMU2 {time_boot_ms : 4295730, xacc : -2, yacc : -2, zacc : -999, xgyro : 4, ygyro : 4, zgyro : -1, xmag : 215, ymag : -211, zmag : 236}
+75: SCALED_PRESSURE {time_boot_ms : 4295730, press_abs : 1013.02160645, press_diff : -0.00539062498137, temperature : 4054}
+75: SENSOR_OFFSETS {mag_ofs_x : -120, mag_ofs_y : -17, mag_ofs_z : -90, mag_declination : 0.0, raw_press : 101302, raw_temp : 4054, gyro_cal_x : -0.0125772515312, gyro_cal_y : -0.00548768602312, gyro_cal_z : -0.0510105863214, accel_cal_x : 0.165476977825, accel_cal_y : -0.389114320278, accel_cal_z : -0.774037361145}
+74: SERVO_OUTPUT_RAW {time_usec : 4292797299, port : 0, servo1_raw : 1394, servo2_raw : 1394, servo3_raw : 1391, servo4_raw : 1391, servo5_raw : 0, servo6_raw : 0, servo7_raw : 0, servo8_raw : 0}
+9: STATUSTEXT {severity : 1, text : barometer calibration complete}
+74: SYSTEM_TIME {time_unix_usec : 0, time_boot_ms : 4295651}
+77: SYS_STATUS {onboard_control_sensors_present : 64559, onboard_control_sensors_enabled : 39983, onboard_control_sensors_health : 64559, load : 94, voltage_battery : 0, current_battery : -1, battery_remaining : -1, drop_rate_comm : 0, errors_comm : 0, errors_count1 : 0, errors_count2 : 0, errors_count3 : 0, errors_count4 : 0}
+73: VFR_HUD {airspeed : 0.0, groundspeed : 0.0, heading : 44, throttle : 35, alt : 0.899999976158, climb : 0.419999986887}
+Counters: Slave:0 MasterIn:[1763] FGearOut:0 FGearIn:0 MasterOut:25 
+MAV Errors: 0
+None
+79: AHRS {omegaIx : -0.00017228643992, omegaIy : -0.00451154774055, omegaIz : 0.0024550431408, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.00074987008702, error_yaw : 0.00726420572028}
+77: ATTITUDE {time_boot_ms : 4296890, roll : 0.000106886102003, pitch : -0.000342872692272, yaw : 0.772812187672, rollspeed : 0.00180059298873, pitchspeed : 0.00414024014026, yawspeed : -0.00320035219193}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+78: GLOBAL_POSITION_INT {time_boot_ms : 4296850, lat : 0, lon : 0, alt : 123560, relative_alt : 820, vx : 0, vy : 0, vz : 0, hdg : 4428}
+78: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 38718651, lon : 973686886, alt : 123560, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+27: HEARTBEAT {type : 2, autopilot : 3, base_mode : 209, custom_mode : 0, system_status : 4, mavlink_version : 3}
+79: HWSTATUS {Vcc : 5219, I2Cerr : 0}
+78: MEMINFO {brkval : 0, freemem : 65535}
+78: MISSION_CURRENT {seq : 0}
+78: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.0, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM_VALUE {param_id : RC2_TRIM, param_value : 1511.0, param_type : 4, param_count : 331, param_index : 65535}
+26: RADIO {rssi : 152, remrssi : 173, txbuf : 100, noise : 54, remnoise : 45, rxerrors : 3, fixed : 0}
+26: RADIO_STATUS {rssi : 152, remrssi : 173, txbuf : 100, noise : 54, remnoise : 45, rxerrors : 3, fixed : 0}
+79: RAW_IMU {time_usec : 4293897077, xacc : 2, yacc : -1, zacc : -1000, xgyro : -4, ygyro : 3, zgyro : -3, xmag : 228, ymag : -218, zmag : 283}
+78: RC_CHANNELS_RAW {time_boot_ms : 4296730, port : 0, chan1_raw : 1516, chan2_raw : 1511, chan3_raw : 1300, chan4_raw : 1508, chan5_raw : 0, chan6_raw : 0, chan7_raw : 0, chan8_raw : 0, rssi : 0}
+79: SCALED_IMU2 {time_boot_ms : 4296770, xacc : 0, yacc : 0, zacc : -1002, xgyro : -7, ygyro : 3, zgyro : 0, xmag : 214, ymag : -212, zmag : 237}
+79: SCALED_PRESSURE {time_boot_ms : 4296770, press_abs : 1013.0256958, press_diff : -0.00132812501397, temperature : 4054}
+79: SENSOR_OFFSETS {mag_ofs_x : -120, mag_ofs_y : -17, mag_ofs_z : -90, mag_declination : 0.0, raw_press : 101302, raw_temp : 4054, gyro_cal_x : -0.0125772515312, gyro_cal_y : -0.00548768602312, gyro_cal_z : -0.0510105863214, accel_cal_x : 0.165476977825, accel_cal_y : -0.389114320278, accel_cal_z : -0.774037361145}
+79: SERVO_OUTPUT_RAW {time_usec : 4294117168, port : 0, servo1_raw : 1454, servo2_raw : 1454, servo3_raw : 1450, servo4_raw : 1450, servo5_raw : 0, servo6_raw : 0, servo7_raw : 0, servo8_raw : 0}
+9: STATUSTEXT {severity : 1, text : barometer calibration complete}
+79: SYSTEM_TIME {time_unix_usec : 0, time_boot_ms : 4296970}
+81: SYS_STATUS {onboard_control_sensors_present : 64559, onboard_control_sensors_enabled : 39983, onboard_control_sensors_health : 64559, load : 93, voltage_battery : 0, current_battery : -1, battery_remaining : -1, drop_rate_comm : 0, errors_comm : 0, errors_count1 : 0, errors_count2 : 0, errors_count3 : 0, errors_count4 : 0}
+77: VFR_HUD {airspeed : 0.0, groundspeed : 0.0, heading : 44, throttle : 42, alt : 0.829999983311, climb : 0.370000004768}
+Counters: Slave:0 MasterIn:[1837] FGearOut:0 FGearIn:0 MasterOut:27 
+MAV Errors: 0
+None
+83: AHRS {omegaIx : -0.00017228643992, omegaIy : -0.00451154774055, omegaIz : 0.0024550431408, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.00122922973242, error_yaw : 0.00325731374323}
+81: ATTITUDE {time_boot_ms : 4297990, roll : -6.16842953605e-05, pitch : -0.000346627552062, yaw : 0.772016763687, rollspeed : 0.0017207833007, pitchspeed : 0.00473867030814, yawspeed : -0.00312940403819}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+82: GLOBAL_POSITION_INT {time_boot_ms : 4297911, lat : 0, lon : 0, alt : 123200, relative_alt : 750, vx : 0, vy : 0, vz : 0, hdg : 4423}
+82: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 38649339, lon : 973693793, alt : 123200, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+28: HEARTBEAT {type : 2, autopilot : 3, base_mode : 209, custom_mode : 0, system_status : 4, mavlink_version : 3}
+83: HWSTATUS {Vcc : 5231, I2Cerr : 0}
+81: MEMINFO {brkval : 0, freemem : 65535}
+81: MISSION_CURRENT {seq : 0}
+82: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.0, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM_VALUE {param_id : RC2_TRIM, param_value : 1511.0, param_type : 4, param_count : 331, param_index : 65535}
+27: RADIO {rssi : 152, remrssi : 173, txbuf : 100, noise : 52, remnoise : 43, rxerrors : 3, fixed : 0}
+27: RADIO_STATUS {rssi : 152, remrssi : 173, txbuf : 100, noise : 52, remnoise : 43, rxerrors : 3, fixed : 0}
+84: RAW_IMU {time_usec : 229961, xacc : 0, yacc : -2, zacc : -1000, xgyro : 4, ygyro : 6, zgyro : -3, xmag : 227, ymag : -220, zmag : 281}
+83: RC_CHANNELS_RAW {time_boot_ms : 4298070, port : 0, chan1_raw : 1516, chan2_raw : 1511, chan3_raw : 1340, chan4_raw : 1508, chan5_raw : 0, chan6_raw : 0, chan7_raw : 0, chan8_raw : 0, rssi : 0}
+84: SCALED_IMU2 {time_boot_ms : 4298070, xacc : 6, yacc : -1, zacc : -996, xgyro : 4, ygyro : 4, zgyro : 4, xmag : 213, ymag : -212, zmag : 235}
+84: SCALED_PRESSURE {time_boot_ms : 4298070, press_abs : 1013.0112915, press_diff : -0.0157031249255, temperature : 4054}
+84: SENSOR_OFFSETS {mag_ofs_x : -120, mag_ofs_y : -17, mag_ofs_z : -90, mag_declination : 0.0, raw_press : 101301, raw_temp : 4054, gyro_cal_x : -0.0125772515312, gyro_cal_y : -0.00548768602312, gyro_cal_z : -0.0510105863214, accel_cal_x : 0.165476977825, accel_cal_y : -0.389114320278, accel_cal_z : -0.774037361145}
+83: SERVO_OUTPUT_RAW {time_usec : 230115, port : 0, servo1_raw : 1514, servo2_raw : 1514, servo3_raw : 1508, servo4_raw : 1508, servo5_raw : 0, servo6_raw : 0, servo7_raw : 0, servo8_raw : 0}
+9: STATUSTEXT {severity : 1, text : barometer calibration complete}
+83: SYSTEM_TIME {time_unix_usec : 0, time_boot_ms : 4298071}
+85: SYS_STATUS {onboard_control_sensors_present : 64559, onboard_control_sensors_enabled : 39983, onboard_control_sensors_health : 64559, load : 96, voltage_battery : 0, current_battery : -1, battery_remaining : -1, drop_rate_comm : 0, errors_comm : 0, errors_count1 : 0, errors_count2 : 0, errors_count3 : 0, errors_count4 : 0}
+81: VFR_HUD {airspeed : 0.0, groundspeed : 0.0, heading : 44, throttle : 49, alt : 0.75, climb : 0.310000002384}
+Counters: Slave:0 MasterIn:[1914] FGearOut:0 FGearIn:0 MasterOut:28 
+MAV Errors: 0
+None
+87: AHRS {omegaIx : -0.000164297613082, omegaIy : -0.00449754390866, omegaIz : 0.00199407781474, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.000982149504125, error_yaw : 0.00945246685296}
+85: ATTITUDE {time_boot_ms : 4299070, roll : -3.1600753573e-05, pitch : -0.000408450025134, yaw : 0.770650923252, rollspeed : -0.00431620609015, pitchspeed : 0.00379892159253, yawspeed : -0.00249221920967}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+86: GLOBAL_POSITION_INT {time_boot_ms : 4298991, lat : 0, lon : 0, alt : 109670, relative_alt : 680, vx : 0, vy : 0, vz : 0, hdg : 4416}
+87: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 38552303, lon : 973703460, alt : 122700, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+29: HEARTBEAT {type : 2, autopilot : 3, base_mode : 209, custom_mode : 0, system_status : 4, mavlink_version : 3}
+87: HWSTATUS {Vcc : 5225, I2Cerr : 0}
+86: MEMINFO {brkval : 0, freemem : 65535}
+86: MISSION_CURRENT {seq : 0}
+87: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.0, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM_VALUE {param_id : RC2_TRIM, param_value : 1511.0, param_type : 4, param_count : 331, param_index : 65535}
+29: RADIO {rssi : 152, remrssi : 173, txbuf : 98, noise : 53, remnoise : 44, rxerrors : 3, fixed : 0}
+29: RADIO_STATUS {rssi : 152, remrssi : 173, txbuf : 98, noise : 53, remnoise : 44, rxerrors : 3, fixed : 0}
+88: RAW_IMU {time_usec : 1270088, xacc : 2, yacc : 0, zacc : -997, xgyro : 3, ygyro : 4, zgyro : -3, xmag : 228, ymag : -219, zmag : 283}
+87: RC_CHANNELS_RAW {time_boot_ms : 4299170, port : 0, chan1_raw : 1516, chan2_raw : 1511, chan3_raw : 1380, chan4_raw : 1508, chan5_raw : 0, chan6_raw : 0, chan7_raw : 0, chan8_raw : 0, rssi : 0}
+88: SCALED_IMU2 {time_boot_ms : 4299110, xacc : 2, yacc : -3, zacc : -997, xgyro : 6, ygyro : 0, zgyro : -6, xmag : 213, ymag : -213, zmag : 236}
+88: SCALED_PRESSURE {time_boot_ms : 4299110, press_abs : 1013.02154541, press_diff : -0.00546874990687, temperature : 4054}
+88: SENSOR_OFFSETS {mag_ofs_x : -120, mag_ofs_y : -17, mag_ofs_z : -90, mag_declination : 0.0, raw_press : 101302, raw_temp : 4054, gyro_cal_x : -0.0125772515312, gyro_cal_y : -0.00548768602312, gyro_cal_z : -0.0510105863214, accel_cal_x : 0.165476977825, accel_cal_y : -0.389114320278, accel_cal_z : -0.774037361145}
+87: SERVO_OUTPUT_RAW {time_usec : 1329909, port : 0, servo1_raw : 1561, servo2_raw : 1561, servo3_raw : 1555, servo4_raw : 1555, servo5_raw : 0, servo6_raw : 0, servo7_raw : 0, servo8_raw : 0}
+9: STATUSTEXT {severity : 1, text : barometer calibration complete}
+87: SYSTEM_TIME {time_unix_usec : 0, time_boot_ms : 4299170}
+89: SYS_STATUS {onboard_control_sensors_present : 64559, onboard_control_sensors_enabled : 39983, onboard_control_sensors_health : 64559, load : 102, voltage_battery : 0, current_battery : -1, battery_remaining : -1, drop_rate_comm : 0, errors_comm : 0, errors_count1 : 0, errors_count2 : 0, errors_count3 : 0, errors_count4 : 0}
+85: VFR_HUD {airspeed : 0.0, groundspeed : 0.0, heading : 44, throttle : 55, alt : 0.669999957085, climb : 0.259999990463}
+Counters: Slave:0 MasterIn:[1986] FGearOut:0 FGearIn:0 MasterOut:29 
+MAV Errors: 0
+None
+91: AHRS {omegaIx : -0.000164297613082, omegaIy : -0.00449754390866, omegaIz : 0.00199407781474, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.000491943734232, error_yaw : 0.006704648491}
+89: ATTITUDE {time_boot_ms : 4300150, roll : 0.000229003635468, pitch : -0.000526777468622, yaw : 0.76969820261, rollspeed : -0.00314975436777, pitchspeed : 0.00335287116468, yawspeed : -0.00149287283421}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+91: GLOBAL_POSITION_INT {time_boot_ms : 4300350, lat : 0, lon : 0, alt : 122280, relative_alt : 580, vx : 0, vy : 0, vz : 0, hdg : 4409}
+91: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 38482991, lon : 973710365, alt : 122350, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+30: HEARTBEAT {type : 2, autopilot : 3, base_mode : 209, custom_mode : 0, system_status : 4, mavlink_version : 3}
+91: HWSTATUS {Vcc : 5222, I2Cerr : 0}
+90: MEMINFO {brkval : 0, freemem : 65535}
+90: MISSION_CURRENT {seq : 0}
+91: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.0, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM_VALUE {param_id : RC2_TRIM, param_value : 1511.0, param_type : 4, param_count : 331, param_index : 65535}
+30: RADIO {rssi : 152, remrssi : 173, txbuf : 100, noise : 55, remnoise : 43, rxerrors : 3, fixed : 0}
+30: RADIO_STATUS {rssi : 152, remrssi : 173, txbuf : 100, noise : 55, remnoise : 43, rxerrors : 3, fixed : 0}
+92: RAW_IMU {time_usec : 2309867, xacc : -1, yacc : 2, zacc : -1003, xgyro : -3, ygyro : 3, zgyro : -1, xmag : 226, ymag : -218, zmag : 285}
+91: RC_CHANNELS_RAW {time_boot_ms : 4300250, port : 0, chan1_raw : 1516, chan2_raw : 1511, chan3_raw : 1420, chan4_raw : 1508, chan5_raw : 0, chan6_raw : 0, chan7_raw : 0, chan8_raw : 0, rssi : 0}
+92: SCALED_IMU2 {time_boot_ms : 4300150, xacc : -3, yacc : 1, zacc : -1005, xgyro : 1, ygyro : -2, zgyro : -1, xmag : 215, ymag : -213, zmag : 236}
+92: SCALED_PRESSURE {time_boot_ms : 4300150, press_abs : 1013.01989746, press_diff : -0.00710937473923, temperature : 4054}
+92: SENSOR_OFFSETS {mag_ofs_x : -120, mag_ofs_y : -17, mag_ofs_z : -90, mag_declination : 0.0, raw_press : 101301, raw_temp : 4054, gyro_cal_x : -0.0125772515312, gyro_cal_y : -0.00548768602312, gyro_cal_z : -0.0510105863214, accel_cal_x : 0.165476977825, accel_cal_y : -0.389114320278, accel_cal_z : -0.774037361145}
+91: SERVO_OUTPUT_RAW {time_usec : 2409981, port : 0, servo1_raw : 1607, servo2_raw : 1607, servo3_raw : 1599, servo4_raw : 1599, servo5_raw : 0, servo6_raw : 0, servo7_raw : 0, servo8_raw : 0}
+9: STATUSTEXT {severity : 1, text : barometer calibration complete}
+91: SYSTEM_TIME {time_unix_usec : 0, time_boot_ms : 4300270}
+93: SYS_STATUS {onboard_control_sensors_present : 64559, onboard_control_sensors_enabled : 39983, onboard_control_sensors_health : 64559, load : 97, voltage_battery : 0, current_battery : -1, battery_remaining : -1, drop_rate_comm : 0, errors_comm : 0, errors_count1 : 0, errors_count2 : 0, errors_count3 : 0, errors_count4 : 0}
+89: VFR_HUD {airspeed : 0.0, groundspeed : 0.0, heading : 44, throttle : 62, alt : 0.579999983311, climb : 0.219999998808}
+Counters: Slave:0 MasterIn:[2057] FGearOut:0 FGearIn:0 MasterOut:30 
+MAV Errors: 0
+None
+95: AHRS {omegaIx : -0.000164297613082, omegaIy : -0.00449754390866, omegaIz : 0.00199407781474, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.00112048420124, error_yaw : 0.000940028578043}
+93: ATTITUDE {time_boot_ms : 4301210, roll : 0.000396841845941, pitch : -0.000492262479383, yaw : 0.76868981123, rollspeed : -0.0028579691425, pitchspeed : 0.00275509105995, yawspeed : -0.00236615911126}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+95: GLOBAL_POSITION_INT {time_boot_ms : 4301390, lat : 0, lon : 0, alt : 121920, relative_alt : 520, vx : 0, vy : 0, vz : 0, hdg : 4403}
+95: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 38413678, lon : 973717269, alt : 121990, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+31: HEARTBEAT {type : 2, autopilot : 3, base_mode : 209, custom_mode : 0, system_status : 4, mavlink_version : 3}
+95: HWSTATUS {Vcc : 5231, I2Cerr : 0}
+94: MEMINFO {brkval : 0, freemem : 65535}
+94: MISSION_CURRENT {seq : 0}
+95: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.0, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM_VALUE {param_id : RC2_TRIM, param_value : 1511.0, param_type : 4, param_count : 331, param_index : 65535}
+31: RADIO {rssi : 152, remrssi : 173, txbuf : 100, noise : 51, remnoise : 47, rxerrors : 3, fixed : 0}
+31: RADIO_STATUS {rssi : 152, remrssi : 173, txbuf : 100, noise : 51, remnoise : 47, rxerrors : 3, fixed : 0}
+96: RAW_IMU {time_usec : 3350512, xacc : -3, yacc : 0, zacc : -1000, xgyro : 0, ygyro : 2, zgyro : -2, xmag : 226, ymag : -219, zmag : 280}
+95: RC_CHANNELS_RAW {time_boot_ms : 4301290, port : 0, chan1_raw : 1516, chan2_raw : 1511, chan3_raw : 1460, chan4_raw : 1508, chan5_raw : 0, chan6_raw : 0, chan7_raw : 0, chan8_raw : 0, rssi : 0}
+96: SCALED_IMU2 {time_boot_ms : 4301191, xacc : -3, yacc : -4, zacc : -997, xgyro : 12, ygyro : 4, zgyro : -1, xmag : 214, ymag : -213, zmag : 238}
+96: SCALED_PRESSURE {time_boot_ms : 4301191, press_abs : 1013.02154541, press_diff : -0.00546874990687, temperature : 4053}
+96: SENSOR_OFFSETS {mag_ofs_x : -120, mag_ofs_y : -17, mag_ofs_z : -90, mag_declination : 0.0, raw_press : 101302, raw_temp : 4053, gyro_cal_x : -0.0125772515312, gyro_cal_y : -0.00548768602312, gyro_cal_z : -0.0510105863214, accel_cal_x : 0.165476977825, accel_cal_y : -0.389114320278, accel_cal_z : -0.774037361145}
+95: SERVO_OUTPUT_RAW {time_usec : 3449852, port : 0, servo1_raw : 1654, servo2_raw : 1654, servo3_raw : 1644, servo4_raw : 1644, servo5_raw : 0, servo6_raw : 0, servo7_raw : 0, servo8_raw : 0}
+9: STATUSTEXT {severity : 1, text : barometer calibration complete}
+95: SYSTEM_TIME {time_unix_usec : 0, time_boot_ms : 4301310}
+97: SYS_STATUS {onboard_control_sensors_present : 64559, onboard_control_sensors_enabled : 39983, onboard_control_sensors_health : 64559, load : 98, voltage_battery : 0, current_battery : -1, battery_remaining : -1, drop_rate_comm : 0, errors_comm : 0, errors_count1 : 0, errors_count2 : 0, errors_count3 : 0, errors_count4 : 0}
+93: VFR_HUD {airspeed : 0.0, groundspeed : 0.0, heading : 44, throttle : 69, alt : 0.52999997139, climb : 0.189999997616}
+Counters: Slave:0 MasterIn:[2167] FGearOut:0 FGearIn:0 MasterOut:31 
+MAV Errors: 0
+None
+101: AHRS {omegaIx : -0.000164297613082, omegaIy : -0.00449754390866, omegaIz : 0.00199407781474, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.000475946435472, error_yaw : 0.00549929775298}
+99: ATTITUDE {time_boot_ms : 4302830, roll : 0.000328221038217, pitch : -0.000418496434577, yaw : 0.767572283745, rollspeed : -0.00468799751252, pitchspeed : 0.00469749933109, yawspeed : -0.00192041695118}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+101: GLOBAL_POSITION_INT {time_boot_ms : 4303011, lat : 0, lon : 0, alt : 121350, relative_alt : 430, vx : 0, vy : 0, vz : 0, hdg : 4396}
+101: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 38302778, lon : 973728314, alt : 121420, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+33: HEARTBEAT {type : 2, autopilot : 3, base_mode : 209, custom_mode : 2, system_status : 4, mavlink_version : 3}
+101: HWSTATUS {Vcc : 5231, I2Cerr : 0}
+100: MEMINFO {brkval : 0, freemem : 65535}
+100: MISSION_CURRENT {seq : 0}
+101: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.170000001788, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM_VALUE {param_id : RC2_TRIM, param_value : 1511.0, param_type : 4, param_count : 331, param_index : 65535}
+32: RADIO {rssi : 152, remrssi : 173, txbuf : 100, noise : 55, remnoise : 46, rxerrors : 3, fixed : 0}
+32: RADIO_STATUS {rssi : 152, remrssi : 173, txbuf : 100, noise : 55, remnoise : 46, rxerrors : 3, fixed : 0}
+103: RAW_IMU {time_usec : 5170372, xacc : -2, yacc : 2, zacc : -997, xgyro : 0, ygyro : 5, zgyro : -1, xmag : 228, ymag : -219, zmag : 282}
+101: RC_CHANNELS_RAW {time_boot_ms : 4302911, port : 0, chan1_raw : 1516, chan2_raw : 1511, chan3_raw : 1460, chan4_raw : 1508, chan5_raw : 0, chan6_raw : 0, chan7_raw : 0, chan8_raw : 0, rssi : 0}
+103: SCALED_IMU2 {time_boot_ms : 4303011, xacc : 0, yacc : -1, zacc : -994, xgyro : 9, ygyro : 8, zgyro : 4, xmag : 213, ymag : -213, zmag : 236}
+103: SCALED_PRESSURE {time_boot_ms : 4303011, press_abs : 1013.00653076, press_diff : -0.0204687491059, temperature : 4053}
+103: SENSOR_OFFSETS {mag_ofs_x : -120, mag_ofs_y : -17, mag_ofs_z : -90, mag_declination : 0.0, raw_press : 101300, raw_temp : 4053, gyro_cal_x : -0.0125772515312, gyro_cal_y : -0.00548768602312, gyro_cal_z : -0.0510105863214, accel_cal_x : 0.165476977825, accel_cal_y : -0.389114320278, accel_cal_z : -0.774037361145}
+101: SERVO_OUTPUT_RAW {time_usec : 5070393, port : 0, servo1_raw : 1661, servo2_raw : 1661, servo3_raw : 1650, servo4_raw : 1650, servo5_raw : 0, servo6_raw : 0, servo7_raw : 0, servo8_raw : 0}
+9: STATUSTEXT {severity : 1, text : barometer calibration complete}
+101: SYSTEM_TIME {time_unix_usec : 0, time_boot_ms : 4302930}
+103: SYS_STATUS {onboard_control_sensors_present : 64559, onboard_control_sensors_enabled : 64559, onboard_control_sensors_health : 64559, load : 103, voltage_battery : 0, current_battery : -1, battery_remaining : -1, drop_rate_comm : 0, errors_comm : 0, errors_count1 : 0, errors_count2 : 0, errors_count3 : 0, errors_count4 : 0}
+99: VFR_HUD {airspeed : 0.0, groundspeed : 0.0, heading : 43, throttle : 70, alt : 0.419999986887, climb : 0.149999991059}
+Counters: Slave:0 MasterIn:[2209] FGearOut:0 FGearIn:0 MasterOut:32 
+MAV Errors: 0
+None
+103: AHRS {omegaIx : -0.000163028526003, omegaIy : -0.00447088479996, omegaIz : 0.00172391603701, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.000797675398644, error_yaw : 0.000907077919692}
+102: ATTITUDE {time_boot_ms : 4303670, roll : -0.000256145111052, pitch : -0.000401392870117, yaw : 0.766938865185, rollspeed : -0.0027758711949, pitchspeed : 0.00332970055752, yawspeed : -0.00303047150373}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+103: GLOBAL_POSITION_INT {time_boot_ms : 4303570, lat : 0, lon : 0, alt : 121140, relative_alt : 410, vx : 0, vy : 0, vz : 0, hdg : 4394}
+104: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 38247327, lon : 973733835, alt : 121140, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+33: HEARTBEAT {type : 2, autopilot : 3, base_mode : 209, custom_mode : 2, system_status : 4, mavlink_version : 3}
+103: HWSTATUS {Vcc : 5231, I2Cerr : 0}
+103: MEMINFO {brkval : 0, freemem : 65535}
+103: MISSION_CURRENT {seq : 0}
+104: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.189999997616, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM_VALUE {param_id : RC2_TRIM, param_value : 1511.0, param_type : 4, param_count : 331, param_index : 65535}
+33: RADIO {rssi : 152, remrssi : 173, txbuf : 100, noise : 54, remnoise : 44, rxerrors : 3, fixed : 0}
+33: RADIO_STATUS {rssi : 152, remrssi : 173, txbuf : 100, noise : 54, remnoise : 44, rxerrors : 3, fixed : 0}
+105: RAW_IMU {time_usec : 5690035, xacc : -2, yacc : 0, zacc : -999, xgyro : 0, ygyro : 4, zgyro : -4, xmag : 225, ymag : -218, zmag : 283}
+103: RC_CHANNELS_RAW {time_boot_ms : 4303470, port : 0, chan1_raw : 1516, chan2_raw : 1511, chan3_raw : 1460, chan4_raw : 1508, chan5_raw : 0, chan6_raw : 0, chan7_raw : 0, chan8_raw : 0, rssi : 0}
+105: SCALED_IMU2 {time_boot_ms : 4303530, xacc : -3, yacc : -1, zacc : -999, xgyro : 7, ygyro : 1, zgyro : -4, xmag : 213, ymag : -214, zmag : 240}
+105: SCALED_PRESSURE {time_boot_ms : 4303530, press_abs : 1013.0100708, press_diff : -0.0169531237334, temperature : 4054}
+105: SENSOR_OFFSETS {mag_ofs_x : -120, mag_ofs_y : -17, mag_ofs_z : -90, mag_declination : 0.0, raw_press : 101301, raw_temp : 4054, gyro_cal_x : -0.0125772515312, gyro_cal_y : -0.00548768602312, gyro_cal_z : -0.0510105863214, accel_cal_x : 0.165476977825, accel_cal_y : -0.389114320278, accel_cal_z : -0.774037361145}
+103: SERVO_OUTPUT_RAW {time_usec : 5629844, port : 0, servo1_raw : 1682, servo2_raw : 1682, servo3_raw : 1669, servo4_raw : 1669, servo5_raw : 0, servo6_raw : 0, servo7_raw : 0, servo8_raw : 0}
+9: STATUSTEXT {severity : 1, text : barometer calibration complete}
+103: SYSTEM_TIME {time_unix_usec : 0, time_boot_ms : 4303491}
+106: SYS_STATUS {onboard_control_sensors_present : 64559, onboard_control_sensors_enabled : 64559, onboard_control_sensors_health : 64559, load : 101, voltage_battery : 0, current_battery : -1, battery_remaining : -1, drop_rate_comm : 0, errors_comm : 0, errors_count1 : 0, errors_count2 : 0, errors_count3 : 0, errors_count4 : 0}
+101: VFR_HUD {airspeed : 0.0, groundspeed : 0.0, heading : 43, throttle : 73, alt : 0.409999996424, climb : 0.140000000596}
+Counters: Slave:0 MasterIn:[2243] FGearOut:0 FGearIn:0 MasterOut:33 
+MAV Errors: 0
+None
+105: AHRS {omegaIx : -0.000163028526003, omegaIy : -0.00447088479996, omegaIz : 0.00172391603701, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.000733838416636, error_yaw : 0.00167855154723}
+104: ATTITUDE {time_boot_ms : 4304210, roll : -0.00039150135126, pitch : -0.00052602548385, yaw : 0.766416370869, rollspeed : -0.00338071864098, pitchspeed : 0.00309687596746, yawspeed : -0.00233235955238}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+104: GLOBAL_POSITION_INT {time_boot_ms : 4303830, lat : 0, lon : 0, alt : 121070, relative_alt : 400, vx : 0, vy : 0, vz : 0, hdg : 4392}
+106: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 40810077, lon : 972239645, alt : 135250, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+34: HEARTBEAT {type : 2, autopilot : 3, base_mode : 209, custom_mode : 2, system_status : 4, mavlink_version : 3}
+105: HWSTATUS {Vcc : 5231, I2Cerr : 0}
+104: MEMINFO {brkval : 0, freemem : 65535}
+105: MISSION_CURRENT {seq : 0}
+106: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.219999998808, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM_VALUE {param_id : RC2_TRIM, param_value : 1511.0, param_type : 4, param_count : 331, param_index : 65535}
+34: RADIO {rssi : 152, remrssi : 173, txbuf : 100, noise : 55, remnoise : 45, rxerrors : 3, fixed : 0}
+34: RADIO_STATUS {rssi : 152, remrssi : 173, txbuf : 100, noise : 55, remnoise : 45, rxerrors : 3, fixed : 0}
+107: RAW_IMU {time_usec : 6209858, xacc : -3, yacc : 2, zacc : -997, xgyro : -1, ygyro : 4, zgyro : -2, xmag : 231, ymag : -221, zmag : 281}
+105: RC_CHANNELS_RAW {time_boot_ms : 4304010, port : 0, chan1_raw : 1516, chan2_raw : 1511, chan3_raw : 1460, chan4_raw : 1508, chan5_raw : 0, chan6_raw : 0, chan7_raw : 0, chan8_raw : 0, rssi : 0}
+107: SCALED_IMU2 {time_boot_ms : 4304050, xacc : 6, yacc : 3, zacc : -1001, xgyro : 5, ygyro : 1, zgyro : -2, xmag : 213, ymag : -213, zmag : 234}
+107: SCALED_PRESSURE {time_boot_ms : 4304050, press_abs : 1013.02661133, press_diff : -0.000390624976717, temperature : 4053}
+107: SENSOR_OFFSETS {mag_ofs_x : -120, mag_ofs_y : -17, mag_ofs_z : -90, mag_declination : 0.0, raw_press : 101302, raw_temp : 4053, gyro_cal_x : -0.0125772515312, gyro_cal_y : -0.00548768602312, gyro_cal_z : -0.0510105863214, accel_cal_x : 0.165476977825, accel_cal_y : -0.389114320278, accel_cal_z : -0.774037361145}
+105: SERVO_OUTPUT_RAW {time_usec : 6170105, port : 0, servo1_raw : 1710, servo2_raw : 1710, servo3_raw : 1696, servo4_raw : 1696, servo5_raw : 0, servo6_raw : 0, servo7_raw : 0, servo8_raw : 0}
+9: STATUSTEXT {severity : 1, text : barometer calibration complete}
+105: SYSTEM_TIME {time_unix_usec : 0, time_boot_ms : 4304030}
+107: SYS_STATUS {onboard_control_sensors_present : 64559, onboard_control_sensors_enabled : 64559, onboard_control_sensors_health : 64559, load : 103, voltage_battery : 0, current_battery : -1, battery_remaining : -1, drop_rate_comm : 0, errors_comm : 0, errors_count1 : 0, errors_count2 : 0, errors_count3 : 0, errors_count4 : 0}
+103: VFR_HUD {airspeed : 0.0, groundspeed : 0.0, heading : 43, throttle : 78, alt : 0.389999985695, climb : 0.119999997318}
+Counters: Slave:0 MasterIn:[2283] FGearOut:0 FGearIn:0 MasterOut:33 
+MAV Errors: 0
+None
+107: AHRS {omegaIx : -0.000163028526003, omegaIy : -0.00447088479996, omegaIz : 0.00172391603701, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.000580199877732, error_yaw : 0.00634427182376}
+106: ATTITUDE {time_boot_ms : 4304790, roll : -0.00017962489801, pitch : -0.000629509333521, yaw : 0.765729486942, rollspeed : 0.00294273439795, pitchspeed : 0.00374469766393, yawspeed : -0.00314880907536}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+106: GLOBAL_POSITION_INT {time_boot_ms : 4304690, lat : 0, lon : 0, alt : 120790, relative_alt : 350, vx : 0, vy : 0, vz : 0, hdg : 4388}
+108: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 38178014, lon : 973740737, alt : 120790, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+34: HEARTBEAT {type : 2, autopilot : 3, base_mode : 209, custom_mode : 2, system_status : 4, mavlink_version : 3}
+107: HWSTATUS {Vcc : 5228, I2Cerr : 0}
+106: MEMINFO {brkval : 0, freemem : 65535}
+107: MISSION_CURRENT {seq : 0}
+108: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.25, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM_VALUE {param_id : RC2_TRIM, param_value : 1511.0, param_type : 4, param_count : 331, param_index : 65535}
+34: RADIO {rssi : 152, remrssi : 173, txbuf : 100, noise : 55, remnoise : 45, rxerrors : 3, fixed : 0}
+34: RADIO_STATUS {rssi : 152, remrssi : 173, txbuf : 100, noise : 55, remnoise : 45, rxerrors : 3, fixed : 0}
+110: RAW_IMU {time_usec : 6990074, xacc : 5, yacc : -1, zacc : -998, xgyro : -4, ygyro : 3, zgyro : 0, xmag : 232, ymag : -220, zmag : 279}
+108: RC_CHANNELS_RAW {time_boot_ms : 4304870, port : 0, chan1_raw : 1516, chan2_raw : 1511, chan3_raw : 1460, chan4_raw : 1508, chan5_raw : 0, chan6_raw : 0, chan7_raw : 0, chan8_raw : 0, rssi : 0}
+110: SCALED_IMU2 {time_boot_ms : 4304830, xacc : 3, yacc : 2, zacc : -1002, xgyro : 2, ygyro : 5, zgyro : 3, xmag : 214, ymag : -215, zmag : 237}
+110: SCALED_PRESSURE {time_boot_ms : 4304830, press_abs : 1013.01715088, press_diff : -0.00984374992549, temperature : 4053}
+110: SENSOR_OFFSETS {mag_ofs_x : -120, mag_ofs_y : -17, mag_ofs_z : -90, mag_declination : 0.0, raw_press : 101301, raw_temp : 4053, gyro_cal_x : -0.0125772515312, gyro_cal_y : -0.00548768602312, gyro_cal_z : -0.0510105863214, accel_cal_x : 0.165476977825, accel_cal_y : -0.389114320278, accel_cal_z : -0.774037361145}
+108: SERVO_OUTPUT_RAW {time_usec : 7029847, port : 0, servo1_raw : 1788, servo2_raw : 1790, servo3_raw : 1773, servo4_raw : 1775, servo5_raw : 0, servo6_raw : 0, servo7_raw : 0, servo8_raw : 0}
+9: STATUSTEXT {severity : 1, text : barometer calibration complete}
+107: SYSTEM_TIME {time_unix_usec : 0, time_boot_ms : 4304590}
+109: SYS_STATUS {onboard_control_sensors_present : 64559, onboard_control_sensors_enabled : 64559, onboard_control_sensors_health : 64559, load : 101, voltage_battery : 0, current_battery : -1, battery_remaining : -1, drop_rate_comm : 0, errors_comm : 0, errors_count1 : 0, errors_count2 : 0, errors_count3 : 0, errors_count4 : 0}
+105: VFR_HUD {airspeed : 0.0, groundspeed : 0.0, heading : 43, throttle : 85, alt : 0.359999984503, climb : 0.109999999404}
+Counters: Slave:0 MasterIn:[2322] FGearOut:0 FGearIn:0 MasterOut:34 
+MAV Errors: 0
+None
+109: AHRS {omegaIx : -0.000163028526003, omegaIy : -0.00447088479996, omegaIz : 0.00172391603701, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.0011118351249, error_yaw : 0.00389995588921}
+108: ATTITUDE {time_boot_ms : 4305350, roll : -5.22450500284e-05, pitch : -0.00060011894675, yaw : 0.765487611294, rollspeed : 0.000232137739658, pitchspeed : 0.00314214872196, yawspeed : -0.000712458044291}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+108: GLOBAL_POSITION_INT {time_boot_ms : 4305231, lat : 0, lon : 0, alt : 134880, relative_alt : 340, vx : 0, vy : 0, vz : 0, hdg : 4386}
+111: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 40726935, lon : 972247964, alt : 134800, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+35: HEARTBEAT {type : 2, autopilot : 3, base_mode : 209, custom_mode : 2, system_status : 4, mavlink_version : 3}
+109: HWSTATUS {Vcc : 5231, I2Cerr : 0}
+108: MEMINFO {brkval : 0, freemem : 65535}
+110: MISSION_CURRENT {seq : 0}
+111: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.259999990463, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM_VALUE {param_id : RC2_TRIM, param_value : 1511.0, param_type : 4, param_count : 331, param_index : 65535}
+35: RADIO {rssi : 152, remrssi : 173, txbuf : 100, noise : 52, remnoise : 41, rxerrors : 3, fixed : 0}
+35: RADIO_STATUS {rssi : 152, remrssi : 173, txbuf : 100, noise : 52, remnoise : 41, rxerrors : 3, fixed : 0}
+112: RAW_IMU {time_usec : 7509805, xacc : 0, yacc : -1, zacc : -997, xgyro : 0, ygyro : 3, zgyro : 0, xmag : 226, ymag : -219, zmag : 282}
+109: RC_CHANNELS_RAW {time_boot_ms : 4305170, port : 0, chan1_raw : 1516, chan2_raw : 1511, chan3_raw : 1460, chan4_raw : 1508, chan5_raw : 0, chan6_raw : 0, chan7_raw : 0, chan8_raw : 0, rssi : 0}
+112: SCALED_IMU2 {time_boot_ms : 4305350, xacc : 0, yacc : -5, zacc : -1003, xgyro : 7, ygyro : 6, zgyro : 0, xmag : 213, ymag : -214, zmag : 239}
+112: SCALED_PRESSURE {time_boot_ms : 4305350, press_abs : 1013.02154541, press_diff : -0.00546874990687, temperature : 4053}
+112: SENSOR_OFFSETS {mag_ofs_x : -120, mag_ofs_y : -17, mag_ofs_z : -90, mag_declination : 0.0, raw_press : 101302, raw_temp : 4053, gyro_cal_x : -0.0125772515312, gyro_cal_y : -0.00548768602312, gyro_cal_z : -0.0510105863214, accel_cal_x : 0.165476977825, accel_cal_y : -0.389114320278, accel_cal_z : -0.774037361145}
+110: SERVO_OUTPUT_RAW {time_usec : 7590212, port : 0, servo1_raw : 1846, servo2_raw : 1847, servo3_raw : 1831, servo4_raw : 1832, servo5_raw : 0, servo6_raw : 0, servo7_raw : 0, servo8_raw : 0}
+9: STATUSTEXT {severity : 1, text : barometer calibration complete}
+109: SYSTEM_TIME {time_unix_usec : 0, time_boot_ms : 4305210}
+111: SYS_STATUS {onboard_control_sensors_present : 64559, onboard_control_sensors_enabled : 64559, onboard_control_sensors_health : 64559, load : 99, voltage_battery : 0, current_battery : -1, battery_remaining : -1, drop_rate_comm : 0, errors_comm : 0, errors_count1 : 0, errors_count2 : 0, errors_count3 : 0, errors_count4 : 0}
+107: VFR_HUD {airspeed : 0.0, groundspeed : 0.0, heading : 43, throttle : 95, alt : 0.340000003576, climb : 0.0999999940395}
+Counters: Slave:0 MasterIn:[2363] FGearOut:0 FGearIn:0 MasterOut:34 
+MAV Errors: 0
+None
+112: AHRS {omegaIx : -0.000163028526003, omegaIy : -0.00447088479996, omegaIz : 0.00172391603701, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.000923625659198, error_yaw : 0.00383250415325}
+110: ATTITUDE {time_boot_ms : 4305870, roll : 8.36488688947e-05, pitch : -0.000622051185928, yaw : 0.765094399452, rollspeed : -0.000794016756117, pitchspeed : 0.00390346487984, yawspeed : -0.00217410549521}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+111: GLOBAL_POSITION_INT {time_boot_ms : 4306010, lat : 0, lon : 0, alt : 120290, relative_alt : 310, vx : 0, vy : 0, vz : 0, hdg : 4382}
+113: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 38080974, lon : 973750397, alt : 120290, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+36: HEARTBEAT {type : 2, autopilot : 3, base_mode : 209, custom_mode : 2, system_status : 4, mavlink_version : 3}
+112: HWSTATUS {Vcc : 5230, I2Cerr : 0}
+110: MEMINFO {brkval : 0, freemem : 65535}
+112: MISSION_CURRENT {seq : 0}
+113: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.280000001192, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM_VALUE {param_id : RC2_TRIM, param_value : 1511.0, param_type : 4, param_count : 331, param_index : 65535}
+35: RADIO {rssi : 152, remrssi : 173, txbuf : 100, noise : 52, remnoise : 41, rxerrors : 3, fixed : 0}
+35: RADIO_STATUS {rssi : 152, remrssi : 173, txbuf : 100, noise : 52, remnoise : 41, rxerrors : 3, fixed : 0}
+114: RAW_IMU {time_usec : 8029955, xacc : 2, yacc : 2, zacc : -997, xgyro : 0, ygyro : 3, zgyro : -2, xmag : 231, ymag : -220, zmag : 283}
+112: RC_CHANNELS_RAW {time_boot_ms : 4305951, port : 0, chan1_raw : 1516, chan2_raw : 1511, chan3_raw : 1460, chan4_raw : 1508, chan5_raw : 0, chan6_raw : 0, chan7_raw : 0, chan8_raw : 0, rssi : 0}
+114: SCALED_IMU2 {time_boot_ms : 4305870, xacc : -1, yacc : 0, zacc : -991, xgyro : 10, ygyro : 4, zgyro : 5, xmag : 212, ymag : -213, zmag : 236}
+114: SCALED_PRESSURE {time_boot_ms : 4305870, press_abs : 1013.01489258, press_diff : -0.0121093746275, temperature : 4053}
+114: SENSOR_OFFSETS {mag_ofs_x : -120, mag_ofs_y : -17, mag_ofs_z : -90, mag_declination : 0.0, raw_press : 101301, raw_temp : 4053, gyro_cal_x : -0.0125772515312, gyro_cal_y : -0.00548768602312, gyro_cal_z : -0.0510105863214, accel_cal_x : 0.165476977825, accel_cal_y : -0.389114320278, accel_cal_z : -0.774037361145}
+112: SERVO_OUTPUT_RAW {time_usec : 8110437, port : 0, servo1_raw : 1849, servo2_raw : 1851, servo3_raw : 1832, servo4_raw : 1834, servo5_raw : 0, servo6_raw : 0, servo7_raw : 0, servo8_raw : 0}
+9: STATUSTEXT {severity : 1, text : barometer calibration complete}
+112: SYSTEM_TIME {time_unix_usec : 0, time_boot_ms : 4305990}
+113: SYS_STATUS {onboard_control_sensors_present : 64559, onboard_control_sensors_enabled : 64559, onboard_control_sensors_health : 64559, load : 100, voltage_battery : 0, current_battery : -1, battery_remaining : -1, drop_rate_comm : 0, errors_comm : 0, errors_count1 : 0, errors_count2 : 0, errors_count3 : 0, errors_count4 : 0}
+110: VFR_HUD {airspeed : 0.0, groundspeed : 0.0, heading : 43, throttle : 100, alt : 0.319999992847, climb : 0.0899999961257}
+Counters: Slave:0 MasterIn:[2402] FGearOut:0 FGearIn:0 MasterOut:35 
+MAV Errors: 0
+None
+114: AHRS {omegaIx : -0.000163028526003, omegaIy : -0.00447088479996, omegaIz : 0.00172391603701, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.000222365342779, error_yaw : 0.0103667024523}
+112: ATTITUDE {time_boot_ms : 4306410, roll : -0.000236488398514, pitch : -0.000697843206581, yaw : 0.764699339867, rollspeed : -0.00084291305393, pitchspeed : 0.00190533744171, yawspeed : -0.00322266668081}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+113: GLOBAL_POSITION_INT {time_boot_ms : 4306531, lat : 0, lon : 0, alt : 120080, relative_alt : 290, vx : 0, vy : 0, vz : 0, hdg : 4381}
+115: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 38053249, lon : 973753157, alt : 120150, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+36: HEARTBEAT {type : 2, autopilot : 3, base_mode : 209, custom_mode : 2, system_status : 4, mavlink_version : 3}
+114: HWSTATUS {Vcc : 5233, I2Cerr : 0}
+112: MEMINFO {brkval : 0, freemem : 65535}
+114: MISSION_CURRENT {seq : 0}
+115: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.310000002384, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM_VALUE {param_id : RC2_TRIM, param_value : 1511.0, param_type : 4, param_count : 331, param_index : 65535}
+36: RADIO {rssi : 152, remrssi : 173, txbuf : 99, noise : 50, remnoise : 45, rxerrors : 3, fixed : 0}
+36: RADIO_STATUS {rssi : 152, remrssi : 173, txbuf : 99, noise : 50, remnoise : 45, rxerrors : 3, fixed : 0}
+117: RAW_IMU {time_usec : 8810172, xacc : 0, yacc : -3, zacc : -1004, xgyro : 0, ygyro : 4, zgyro : -2, xmag : 229, ymag : -218, zmag : 280}
+114: RC_CHANNELS_RAW {time_boot_ms : 4306470, port : 0, chan1_raw : 1516, chan2_raw : 1511, chan3_raw : 1460, chan4_raw : 1508, chan5_raw : 0, chan6_raw : 0, chan7_raw : 0, chan8_raw : 0, rssi : 0}
+117: SCALED_IMU2 {time_boot_ms : 4306650, xacc : 2, yacc : 1, zacc : -1001, xgyro : 0, ygyro : 2, zgyro : -1, xmag : 213, ymag : -214, zmag : 235}
+117: SCALED_PRESSURE {time_boot_ms : 4306651, press_abs : 1013.0199585, press_diff : -0.00703124981374, temperature : 4052}
+116: SENSOR_OFFSETS {mag_ofs_x : -120, mag_ofs_y : -17, mag_ofs_z : -90, mag_declination : 0.0, raw_press : 101301, raw_temp : 4053, gyro_cal_x : -0.0125772515312, gyro_cal_y : -0.00548768602312, gyro_cal_z : -0.0510105863214, accel_cal_x : 0.165476977825, accel_cal_y : -0.389114320278, accel_cal_z : -0.774037361145}
+114: SERVO_OUTPUT_RAW {time_usec : 8630110, port : 0, servo1_raw : 1851, servo2_raw : 1851, servo3_raw : 1831, servo4_raw : 1834, servo5_raw : 0, servo6_raw : 0, servo7_raw : 0, servo8_raw : 0}
+9: STATUSTEXT {severity : 1, text : barometer calibration complete}
+114: SYSTEM_TIME {time_unix_usec : 0, time_boot_ms : 4306531}
+115: SYS_STATUS {onboard_control_sensors_present : 64559, onboard_control_sensors_enabled : 64559, onboard_control_sensors_health : 64559, load : 101, voltage_battery : 0, current_battery : -1, battery_remaining : -1, drop_rate_comm : 0, errors_comm : 0, errors_count1 : 0, errors_count2 : 0, errors_count3 : 0, errors_count4 : 0}
+112: VFR_HUD {airspeed : 0.0, groundspeed : 0.0, heading : 43, throttle : 100, alt : 0.289999991655, climb : 0.0799999982119}
+Counters: Slave:0 MasterIn:[2444] FGearOut:0 FGearIn:0 MasterOut:36 
+MAV Errors: 0
+None
+116: AHRS {omegaIx : -0.000163028526003, omegaIy : -0.00447088479996, omegaIz : 0.00172391603701, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.000936888565775, error_yaw : 0.00421248469502}
+115: ATTITUDE {time_boot_ms : 4307190, roll : -9.81245320872e-05, pitch : -0.000709860818461, yaw : 0.764330148697, rollspeed : -0.00402413588017, pitchspeed : 0.00353454146534, yawspeed : -0.00253959000111}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+115: GLOBAL_POSITION_INT {time_boot_ms : 4307050, lat : 0, lon : 0, alt : 109580, relative_alt : 260, vx : 0, vy : 0, vz : 0, hdg : 4379}
+117: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 36014158, lon : 974905682, alt : 109580, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+37: HEARTBEAT {type : 2, autopilot : 3, base_mode : 209, custom_mode : 2, system_status : 4, mavlink_version : 3}
+116: HWSTATUS {Vcc : 5231, I2Cerr : 0}
+114: MEMINFO {brkval : 0, freemem : 65535}
+116: MISSION_CURRENT {seq : 0}
+118: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.34999999404, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM_VALUE {param_id : RC2_TRIM, param_value : 1511.0, param_type : 4, param_count : 331, param_index : 65535}
+37: RADIO {rssi : 152, remrssi : 173, txbuf : 100, noise : 51, remnoise : 45, rxerrors : 3, fixed : 0}
+37: RADIO_STATUS {rssi : 152, remrssi : 173, txbuf : 100, noise : 51, remnoise : 45, rxerrors : 3, fixed : 0}
+119: RAW_IMU {time_usec : 9330028, xacc : 2, yacc : 0, zacc : -1001, xgyro : -1, ygyro : 3, zgyro : -1, xmag : 228, ymag : -218, zmag : 284}
+117: RC_CHANNELS_RAW {time_boot_ms : 4307251, port : 0, chan1_raw : 1516, chan2_raw : 1511, chan3_raw : 1460, chan4_raw : 1508, chan5_raw : 0, chan6_raw : 0, chan7_raw : 0, chan8_raw : 0, rssi : 0}
+119: SCALED_IMU2 {time_boot_ms : 4307170, xacc : 2, yacc : -1, zacc : -1005, xgyro : 7, ygyro : 6, zgyro : -2, xmag : 216, ymag : -216, zmag : 237}
+119: SCALED_PRESSURE {time_boot_ms : 4307170, press_abs : 1013.02825928, press_diff : 0.00124999997206, temperature : 4052}
+119: SENSOR_OFFSETS {mag_ofs_x : -120, mag_ofs_y : -17, mag_ofs_z : -90, mag_declination : 0.0, raw_press : 101302, raw_temp : 4052, gyro_cal_x : -0.0125772515312, gyro_cal_y : -0.00548768602312, gyro_cal_z : -0.0510105863214, accel_cal_x : 0.165476977825, accel_cal_y : -0.389114320278, accel_cal_z : -0.774037361145}
+117: SERVO_OUTPUT_RAW {time_usec : 9410398, port : 0, servo1_raw : 1849, servo2_raw : 1851, servo3_raw : 1831, servo4_raw : 1832, servo5_raw : 0, servo6_raw : 0, servo7_raw : 0, servo8_raw : 0}
+9: STATUSTEXT {severity : 1, text : barometer calibration complete}
+116: SYSTEM_TIME {time_unix_usec : 0, time_boot_ms : 4307070}
+117: SYS_STATUS {onboard_control_sensors_present : 64559, onboard_control_sensors_enabled : 64559, onboard_control_sensors_health : 64559, load : 102, voltage_battery : 0, current_battery : -1, battery_remaining : -1, drop_rate_comm : 0, errors_comm : 0, errors_count1 : 0, errors_count2 : 0, errors_count3 : 0, errors_count4 : 0}
+114: VFR_HUD {airspeed : 0.0, groundspeed : 0.0, heading : 43, throttle : 100, alt : 0.259999990463, climb : 0.070000000298}
+Counters: Slave:0 MasterIn:[2483] FGearOut:0 FGearIn:0 MasterOut:36 
+MAV Errors: 0
+None
+119: AHRS {omegaIx : -0.000163028526003, omegaIy : -0.00447088479996, omegaIz : 0.00172391603701, accel_weight : 1.0, renorm_val : 0.0, error_rp : 0.000552871380933, error_yaw : 0.00166475248989}
+117: ATTITUDE {time_boot_ms : 4307710, roll : -8.95493649296e-05, pitch : -0.00076589116361, yaw : 0.764092445374, rollspeed : -0.000743885524571, pitchspeed : 0.00384978437796, yawspeed : -0.00359455496073}
+7: BAD_DATA {Bad prefix, data:['5e']}
+1: COMMAND_ACK {command : 241, result : 0}
+118: GLOBAL_POSITION_INT {time_boot_ms : 4307830, lat : 0, lon : 0, alt : 109310, relative_alt : 240, vx : 0, vy : 0, vz : 0, hdg : 4377}
+119: GPS_RAW_INT {time_usec : 0, fix_type : 1, lat : 35958689, lon : 974911182, alt : 109310, eph : 9999, epv : 65535, vel : 0, cog : 0, satellites_visible : 0}
+37: HEARTBEAT {type : 2, autopilot : 3, base_mode : 209, custom_mode : 2, system_status : 4, mavlink_version : 3}
+119: HWSTATUS {Vcc : 5227, I2Cerr : 0}
+116: MEMINFO {brkval : 0, freemem : 65535}
+118: MISSION_CURRENT {seq : 0}
+120: NAV_CONTROLLER_OUTPUT {nav_roll : 0.0, nav_pitch : 0.0, nav_bearing : 44, target_bearing : 0, wp_dist : 0, alt_error : 0.359999984503, aspd_error : 0.0, xtrack_error : 0.0}
+332: PARAM

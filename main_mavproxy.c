@@ -13,6 +13,25 @@
 #include "mavproxy.h"
 #include "fifo.h"
 
+/*Create a function to dispose the exception of wrap_recv function*/
+static void except_recv(int sock, void *buf, size_t len, int flags, int *state_flag)
+{
+	ssize_t ret;
+	ret = wrap_recv(sock, buf, len, flags);
+	if(ret < 0)
+	{
+		perror("wrap_recv error");
+		*state_flag = SOCK_ERROR;
+		//exit(-1);
+	}
+	else if(ret == 0)
+	{
+		printf("sock timeout\n");
+		*state_flag = SOCK_TIMEOUT;
+	}
+	return;
+}
+
 int main()
 {
 	int fifo_create;
