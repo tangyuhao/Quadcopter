@@ -1,7 +1,9 @@
 #ifndef __MAVPROXY_H__
 #define __MAVPROXY_H__
 
-#define DEBUG 0
+#define BEAGLEBONE 0
+
+#define DEBUG 1
 #if DEBUG
     #define DEBUG_PRINTF(format, ...) printf(format, ##__VA_ARGS__)
 #else
@@ -32,10 +34,10 @@
 #define CLEAR(x) memset((x), 0, sizeof(x))
 
 /*Define the channel*/
-#define ROLL		1
-#define PITCH		2
-#define THROTTL		3
-#define YAW		4
+#define ROLL		0
+#define PITCH		1
+#define THROTTL		2
+#define YAW		3
 
 
 /*Define the flying mode*/
@@ -45,12 +47,24 @@
 #define ALT_HOLD 4
 #define AUTO 5
 
+/*Define different control commands*/
+#define LEVEL		0x01
+#define TAKEOFF		0x02
+#define ARM			0x04
+#define DISARM		0x08
+
+
+/*Define cmd_type*/
+#define CONTROL_TYPE	0x01
+#define CHANNEL_TYPE	0x02
+
+
 /*Define State Flag*/
 #define RECV_HEADER		0
-#define RECV_CONTROL		1
-#define RECV_CHANNEL		2
-#define RECV_MODE	   	3
-#define SOCK_TIMEOUT		-1
+#define RECV_PARAM      1
+#define RECV_CONTROL	2
+#define RECV_CHANNEL	3
+#define SOCK_TIMEOUT	-1
 #define SOCK_ERROR		-2
 #define MAV_TIMEOUT		-3
 #define MAV_ERROR		-4
@@ -95,13 +109,29 @@ struct send_struct
 };
 struct send_struct send_data;
 
+/*Create a structure to hold channel command value*/
+struct rc_struct
+{
+	short chan[4];
+	char mode;
+};
+
+
+/*Create a union to store different types of data*/
+union data_struct{
+	struct rc_struct rc;
+	struct status_struct status;
+	char control;
+
+};
+
 /*Create a struct to manage the command*/
 struct cmd_struct
 {
 	unsigned char head[2];
-	char level[4],arm[4],takeoff[4];
-	int chan[4];
-	char mode[4];
+	char type;
+	short len;
+	union data_struct data;
 };
 struct cmd_struct cmd;
 
@@ -111,5 +141,6 @@ int write2mavproxy_rc(int channel,int chan_value);
 int write2mavproxy_mode(int mav_mode);
 int msleep(int delay_time);
 int write2mavproxy_status(struct status_struct* sta);
+
 
 #endif
