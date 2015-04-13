@@ -89,41 +89,38 @@
 /*Creat a structure to store data info*/
 struct status_struct
 {
-		char head[2];
-		int len;
-		int arm;
-		int xacc,yacc,zacc;
-		int motor_speed1,motor_speed2,motor_speed3,motor_speed4;
-		int heading_north;
-		int lat,lon;
-		int eph,satellites_visible;
-		int chan1, chan2, chan3, chan4, chan5, chan6, chan7, chan8;
-		int vol_remain, cur_remain, bat_remain;
-		int rollspeed,pitchspeed,yawspeed;
-		int hud_alt, hud_climb,hud_groundspeed;
+	int arm;
+	int xacc,yacc,zacc;
+	int motor_speed1,motor_speed2,motor_speed3,motor_speed4;
+	int heading_north;
+	int lat,lon;
+	int eph,satellites_visible;
+	int chan1, chan2, chan3, chan4, chan5, chan6, chan7, chan8;
+	int vol_remain, cur_remain, bat_remain;
+	float rollspeed,pitchspeed,yawspeed;
+	float hud_alt, hud_climb,hud_groundspeed;
 };
 
-/*Create a struct to transport the data*/
-struct send_struct
+/*Creat a structure for sending the status*/
+struct send_status
 {
-	unsigned char head[2];
-	struct status_struct status;
-};
-struct status_struct send_data;
+	unsigned char head[4];
+	int len;
+	struct status_struct info;
+}status;
 
 /*Create a structure to hold channel command value*/
 struct rc_struct
 {
-	short chan[4];
-	char mode;
+	unsigned char chan[4];
+	unsigned char mode;
 };
 
 
 /*Create a union to store different types of data*/
 union data_struct{
 	struct rc_struct rc;
-	struct status_struct status;
-	char control;
+	unsigned char control;
 
 };
 
@@ -131,8 +128,8 @@ union data_struct{
 struct cmd_struct
 {
 	unsigned char head[2];
-	char type;
-	short len;
+	unsigned char type;
+	unsigned char len;
 	union data_struct data;
 };
 struct cmd_struct cmd;

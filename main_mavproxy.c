@@ -68,10 +68,11 @@ int main(int argc, char *argv[])
 	pid_t pid_statusSend;
 	extern int cmd_fifo_fd;
 	extern int data_fifo_fd;
-	struct status_struct status;
-	cmd.data.status.head[0] = 0xff;
-	cmd.data.status.head[1] = 0xaa;
-	cmd.data.status.len = 24 * sizeof(int) + 6 * sizeof(double);
+	status.head[0] = 0xff;
+	status.head[1] = 0xaa;
+	status.head[2] = 0xbb;
+	status.head[3] = 0xcc;
+	status.len = sizeof(status.info);
 	
 /*write a test help*/
 	if(argc == 2)
@@ -82,7 +83,8 @@ int main(int argc, char *argv[])
 		{
 			printf("This is a test program of receiving channel value 				from GCS and send it to Mavproxy\n");
 			printf("You need to start our VirtualGCS as server at first\n");
-			printf("Usage: (sudo) ./main [192.168.1.xxx:port_recv] [port_send]\n");
+			printf("Usage: (sudo) ./main [xxx.xxx.x.xxx:port_recv] [port_send]\n \
+					Or (sudo) ./main [xxx.xxx.x.xxx:port_recv] [port_send]\ne.g. 127.0.0.1:8000 8008");
 			return 0;
 		}	
 		else
@@ -94,17 +96,19 @@ int main(int argc, char *argv[])
 	else if(argc == 3)
 	{
 		if((strlen(argv[1]) == strlen("127.0.0.1:xxxx\0")) && 
+			(strlen(argv[2]) == strlen("xxxx\0")) ||
+		(strlen(argv[1]) == strlen("192.168.1.100:xxxx\0")) && 
 			(strlen(argv[2]) == strlen("xxxx\0")))
 		{
 			ip_addr_recv = (char *)malloc(sizeof(argv[1]));
 			ip_addr_recv = argv[1];
 			mksock_send_ip(argv[1],argv[2]);
 			ip_addr_send = argv[2];
-			printf("The recv port is %s\nThe send port is %s\n",argv[1],argv[2]);
+			DEBUG_PRINTF("The recv port is %s\nThe send port is %s\n",argv[1],argv[2]);
 		}
 		else
 		{
-			printf("aaawrong instrument. Just rerun the program or use '-h','--help' for help\n");
+			printf("a wrong instrument. Just rerun the program or use '-h','--help' for help\n");
 			return 0;
 		}
 	}
@@ -159,14 +163,14 @@ int main(int argc, char *argv[])
 	if ((pid_statusSend = fork()) == 0)
 	{
 		int ret,status_len;
-		status_len = sizeof(cmd.data.status);
+		status_len = sizeof(status);
 		while(1)
 	{
 		sleep(1);
 		/*read status data from Mavproxy*/
-		write2mavproxy_status(&cmd.data.status);
+		write2mavproxy_status(&status.info);
 		/*Send status data to GCS*/
-		ret = wrap_send(client_sockfd_send, &cmd.data.status, status_len, 0);
+		ret = wrap_send(client_sockfd_send, &status, status_len, 0);
 		if(ret == -1)
 		{
 			perror("wrap_send error");
@@ -191,15 +195,21 @@ int main(int argc, char *argv[])
 		write2mavproxy_mode(STABILIZE);
 		sleep(1);
 		/*set params and rc channels*/
-		write2mavproxy_rc(1,1516);
+		write2mavproxy_rc(1,1520);
 		msleep(100);
-		write2mavproxy_rc(2,1511);
+		write2mavproxy_rc(2,1510);
 		msleep(100);
 		write2mavproxy_rc(3,1100);
 		msleep(100);
-		write2mavproxy_rc(4,1508);
+		write2mavproxy_rc(4,1510);
 		msleep(100);
-		write2mavproxy("param set RC2_TRIM 1511");
+		write2mavproxy("param set RC1_TRIM 1520");
+		msleep(50);
+		write2mavproxy("param set RC2_TRIM 1510");
+		msleep(50);
+		write2mavproxy("param set RC3_TRIM 1100");
+		msleep(50);
+		write2mavproxy("param set RC4_TRIM 1510");
 		sleep(1);
 		/*while for sending and receiving*/
 		while(1)
@@ -265,6 +275,10 @@ int main(int argc, char *argv[])
 				CH_PRINTF("cnt:%d\n",cnt);
 
 				except_recv(client_sockfd_recv, &cmd.data.rc, cmd.len, 0, &state_flag);
+				cmd.data.rc.chan[0] *= 10;
+				cmd.data.rc.chan[1] *= 10;
+				cmd.data.rc.chan[2] *= 10;
+				cmd.data.rc.chan[3] *= 10;
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
 				/*Print Received Command*/
@@ -325,16 +339,17 @@ int main(int argc, char *argv[])
 					{
 						case LEVEL:
 							write2mavproxy("level");
-							msleep(500);
+							msleep(1000);
 							break;
 						case ARM  :
-							write2mavproxy_rc(1,1516);
+							write2mavproxy_rc(1,1520);
 							msleep(100);
-							write2mavproxy_rc(2,1511);
+							write2mavproxy_rc(2,1510);
 							msleep(100);
 							write2mavproxy_rc(3,1100);
+							throttl_val = 1100;
 							msleep(100);
-							write2mavproxy_rc(4,1508);
+							write2mavproxy_rc(4,1510);
 							msleep(100);
 							write2mavproxy_rc(4,1900);
 							sleep(1);
@@ -342,19 +357,21 @@ int main(int argc, char *argv[])
 							sleep(1);
 							write2mavproxy_rc(4,1900);
 							sleep(1);
-							write2mavproxy_rc(4,1508);
+							write2mavproxy_rc(4,1510);
 							msleep(100);
 							write2mavproxy_rc(3,1200);
+							throttl_val = 1200;
 							msleep(100);
 							break;
 						case DISARM:
-							write2mavproxy_rc(1,1516);
+							write2mavproxy_rc(1,1520);
 							msleep(100);
-							write2mavproxy_rc(2,1511);
+							write2mavproxy_rc(2,1510);
 							msleep(100);
 							write2mavproxy_rc(3,1100);
+							throttl_val = 1100;
 							msleep(100);
-							write2mavproxy_rc(4,1508);
+							write2mavproxy_rc(4,1510);
 							msleep(100);
 							break;
 						case TAKEOFF:
@@ -403,12 +420,12 @@ int main(int argc, char *argv[])
 			write2mavproxy_rc(3,1140+40*i);
 			sleep(1);
 			write2mavproxy_status(&status);
-			motor12 = abs(status.motor_speed1 - status.motor_speed2);
-			motor13 = abs(status.motor_speed1 - status.motor_speed3);
-			motor14 = abs(status.motor_speed1 - status.motor_speed4);
-			motor23 = abs(status.motor_speed2 - status.motor_speed3);
-			motor24 = abs(status.motor_speed2 - status.motor_speed4);
-			motor34 = abs(status.motor_speed3 - status.motor_speed4);
+			motor12 = abs(status.info.motor_speed1 - status.info.motor_speed2);
+			motor13 = abs(status.info.motor_speed1 - status.info.motor_speed3);
+			motor14 = abs(status.info.motor_speed1 - status.info.motor_speed4);
+			motor23 = abs(status.info.motor_speed2 - status.info.motor_speed3);
+			motor24 = abs(status.info.motor_speed2 - status.info.motor_speed4);
+			motor34 = abs(status.info.motor_speed3 - status.info.motor_speed4);
 			if (motor12 < THRESHOLD_TAKEOFF && motor13 < THRESHOLD_TAKEOFF && 
 				motor14 < THRESHOLD_TAKEOFF && motor23 < THRESHOLD_TAKEOFF 
 				&& motor24 < THRESHOLD_TAKEOFF && motor34 < THRESHOLD_TAKEOFF)
@@ -430,12 +447,12 @@ int main(int argc, char *argv[])
 			write2mavproxy_mode(ALT_HOLD);
 			msleep(500);
 			write2mavproxy_status(&status);
-			motor12 = abs(status.motor_speed1 - status.motor_speed2);
-			motor13 = abs(status.motor_speed1 - status.motor_speed3);
-			motor14 = abs(status.motor_speed1 - status.motor_speed4);
-			motor23 = abs(status.motor_speed2 - status.motor_speed3);
-			motor24 = abs(status.motor_speed2 - status.motor_speed4);
-			motor34 = abs(status.motor_speed3 - status.motor_speed4);
+			motor12 = abs(status.info.motor_speed1 - status.info.motor_speed2);
+			motor13 = abs(status.info.motor_speed1 - status.info.motor_speed3);
+			motor14 = abs(status.info.motor_speed1 - status.info.motor_speed4);
+			motor23 = abs(status.info.motor_speed2 - status.info.motor_speed3);
+			motor24 = abs(status.info.motor_speed2 - status.info.motor_speed4);
+			motor34 = abs(status.info.motor_speed3 - status.info.motor_speed4);
 			if (motor12 < THRESHOLD_FLYING && motor13 < THRESHOLD_FLYING 
 				&& motor14 < THRESHOLD_FLYING && motor23 < THRESHOLD_FLYING 
 				&& motor24 < THRESHOLD_FLYING && motor34 < THRESHOLD_FLYING)
