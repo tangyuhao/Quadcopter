@@ -15,9 +15,11 @@
 #include "socket.h"
 
 pid_t pid_mav;
-int client_sockfd;
+int client_sockfd_recv;
+int client_sockfd_send;
 char buf[BUFSIZ];
-char *ip_addr;
+char *ip_addr_recv;
+char *ip_addr_send;
 int auto_flag;
 long nbytes;
 int throttl_val;
@@ -63,9 +65,14 @@ int main(int argc, char *argv[])
 	char motor_right = 0;
 	int fifo_create;
 	pid_t pid_fork;
+	pid_t pid_statusSend;
 	extern int cmd_fifo_fd;
 	extern int data_fifo_fd;
 	struct status_struct status;
+	cmd.data.status.head[0] = 0xff;
+	cmd.data.status.head[1] = 0xaa;
+	cmd.data.status.len = 24 * sizeof(int) + 6 * sizeof(double);
+	
 /*write a test help*/
 	if(argc == 2)
 	{
@@ -75,18 +82,29 @@ int main(int argc, char *argv[])
 		{
 			printf("This is a test program of receiving channel value 				from GCS and send it to Mavproxy\n");
 			printf("You need to start our VirtualGCS as server at first\n");
-			printf("Usage: (sudo) ./main [192.168.1.xxx:port]\n");
+			printf("Usage: (sudo) ./main [192.168.1.xxx:port_recv] [port_send]\n");
 			return 0;
-		}
-		else if((strlen(argv[1]) == strlen("192.168.1.xxx:xxxx\0")) || 
-				(strlen(argv[1]) == strlen("192.168.xxx.xxx:xxxx\0")))
-		{
-			ip_addr = (char *)malloc(sizeof(argv[1]));
-			ip_addr = argv[1];
-		}
+		}	
 		else
 		{
 			printf("wrong instrument. Just rerun the program or use '-h','--help' for help\n");
+			return 0;
+		}
+	}
+	else if(argc == 3)
+	{
+		if((strlen(argv[1]) == strlen("127.0.0.1:xxxx\0")) && 
+			(strlen(argv[2]) == strlen("xxxx\0")))
+		{
+			ip_addr_recv = (char *)malloc(sizeof(argv[1]));
+			ip_addr_recv = argv[1];
+			mksock_send_ip(argv[1],argv[2]);
+			ip_addr_send = argv[2];
+			printf("The recv port is %s\nThe send port is %s\n",argv[1],argv[2]);
+		}
+		else
+		{
+			printf("aaawrong instrument. Just rerun the program or use '-h','--help' for help\n");
 			return 0;
 		}
 	}
@@ -103,13 +121,20 @@ int main(int argc, char *argv[])
 	}
 
 	/*Create a socket*/
-	if((client_sockfd = wrap_client(ip_addr))<0)
+	if((client_sockfd_recv = wrap_client(ip_addr_recv))<0)
 	{
-		perror("client_sockfd");
+		perror("client_sockfd_recv");
 		return -1;
 	}
 	else
-		printf("Beaglebone connected to Ground Station, fd = %d\n",client_sockfd);
+		printf("Beaglebone connected to Ground Station(recv), fd = %d\n",client_sockfd_recv);
+	if((client_sockfd_send = wrap_client(ip_addr_send))<0)
+	{
+		perror("client_sockfd_send");
+		return -1;
+	}
+	else
+		printf("Beaglebone connected to Ground Station(send), fd = %d\n",client_sockfd_send);
 //	printf("status length is%d\n",status_len);
 	if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 	{
@@ -128,12 +153,30 @@ int main(int argc, char *argv[])
 		execl("/usr/local/bin/mavproxy_pro.py","mavproxy_pro.py","--master=/dev/ttyO1","--baudrate=57600",NULL);
 		#else 
 		dup2(cmd_fifo_fd, STDIN_FILENO);
-		execl("/usr/local/bin/mavproxy_pro_forPC.py","mavproxy_pro_forPC.py","--master=/dev/ttyUSB1","--baudrate=57600",NULL);
+		execl("/usr/local/bin/mavproxy_pro_forPC.py","mavproxy_pro_forPC.py","--master=/dev/ttyUSB0","--baudrate=57600",NULL);
 		#endif
+	}
+	if ((pid_statusSend = fork()) == 0)
+	{
+		int ret,status_len;
+		status_len = sizeof(cmd.data.status);
+		while(1)
+	{
+		sleep(1);
+		/*read status data from Mavproxy*/
+		write2mavproxy_status(&cmd.data.status);
+		/*Send status data to GCS*/
+		ret = wrap_send(client_sockfd_send, &cmd.data.status, status_len, 0);
+		if(ret == -1)
+		{
+			perror("wrap_send error");
+			return -1;
+		}
+	}
 	}
 	else
 	{
-		int nread, i, status_len, ret;
+		int nread, i;
 		int state_flag = RECV_HEADER;
 		char cmd_buf[100],control_flag;
 		int cnt = 0;
@@ -166,7 +209,7 @@ int main(int argc, char *argv[])
 			if(state_flag == RECV_HEADER)
 			{
 				CLEAR(&cmd);
-				except_recv(client_sockfd, cmd.head, sizeof(cmd.head), 0, &state_flag);
+				except_recv(client_sockfd_recv, cmd.head, sizeof(cmd.head), 0, &state_flag);
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
 				if(cmd.head[0] == 0xff && cmd.head[1] == 0xaa)
@@ -177,7 +220,7 @@ int main(int argc, char *argv[])
 				 else if(cmd.head[1] == 0xff)
 				{
 					cmd.head[0] = cmd.head[1];
-					except_recv(client_sockfd, &cmd.head[1], sizeof(cmd.head[1]), 0, &state_flag);
+					except_recv(client_sockfd_recv, &cmd.head[1], sizeof(cmd.head[1]), 0, &state_flag);
 					if(state_flag == SOCK_TIMEOUT)
 						continue;
 					if(cmd.head[1] == 0xaa)
@@ -189,7 +232,7 @@ int main(int argc, char *argv[])
 			/*[State 1] Receive data parameter*/
 			else if(state_flag == RECV_PARAM)
 			{
-				except_recv(client_sockfd, &cmd.type, sizeof(cmd.type), 0, &state_flag);
+				except_recv(client_sockfd_recv, &cmd.type, sizeof(cmd.type), 0, &state_flag);
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
 				DEBUG_PRINTF("cmd.type=%d\n", cmd.type);
@@ -203,7 +246,7 @@ int main(int argc, char *argv[])
 						state_flag = RECV_HEADER;
 				}
 				/*Receive data length*/
-				except_recv(client_sockfd, &cmd.len, sizeof(cmd.len), 0, &state_flag);
+				except_recv(client_sockfd_recv, &cmd.len, sizeof(cmd.len), 0, &state_flag);
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
 				DEBUG_PRINTF("cmd.len:%d\n", cmd.len);
@@ -221,7 +264,7 @@ int main(int argc, char *argv[])
 				cnt++;
 				CH_PRINTF("cnt:%d\n",cnt);
 
-				except_recv(client_sockfd, &cmd.data.rc, cmd.len, 0, &state_flag);
+				except_recv(client_sockfd_recv, &cmd.data.rc, cmd.len, 0, &state_flag);
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
 				/*Print Received Command*/
@@ -274,7 +317,7 @@ int main(int argc, char *argv[])
 					state_flag = RECV_HEADER;
 					continue;
 				}	
-				except_recv(client_sockfd, &cmd.data.control, cmd.len, 0, &state_flag);
+				except_recv(client_sockfd_recv, &cmd.data.control, cmd.len, 0, &state_flag);
 				if(state_flag == SOCK_TIMEOUT)
 					continue;		
 				control_flag = cmd.data.control;	

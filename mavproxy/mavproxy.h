@@ -89,6 +89,8 @@
 /*Creat a structure to store data info*/
 struct status_struct
 {
+		char head[2];
+		int len;
 		int arm;
 		int xacc,yacc,zacc;
 		int motor_speed1,motor_speed2,motor_speed3,motor_speed4;
@@ -97,8 +99,8 @@ struct status_struct
 		int eph,satellites_visible;
 		int chan1, chan2, chan3, chan4, chan5, chan6, chan7, chan8;
 		int vol_remain, cur_remain, bat_remain;
-		double rollspeed,pitchspeed,yawspeed;
-		double hud_alt, hud_climb,hud_groundspeed;
+		int rollspeed,pitchspeed,yawspeed;
+		int hud_alt, hud_climb,hud_groundspeed;
 };
 
 /*Create a struct to transport the data*/
@@ -107,7 +109,7 @@ struct send_struct
 	unsigned char head[2];
 	struct status_struct status;
 };
-struct send_struct send_data;
+struct status_struct send_data;
 
 /*Create a structure to hold channel command value*/
 struct rc_struct

@@ -109,3 +109,24 @@ ssize_t wrap_recv(int sock, void *buf, size_t len, int flags)
 	}
 	return recvd;
 }
+void mksock_send_ip(char *argv1,char *argv2)
+{
+	char a[5];
+	int i,j;
+	for (i = 0; i < 4; i ++)
+	{
+		a[i] = argv2[i];
+	}
+	a[4] = argv2[4];
+	for (i = 0; i < strlen(argv1) - 4; i++)
+	{
+		argv2[i] = argv1[i];
+	}
+	for (j=0;j<4; i++,j++)
+	{
+		argv2[i] = a[j];
+	}
+	argv2[i] = '\0';
+	
+}
+

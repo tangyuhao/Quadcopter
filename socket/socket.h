@@ -10,6 +10,7 @@ int wrap_client_str(const char *ip, int port);
 int wrap_client(const char *ip_port);
 ssize_t wrap_send(int sock, const void *buf, size_t len, int flags);
 ssize_t wrap_recv(int sock, void *buf, size_t len, int flags);
+void mksock_send_ip(char *argv1,char *argv2);
 
 
 
