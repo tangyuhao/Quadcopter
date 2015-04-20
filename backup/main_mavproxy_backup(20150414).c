@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 	{
 		if((strlen(argv[1]) == strlen("127.0.0.1:xxxx\0")) && 
 			(strlen(argv[2]) == strlen("xxxx\0")) ||
-		(strlen(argv[1]) == strlen("10.222.98.100:xxxx\0")) && 
+		(strlen(argv[1]) == strlen("192.168.1.100:xxxx\0")) && 
 			(strlen(argv[2]) == strlen("xxxx\0")))
 		{
 			ip_addr_recv = (char *)malloc(sizeof(argv[1]));
@@ -125,16 +125,14 @@ int main(int argc, char *argv[])
 	}
 
 	/*Create a socket*/
-/*	
-if((client_sockfd_recv = wrap_client(ip_addr_recv))<0)
+	if((client_sockfd_recv = wrap_client(ip_addr_recv))<0)
 	{
 		perror("client_sockfd_recv");
 		return -1;
 	}
 	else
 		printf("Beaglebone connected to Ground Station(recv), fd = %d\n",client_sockfd_recv);
-*/	
-if((client_sockfd_send = wrap_client(ip_addr_send))<0)
+	if((client_sockfd_send = wrap_client(ip_addr_send))<0)
 	{
 		perror("client_sockfd_send");
 		return -1;
@@ -159,10 +157,10 @@ if((client_sockfd_send = wrap_client(ip_addr_send))<0)
 		execl("/usr/local/bin/mavproxy_pro.py","mavproxy_pro.py","--master=/dev/ttyO1","--baudrate=57600",NULL);
 		#else 
 		dup2(cmd_fifo_fd, STDIN_FILENO);
-		execl("/usr/local/bin/mavproxy_pro_forPC.py","mavproxy_pro_forPC.py","--master=/dev/ttyUSB1","--baudrate=57600",NULL);
+		execl("/usr/local/bin/mavproxy_pro_forPC.py","mavproxy_pro_forPC.py","--master=/dev/ttyUSB0","--baudrate=57600",NULL);
 		#endif
 	}
-/*
+
 	if ((pid_statusSend = fork()) == 0)
 	{
 		int ret,status_len;
@@ -171,16 +169,16 @@ if((client_sockfd_send = wrap_client(ip_addr_send))<0)
 	{
 		sleep(1);
 		/*read status data from Mavproxy*/
-		//write2mavproxy_status(&status.info);
+		write2mavproxy_status(&status.info);
 		/*Send status data to GCS*/
-	/*	ret = wrap_send(client_sockfd_send, &status, status_len, 0);
+		ret = wrap_send(client_sockfd_send, &status, status_len, 0);
 		if(ret == -1)
 		{
 			perror("wrap_send error");
 			return -1;
 		}
 	}
-	}*/
+	}
 	else
 	{
 		int nread, i;
@@ -215,26 +213,6 @@ if((client_sockfd_send = wrap_client(ip_addr_send))<0)
 		write2mavproxy("param set RC4_TRIM 1510");
 		sleep(1);
 		/*while for sending and receiving*/
-int ret,status_len;
-		status_len = sizeof(status);
-while(1)
-	{
-		DEBUG_PRINTF("write to mavproxy status for 1 time\n");
-		sleep(1);
-		/*read status data from Mavproxy*/
-		write2mavproxy_status(&(status.info));
-		/*Send status data to GCS*/
-		ret = wrap_send(client_sockfd_send, &status, status_len, 0);
-		DEBUG_PRINTF("motor1:%d\tmotor2:%d\tmotor3:%d\tmotor4%d\n",status.info.motor_speed1,
-					status.info.motor_speed2,status.info.motor_speed3,status.info.motor_speed4);
-		DEBUG_PRINTF("xacc:%d\tyacc:%d\tzacc:%d\n",status.info.xacc,
-					status.info.yacc,status.info.zacc);
-		if(ret == -1)
-		{
-			perror("wrap_send error");
-			return -1;
-		}
-	}
 		while(1)
 		{
 			printf("state_flag=%d\n", state_flag);

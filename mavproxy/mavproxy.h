@@ -41,11 +41,11 @@
 
 
 /*Define the flying mode*/
-#define STABILIZE 1
-#define LAND 2
-#define LOITER 3
-#define ALT_HOLD 4
-#define AUTO 5
+#define STABILIZE 0x01
+#define LAND 0x02
+#define LOITER 0x03
+#define ALT_HOLD 0x04
+#define AUTO 0x05
 
 /*Define different control commands*/
 #define LEVEL		0x01
