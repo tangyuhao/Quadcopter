@@ -3,14 +3,14 @@
 
 #define BEAGLEBONE 0
 
-#define DEBUG 1
+#define DEBUG 0
 #if DEBUG
     #define DEBUG_PRINTF(format, ...) printf(format, ##__VA_ARGS__)
 #else
     #define DEBUG_PRINTF(format, ...) 
 #endif
 
-#define CHAN_DEBUG 0
+#define CHAN_DEBUG 1
 #if CHAN_DEBUG
     #define CH_PRINTF(format, ...) printf(format, ##__VA_ARGS__)
 #else
@@ -87,6 +87,8 @@
 #define THRESHOLD_FLYING 250
 
 /*Creat a structure to store data info*/
+
+
 struct status_struct
 {
 	int arm;

@@ -14,7 +14,7 @@
 #include "fifo.h"
 #include "socket.h"
 
-pid_t pid_mav;
+pid_t pid_fork;
 int client_sockfd_recv;
 int client_sockfd_send;
 char buf[BUFSIZ];
@@ -31,10 +31,10 @@ int arm_state;
 /*Interupt Handle*/
 static void sigint_handler(int signo)
 {
-	kill(pid_mav, SIGKILL);
+	kill(pid_fork, SIGKILL);
 	wait(NULL);
 	printf("\n[%d]Caught SIGINT!\n", getpid());
-	printf("[%d]MAVPROXY PROC killed\n", pid_mav);
+	printf("[%d]MAVPROXY PROC killed\n", pid_fork);
 	system("rm -rf *.fifo *.tlog*");
 	exit(EXIT_SUCCESS);
 }
@@ -62,6 +62,7 @@ int main(int argc, char *argv[])
 {
 	int i;
 	int motor12,motor13,motor14,motor23,motor24,motor34;
+	int chan[4];
 	char motor_right = 0;
 	int fifo_create;
 	pid_t pid_fork;
@@ -83,8 +84,7 @@ int main(int argc, char *argv[])
 		{
 			printf("This is a test program of receiving channel value 				from GCS and send it to Mavproxy\n");
 			printf("You need to start our VirtualGCS as server at first\n");
-			printf("Usage: (sudo) ./main [xxx.xxx.x.xxx:port_recv] [port_send]\n \
-					Or (sudo) ./main [xxx.xxx.x.xxx:port_recv] [port_send]\ne.g. 127.0.0.1:8000 8008");
+			printf("Usage: (sudo) ./main [xxx.xxx.xxx.xxx:port_recv] [port_send]\ne.g. 127.0.0.1:8000 8008");
 			return 0;
 		}	
 		else
@@ -95,9 +95,7 @@ int main(int argc, char *argv[])
 	}
 	else if(argc == 3)
 	{
-		if((strlen(argv[1]) == strlen("127.0.0.1:xxxx\0")) && 
-			(strlen(argv[2]) == strlen("xxxx\0")) ||
-		(strlen(argv[1]) == strlen("10.222.98.100:xxxx\0")) && 
+		if((strlen(argv[1]) <= strlen("127.168.100.100:xxxx\0")) && 
 			(strlen(argv[2]) == strlen("xxxx\0")))
 		{
 			ip_addr_recv = (char *)malloc(sizeof(argv[1]));
@@ -112,6 +110,17 @@ int main(int argc, char *argv[])
 			return 0;
 		}
 	}
+	else if (argc == 1)
+	{
+		char ar1[20]="127.0.0.1:8000";
+		char ar2[20]="8008";
+		ip_addr_recv = (char *)malloc(sizeof(ar1));
+		ip_addr_recv = ar1;
+		mksock_send_ip(ar1,ar2);
+		ip_addr_send = ar2;
+		DEBUG_PRINTF("The recv port is %s\nThe send port is %s\n",ar1,ar2);
+
+	}
 	else
 	{
 		printf("Parameter input error, please using '-h' or '--help' for help\n");
@@ -125,24 +134,26 @@ int main(int argc, char *argv[])
 	}
 
 	/*Create a socket*/
-/*	
-if((client_sockfd_recv = wrap_client(ip_addr_recv))<0)
+
+    if((client_sockfd_recv = wrap_client(ip_addr_recv))<0)
 	{
 		perror("client_sockfd_recv");
 		return -1;
 	}
 	else
 		printf("Beaglebone connected to Ground Station(recv), fd = %d\n",client_sockfd_recv);
-*/	
-if((client_sockfd_send = wrap_client(ip_addr_send))<0)
-	{
-		perror("client_sockfd_send");
-		return -1;
-	}
+	msleep(200);	
+
+	if((client_sockfd_send = wrap_client(ip_addr_send))<0)
+		{
+			perror("client_sockfd_send");
+			return -1;
+		}
 	else
 		printf("Beaglebone connected to Ground Station(send), fd = %d\n",client_sockfd_send);
 //	printf("status length is%d\n",status_len);
-	if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
+
+if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 	{
 		perror("error create cmd_fifo ");
 		return CMD_FIFO_CREATE_ERROR;
@@ -159,28 +170,31 @@ if((client_sockfd_send = wrap_client(ip_addr_send))<0)
 		execl("/usr/local/bin/mavproxy_pro.py","mavproxy_pro.py","--master=/dev/ttyO1","--baudrate=57600",NULL);
 		#else 
 		dup2(cmd_fifo_fd, STDIN_FILENO);
+	//	execl("/usr/local/bin/mavproxy_pro_forPC.py","mavproxy_pro_forPC.py","--master=/dev/ttyUSB0","--baudrate=57600",NULL);
 		execl("/usr/local/bin/mavproxy_pro_forPC.py","mavproxy_pro_forPC.py","--master=/dev/ttyUSB1","--baudrate=57600",NULL);
 		#endif
 	}
-/*
+
 	if ((pid_statusSend = fork()) == 0)
 	{
 		int ret,status_len;
 		status_len = sizeof(status);
 		while(1)
 	{
-		sleep(1);
-		/*read status data from Mavproxy*/
-		//write2mavproxy_status(&status.info);
-		/*Send status data to GCS*/
-	/*	ret = wrap_send(client_sockfd_send, &status, status_len, 0);
+		msleep(400);
+		//read status data from Mavproxy
+		write2mavproxy_status(&status.info);
+		//Send status data to GCS
+		ret = wrap_send(client_sockfd_send, &status, status_len, 0);
 		if(ret == -1)
 		{
 			perror("wrap_send error");
 			return -1;
 		}
 	}
-	}*/
+
+	}
+
 	else
 	{
 		int nread, i;
@@ -192,12 +206,12 @@ if((client_sockfd_send = wrap_client(ip_addr_send))<0)
 		yaw_val = 0;
 		pitch_val = 0;
 		roll_val = 0;
-//*******************start arming*************************//
+//*******************start arming*************************
 		sleep(10);
-		/*Initialze the flying mode to STABILIZE*/
+		//Initialze the flying mode to STABILIZE
 		write2mavproxy_mode(STABILIZE);
 		sleep(1);
-		/*set params and rc channels*/
+		//set params and rc channels
 		write2mavproxy_rc(1,1520);
 		msleep(100);
 		write2mavproxy_rc(2,1510);
@@ -214,31 +228,16 @@ if((client_sockfd_send = wrap_client(ip_addr_send))<0)
 		msleep(50);
 		write2mavproxy("param set RC4_TRIM 1510");
 		sleep(1);
-		/*while for sending and receiving*/
-int ret,status_len;
+		//while for sending and receiving
+		int ret,status_len;
 		status_len = sizeof(status);
-while(1)
-	{
-		DEBUG_PRINTF("write to mavproxy status for 1 time\n");
-		sleep(1);
-		/*read status data from Mavproxy*/
-		write2mavproxy_status(&(status.info));
-		/*Send status data to GCS*/
-		ret = wrap_send(client_sockfd_send, &status, status_len, 0);
-		DEBUG_PRINTF("motor1:%d\tmotor2:%d\tmotor3:%d\tmotor4%d\n",status.info.motor_speed1,
-					status.info.motor_speed2,status.info.motor_speed3,status.info.motor_speed4);
-		DEBUG_PRINTF("xacc:%d\tyacc:%d\tzacc:%d\n",status.info.xacc,
-					status.info.yacc,status.info.zacc);
-		if(ret == -1)
-		{
-			perror("wrap_send error");
-			return -1;
-		}
-	}
+		DEBUG_PRINTF("SIZE of status is:%d\n",status_len);
+		DEBUG_PRINTF("SIZE of status.info is:%d\n",sizeof(status.info));
+
 		while(1)
 		{
 			printf("state_flag=%d\n", state_flag);
-			/*[State 0] Receive header*/
+			//[State 0] Receive header
 			if(state_flag == RECV_HEADER)
 			{
 				CLEAR(&cmd);
@@ -249,7 +248,7 @@ while(1)
 				{
 					state_flag = RECV_PARAM;
 				}
-				/*If cmd.head[1] receives 0xFF*/
+				//If cmd.head[1] receives 0xFF
 				 else if(cmd.head[1] == 0xff)
 				{
 					cmd.head[0] = cmd.head[1];
@@ -262,7 +261,7 @@ while(1)
 				DEBUG_PRINTF("cmd.head[0]=%x cmd.head[1]=%x\n", cmd.head[0], cmd.head[1]);
 			}
 		
-			/*[State 1] Receive data parameter*/
+			//[State 1] Receive data parameter
 			else if(state_flag == RECV_PARAM)
 			{
 				except_recv(client_sockfd_recv, &cmd.type, sizeof(cmd.type), 0, &state_flag);
@@ -278,13 +277,13 @@ while(1)
 					default:
 						state_flag = RECV_HEADER;
 				}
-				/*Receive data length*/
+				//Receive data length
 				except_recv(client_sockfd_recv, &cmd.len, sizeof(cmd.len), 0, &state_flag);
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
 				DEBUG_PRINTF("cmd.len:%d\n", cmd.len);
 			}
-			/*[State 2] Receive channel values*/
+			//[State 2] Receive channel values
 			else if(state_flag == RECV_CHANNEL)
 			{
 				if(cmd.len != sizeof(cmd.data.rc))
@@ -298,24 +297,24 @@ while(1)
 				CH_PRINTF("cnt:%d\n",cnt);
 
 				except_recv(client_sockfd_recv, &cmd.data.rc, cmd.len, 0, &state_flag);
-				cmd.data.rc.chan[0] *= 10;
-				cmd.data.rc.chan[1] *= 10;
-				cmd.data.rc.chan[2] *= 10;
-				cmd.data.rc.chan[3] *= 10;
+				chan[0] = cmd.data.rc.chan[0]*10;
+				chan[1] = cmd.data.rc.chan[1]*10;
+				chan[2] = cmd.data.rc.chan[2]*10;
+				chan[3] = cmd.data.rc.chan[3]*10;
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
-				/*Print Received Command*/
+				//Print Received Command
 				CH_PRINTF("***This is COMMAND test from C***\n");
 				CH_PRINTF("chan1:%d, chan2:%d, chan3:%d, chan4:%d\n",
-					cmd.data.rc.chan[0], cmd.data.rc.chan[1], cmd.data.rc.chan[2], cmd.data.rc.chan[3]);
+					chan[0],chan[1],chan[2],chan[3]);
 				//CH_PRINTF("ARM status: %d\n", cmd.data.rc.arm);
 
-				/*write new channel values to Mavproxy*/
-				/*Write the throttle channel, we expect this channel could be updated periodically*/
-				if(throttl_val != cmd.data.rc.chan[THROTTL] && cmd.data.rc.chan[THROTTL] != -1)
-					throttl_val = cmd.data.rc.chan[THROTTL];
+				//write new channel values to Mavproxy
+				//Write the throttle channel, we expect this channel could be updated periodically
+				if(throttl_val != chan[THROTTL] && chan[THROTTL] != -1)
+					throttl_val = chan[THROTTL];
 				write2mavproxy_rc(THROTTL+1,throttl_val);
-				/*Write the mode channel; if mode channel switched, we expect we could use command to control it*/
+				//Write the mode channel; if mode channel switched, we expect we could use command to control it
 				if(cmd.data.rc.mode != -1)
 				{
 					switch(cmd.data.rc.mode)
@@ -334,16 +333,16 @@ while(1)
 										continue;
 					}
 				}
-				/*Write other channels if they changed*/
+				//Write other channels if they changed
 				for(i = 0; i <= 3; i++)
 				{
-					if(i != THROTTL && cmd.data.rc.chan[i] != -1)
-						write2mavproxy_rc(i+1,cmd.data.rc.chan[i]);
+					if(i != THROTTL)
+						write2mavproxy_rc(i+1,chan[i]);
 				}
 			
 				state_flag = RECV_HEADER;
 			}
-			/*[State 3] Receive control commands*/
+			//[State 3] Receive control commands
 			else if (state_flag == RECV_CONTROL)  
 			{
 
@@ -361,59 +360,40 @@ while(1)
 				switch(control_flag)
 					{
 						case LEVEL:
-							write2mavproxy("level");
-							msleep(1000);
 							break;
 						case ARM  :
-							write2mavproxy_rc(1,1520);
-							msleep(100);
-							write2mavproxy_rc(2,1510);
-							msleep(100);
-							write2mavproxy_rc(3,1100);
-							throttl_val = 1100;
-							msleep(100);
-							write2mavproxy_rc(4,1510);
-							msleep(100);
-							write2mavproxy_rc(4,1900);
-							sleep(1);
-							write2mavproxy_rc(4,1900);
-							sleep(1);
-							write2mavproxy_rc(4,1900);
-							sleep(1);
-							write2mavproxy_rc(4,1510);
-							msleep(100);
-							write2mavproxy_rc(3,1200);
-							throttl_val = 1200;
-							msleep(100);
 							break;
 						case DISARM:
-							write2mavproxy_rc(1,1520);
-							msleep(100);
-							write2mavproxy_rc(2,1510);
-							msleep(100);
-							write2mavproxy_rc(3,1100);
-							throttl_val = 1100;
-							msleep(100);
-							write2mavproxy_rc(4,1510);
-							msleep(100);
 							break;
 						case TAKEOFF:
 							break;
 						default:
-							DEBUG_PRINTF("control_flag error: control_cmd not found in <ARM|DISARM|TAKEOFF|LEVEL>");		
 							continue;
 					}
 				state_flag = RECV_HEADER;
-				}
-				
-			}   
-
-
-
-
-
-
-
+			}
+		   	//[State 4] Receive error commands
+        	else if(state_flag == SOCK_TIMEOUT || state_flag == SOCK_ERROR)
+			{
+				DEBUG_PRINTF("Entering Timeout State\n");
+				sleep(1);
+				write2mavproxy("mode LAND");
+				close_rm_fifo(data_fifo_fd,DATA_FIFO_NAME);
+				close_rm_fifo(cmd_fifo_fd,CMD_FIFO_NAME);
+				if (kill(pid_fork, SIGKILL) != SIGKILL_SUCCEED) 
+					perror("kill cmd_fork_pid failed");
+				else
+					printf("kill %d complete!\n ",pid_fork);
+				if (kill(pid_statusSend, SIGKILL) != SIGKILL_SUCCEED) 
+					perror("kill cmd_statusSend_pid failed");
+				else
+					printf("kill %d complete!\n ",pid_statusSend);
+				pause();
+				kill(getpid(), SIGINT);
+			}
+		}
+	}
+}
 /*		write2mavproxy("level");
 		sleep(5);
 		write2mavproxy_status(&status);
@@ -492,20 +472,3 @@ while(1)
 		write2mavproxy_mode(LAND);
 		sleep(10);
 */
-//*******************remove fifo before end***********************//
-		close_rm_fifo(data_fifo_fd,DATA_FIFO_NAME);
-		close_rm_fifo(cmd_fifo_fd,CMD_FIFO_NAME);
-        if (kill(pid_fork, SIGKILL) != SIGKILL_SUCCEED) 
-			perror("kill cmd_fork_pid failed");
-		else
-			printf("kill %d complete!\n ",pid_fork);
-		pause();
-		return (0);
-		
-
-	
-	}
-	
-	
-	
-}
