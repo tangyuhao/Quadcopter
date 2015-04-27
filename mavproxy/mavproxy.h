@@ -1,30 +1,28 @@
 #ifndef __MAVPROXY_H__
 #define __MAVPROXY_H__
 
-#define BEAGLEBONE 0
-
-#define DEBUG 0
+#include <control.h>
 #if DEBUG
     #define DEBUG_PRINTF(format, ...) printf(format, ##__VA_ARGS__)
 #else
     #define DEBUG_PRINTF(format, ...) 
 #endif
 
-#define CHAN_DEBUG 1
+
 #if CHAN_DEBUG
     #define CH_PRINTF(format, ...) printf(format, ##__VA_ARGS__)
 #else
     #define CH_PRINTF(format, ...) 
 #endif
 
-#define WP_DEBUG 0
+
 #if WP_DEBUG
     #define WP_PRINTF(format, ...) printf(format, ##__VA_ARGS__)
 #else
     #define WP_PRINTF(format, ...) 
 #endif
 
-#define ST_DEBUG 0
+
 #if ST_DEBUG
     #define ST_PRINTF(format, ...) printf(format, ##__VA_ARGS__)
 #else

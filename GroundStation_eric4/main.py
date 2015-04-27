@@ -213,7 +213,7 @@ if __name__ == "__main__":
 
     def receive_server():
         global receive_sock
-        receive_sock=ServerSocket(('127.0.0.1',8008))
+        receive_sock=ServerSocket(('192.168.1.124',8008))
         receive_sock.listen(2)
         
         while True:
@@ -288,7 +288,7 @@ if __name__ == "__main__":
 
     def send_server():
         global send_sock
-        send_sock=ServerSocket(('127.0.0.1',8000))
+        send_sock=ServerSocket(('192.168.1.124',8000))
         send_sock.listen(2)
         
         while True:

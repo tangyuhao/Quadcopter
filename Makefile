@@ -1,5 +1,5 @@
-vpath % .h socket:mavproxy:fifo
-CFLAGS = -g -I./socket -I./mavproxy -I./fifo 
+vpath % .h socket:mavproxy:fifo:control_flag
+CFLAGS = -g -I./socket -I./mavproxy -I./fifo -I./control_flag 
 CC = gcc
 RM = -rm -rf
 main_mavproxy: main_mavproxy.o mavproxy.o fifo.o socket.o

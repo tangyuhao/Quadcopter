@@ -227,7 +227,9 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 		write2mavproxy("param set RC3_TRIM 1100");
 		msleep(50);
 		write2mavproxy("param set RC4_TRIM 1510");
-		sleep(1);
+		msleep(50);
+		write2mavproxy("level");
+		sleep(5);
 		//while for sending and receiving
 		int ret,status_len;
 		status_len = sizeof(status);
