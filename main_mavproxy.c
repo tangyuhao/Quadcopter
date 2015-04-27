@@ -229,7 +229,7 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 		write2mavproxy("param set RC4_TRIM 1510");
 		msleep(50);
 		write2mavproxy("level");
-		sleep(5);
+		sleep(10);
 		//while for sending and receiving
 		int ret,status_len;
 		status_len = sizeof(status);
@@ -380,6 +380,7 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 				DEBUG_PRINTF("Entering Timeout State\n");
 				sleep(1);
 				write2mavproxy("mode LAND");
+				sleep(3);
 				close_rm_fifo(data_fifo_fd,DATA_FIFO_NAME);
 				close_rm_fifo(cmd_fifo_fd,CMD_FIFO_NAME);
 				if (kill(pid_fork, SIGKILL) != SIGKILL_SUCCEED) 
