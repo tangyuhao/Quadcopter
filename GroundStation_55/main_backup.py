@@ -162,26 +162,26 @@ class main(QtGui.QDialog, Ui_Form):#, Player
 ##    def on_lineEdit_end2_textChanged(self, p0):
 ##        self.textBrowser.append('test')
 
-def send_CONTROL(ctrl):
-    try:
-        by=struct.pack("BBBBB",0xff,0xaa,0x1,0x1,ctrl)
-        global send_sock
-        #time.sleep(0.1)
-        send_sock.sendall(by)
-    except Exception as err:
-        ui.textBrowser.append("Send control err!")
-        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
-
-def send_CHANNEL(throttle,roll,pitch,yaw,mode):
-    try:
-        by=struct.pack("BBBBBBBBB",0xff,0xaa,0x2,0x5,pitch/10,roll/10,throttle/10,yaw/10,mode)
-        global send_sock
-        #time.sleep(0.1)
-        send_sock.sendall(by)
-    except Exception as err:
-        ui.textBrowser.append("Send channel err!")
-        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
-
+##def send_CONTROL(ctrl):
+##    try:
+##        by=struct.pack("BBBBB",0xff,0xaa,0x1,0x1,ctrl)
+##        global send_sock
+##        #time.sleep(0.1)
+##        send_sock.sendall(by)
+##    except Exception as err:
+##        ui.textBrowser.append("Send control err!")
+##        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
+##
+##def send_CHANNEL(throttle,roll,pitch,yaw,mode):
+##    try:
+##        by=struct.pack("BBBBBBBBB",0xff,0xaa,0x2,0x5,pitch/10,roll/10,throttle/10,yaw/10,mode)
+##        global send_sock
+##        #time.sleep(0.1)
+##        send_sock.sendall(by)
+##    except Exception as err:
+##        ui.textBrowser.append("Send channel err!")
+##        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
+##
 def set_slider(throttle,roll,pitch,yaw):
      ui.slider_throto.setValue(throttle)
      ui.label_throto.setText(str(throttle))
@@ -213,7 +213,7 @@ if __name__ == "__main__":
 
     def receive_server():
         global receive_sock
-        receive_sock=ServerSocket(('192.168.1.100',8008))
+        receive_sock=ServerSocket(('192.168.1.102',8008))
         receive_sock.listen(2)
         
         while True:
@@ -288,7 +288,7 @@ if __name__ == "__main__":
 
     def send_server():
         global send_sock
-        send_sock=ServerSocket(('192.168.1.100',8000))
+        send_sock=ServerSocket(('192.168.1.102',8000))
         send_sock.listen(2)
         
         while True:

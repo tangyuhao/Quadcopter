@@ -23,8 +23,6 @@ ctrl=0x0
 
 send_sock=None
 
-ui=None
-
 class main(QtGui.QDialog, Ui_Form):#, Player
     def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)
@@ -62,7 +60,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
     @QtCore.pyqtSlot()
     def on_radioButton_loiter_clicked(self):
         self.textBrowser.append('Mode: loiter')
-        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global mode
         mode=0x3  #loiter
         send_CHANNEL(throttle,roll,pitch,yaw,mode)
@@ -70,7 +67,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
     @QtCore.pyqtSlot()
     def on_radioButton_auto_clicked(self):
         self.textBrowser.append('Mode: auto')
-        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global mode
         mode=0x5  #auto
         send_CHANNEL(throttle,roll,pitch,yaw,mode)
@@ -78,7 +74,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
     @QtCore.pyqtSlot()
     def on_radioButton_land_clicked(self):
         self.textBrowser.append('Mode: land')
-        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global mode
         mode=0x2  #land
         send_CHANNEL(throttle,roll,pitch,yaw,mode)
@@ -86,7 +81,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
     @QtCore.pyqtSlot()
     def on_radioButton_stablize_clicked(self):
         self.textBrowser.append('Mode: stablize')
-        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global mode
         mode=0x1  #stablize
         send_CHANNEL(throttle,roll,pitch,yaw,mode)
@@ -94,7 +88,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
     @QtCore.pyqtSlot()
     def on_radioButton_altitude_clicked(self):
         self.textBrowser.append('Mode: altitude')
-        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global mode
         mode=0x4  #alt_hold
         send_CHANNEL(throttle,roll,pitch,yaw,mode)
@@ -102,7 +95,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
     @QtCore.pyqtSlot()
     def on_pushButton_level_clicked(self):
         self.textBrowser.setText('Restart...level')
-        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global ctrl
         ctrl=0x1  #level
         send_CONTROL(ctrl)
@@ -110,7 +102,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
     @QtCore.pyqtSlot()
     def on_pushButton_arm_clicked(self):
         self.textBrowser.append('CTRL: arm')
-        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global ctrl
         ctrl=0x4  #arm
         send_CONTROL(ctrl)
@@ -118,7 +109,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
     @QtCore.pyqtSlot()
     def on_pushButton_disarm_clicked(self):
         self.textBrowser.append('CTRL: disarm')
-        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global ctrl
         ctrl=0x8  #disarm
         send_CONTROL(ctrl)
@@ -126,7 +116,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
     @QtCore.pyqtSlot()
     def on_pushButton_takeoff_clicked(self):
         self.textBrowser.append('CTRL: takeoff')
-        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global ctrl
         ctrl=0x2  #takeoff
         send_CONTROL(ctrl)
@@ -134,14 +123,50 @@ class main(QtGui.QDialog, Ui_Form):#, Player
     @QtCore.pyqtSlot()
     def on_pushButton_connect_clicked(self):
         self.textBrowser.append('Begin ssh')
-        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect('127.0.0.1', 22, username='lixin', password='171901')
         cmd='ls'
         stdin, stdout, stderr = ssh.exec_command(cmd)
         print stdout.readlines()
-        ssh.close()           
+        ssh.close()
+
+##    @QtCore.pyqtSlot()
+##    def on_pushButton_takeover_clicked(self):
+##        try:
+##            #print 'ok'
+##            pygame.joystick.init()
+##            pygame.init()
+##            _joystick = pygame.joystick.Joystick(0)
+##            _joystick.init()
+##            #print "Joystick: get " + str(_joystick.get_name())
+##            ui.textBrowser.append("Joystick: get " + str(_joystick.get_name()))
+##
+##            while pygame.joystick.get_count():
+##                #print
+##                time.sleep(0.1)
+##                pygame.event.get()
+##                throttle=int(_joystick.get_axis(0)*400+1500)
+##                #print "Axis 0 (throttle) value is:" + str(throttle)           
+##                pygame.event.get()
+##                pitch=int(_joystick.get_axis(1)*400+1500)
+##                #print "Axis 1 (pitch) value is:" + str(pitch)        
+##                pygame.event.get()
+##                yaw=int(_joystick.get_axis(2)*400+1500)
+##                #print "Axis 2 (yaw) value is:" + str(yaw)          
+##                pygame.event.get()
+##                roll=int(_joystick.get_axis(3)*400+1500)
+##                #print "Axis 3 (roll) value is:" + str(roll)   
+##                pygame.event.get()
+##                #print"Button 0 (mix/gear) value is:" + str(_joystick.get_button(0))
+##                pygame.event.get()
+##                #print"Button 1 (flap gyro) value is:" + str(_joystick.get_button(1))
+##                set_slider(throttle,roll,pitch,yaw)
+##                #send_CHANNEL(throttle,roll,pitch,yaw,mode)                
+##            pygame.joystick.quit()
+##                    
+##        except Exception as err:
+##                ui.textBrowser.append("Joystick err: Disconnected!")             
                 
         
 ##       
@@ -170,17 +195,15 @@ def send_CONTROL(ctrl):
         send_sock.sendall(by)
     except Exception as err:
         ui.textBrowser.append("Send control err!")
-        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
 
 def send_CHANNEL(throttle,roll,pitch,yaw,mode):
     try:
-        by=struct.pack("BBBBBBBBB",0xff,0xaa,0x2,0x5,pitch/10,roll/10,throttle/10,yaw/10,mode)
+        by=struct.pack("BBBBBBBBB",0xff,0xaa,0x2,0x9,throttle/10,roll/10,pitch/10,yaw/10,mode)
         global send_sock
         #time.sleep(0.1)
         send_sock.sendall(by)
     except Exception as err:
         ui.textBrowser.append("Send channel err!")
-        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
 
 def set_slider(throttle,roll,pitch,yaw):
      ui.slider_throto.setValue(throttle)
@@ -192,15 +215,15 @@ def set_slider(throttle,roll,pitch,yaw):
      ui.slider_yaw.setValue(yaw)
      ui.label_yaw.setText(str(yaw))
 
-def set_button(btn1,btn2):
-    if (btn1==0 and btn2==0):
-        ui.radioButton_altitude.setChecked(True)
-    else:
-        if (btn1==0 and btn2==1):
-            ui.radioButton_loiter.setChecked(True)
-        else:
-            if (btn1==1 and btn2==0):
-                ui.radioButton_stablize.setChecked(True)
+##def set_button(btn1,btn2):
+##    if (btn1==0 and btn2==0):
+##        ui.radioButton_altitude.select()
+##    else:
+##        if (btn1==0 and btn2==1):
+##            ui.radioButton_loiter.checked()
+##        else:
+##            if (btn1==1 and btn2==0):
+##                ui.radioButton_stablize.select()
 
   
 if __name__ == "__main__":
@@ -213,19 +236,18 @@ if __name__ == "__main__":
 
     def receive_server():
         global receive_sock
-        receive_sock=ServerSocket(('192.168.1.100',8008))
+        receive_sock=ServerSocket(('127.0.0.1',8008))
         receive_sock.listen(2)
         
         while True:
             c, client = receive_sock.accept()
             ui.textBrowser.append('Receive_server: Connected!')
-            ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
-            
             while True:
                 try:
                     recv_bytes=receive_sock.recv(4)
                     parity_bit=struct.unpack("BBBB", recv_bytes)
-                    #print parity_bit                   
+                    #print parity_bit
+                    
                     if ((parity_bit[0]==0xff)and(parity_bit[1]==0xaa)\
                         and(parity_bit[2]==0xbb)and(parity_bit[3]==0xcc)): #FFAABBCC
                         #ui.textBrowser.append('Receive_server: get head!')
@@ -234,9 +256,10 @@ if __name__ == "__main__":
                         #ui.textBrowser.append('Receive_server: get len!')#length=120
                         #print length[0]
                         recv_bytes=receive_sock.recv(length[0])
-                        
+
                         #t=struct.unpack("iiiiiiiiiiiiiiiiiiiiiiiiffffff", recv_bytes)
                         #print t
+        
                         arm, xacc, yacc, zacc, motor_speed1, motor_speed2, \
                         motor_speed3, motor_speed4, heading_north, lat, lon, eph, \
                         satellites_visible, chan1, chan2, chan3, chan4, chan5, \
@@ -268,88 +291,126 @@ if __name__ == "__main__":
                         ui.label_cur_remain.setText(str(cur_remain)+'mA')
                         ui.label_bat_remain.setText(str(bat_remain)+'%')
                         s=str(rollspeed)
-                        ui.label_rollspeed.setText(s[0:5]+'rad/s')
+                        ui.label_rollspeed.setText(s[0:5]+'cm/s')
                         s=str(pitchspeed)
-                        ui.label_pitchspeed.setText(s[0:5]+'rad/s')
+                        ui.label_pitchspeed.setText(s[0:5]+'cm/s')
                         s=str(yawspeed)
-                        ui.label_yawspeed.setText(s[0:5]+'rad/s')
+                        ui.label_yawspeed.setText(s[0:5]+'cm/s')
                         s=str(hud_alt)
-                        ui.label_altitude.setText(s[0:5]+'m')
+                        ui.label_altitude.setText(s[0:5]+'cm/s')
                         s=str(hud_climb)
                         ui.label_climb_speed.setText(s[0:5]+'cm/s')
                         s=str(hud_groundspeed)
                         ui.label_ground_speed.setText(s[0:5]+'cm/s')
-                        
+
+
+##                        armH,armL,\
+##                        xaccH,xaccL,yaccH,yaccL,zaccH,zaccL,\
+##                        motor_speed1H,motor_speed1L,motor_speed2H,motor_speed2L,\
+##                        motor_speed3H,motor_speed3L,motor_speed4H,motor_speed4L,\
+##                        heading_northH,heading_northL,\
+##                        latH,latL,lonH,lonL,ephH,ephL,satellites_visibleH,satellites_visibleL,\
+##                        chan1H,chan1L,chan2H,chan2L,chan3H,chan3L,chan4H,chan4L,\
+##                        chan5H,chan5L,chan6H,chan6L,chan7H,chan7L,chan8H,chan8L,\
+##                        vol_remainH,vol_remainL,cur_remainH,cur_remainL,\
+##                        bat_remainH,bat_remainL,\
+##                        rollspeedH,rollspeedL,pitchspeedH,pitchspeedL,\
+##                        yawspeedH,yawspeedL,hud_altH,hud_altL,\
+##                        hud_climbH,hud_climbL,hud_groundspeedH,hud_groundspeedL \
+##                        = struct.unpack("bBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbB\
+##                        bBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbB\
+##                        bBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbB", recv_bytes)
+##                        
+##                        ui.label_arm.setText(str(256*armH+armL))
+##                        ui.label_head_N.setText(str(256*heading_northH+heading_northL))
+##                        ui.label_satellites.setText(str(256*satellites_visibleH+satellites_visibleL))
+##                        ui.label_GPS_lat.setText(str(256*latH+latL))
+##                        ui.label_GPS_lon.setText(str(256*lonH+lonL))
+##                        ui.label_GPS_eph.setText(str(256*ephH+ephL))
+##                        ui.label_X_acc.setText(str(256*xaccH+xaccL))
+##                        ui.label_Y_acc.setText(str(256*yaccH+yaccL))
+##                        ui.label_Z_acc.setText(str(256*zaccH+zaccL))
+##                        ui.label_channel1.setText(str(256*chan1H+chan1L))
+##                        ui.label_channel2.setText(str(256*chan2H+chan2L))
+##                        ui.label_channel3.setText(str(256*chan3H+chan3L))
+##                        ui.label_channel4.setText(str(256*chan4H+chan4L))
+####                        ui.label_channel5.setText(str(chan5))
+####                        ui.label_channel6.setText(str(chan6))
+####                        ui.label_channel7.setText(str(chan7))
+####                        ui.label_channel8.setText(str(chan8))
+##                        ui.label_motor1.setText(str(256*motor_speed1H+motor_speed1L))
+##                        ui.label_motor2.setText(str(256*motor_speed2H+motor_speed2L))
+##                        ui.label_motor3.setText(str(256*motor_speed3H+motor_speed3L))
+##                        ui.label_motor4.setText(str(256*motor_speed4H+motor_speed4L))
+##                        ui.label_vol_remain.setText(str(256*vol_remainH+vol_remainL)+'mV')
+##                        ui.label_cur_remain.setText(str(256*cur_remainH+cur_remainL)+'mA')
+##                        ui.label_bat_remain.setText(str(256*bat_remainH+bat_remainL)+'%')
+##                        ui.label_rollspeed.setText(str(256*rollspeedH+rollspeedL)+'cm/s')
+##                        ui.label_pitchspeed.setText(str(256*pitchspeedH+pitchspeedL)+'cm/s')
+##                        ui.label_yawspeed.setText(str(256*yawspeedH+yawspeedL)+'cm/s')
+##                        ui.label_altitude.setText(str(256*hud_altH+hud_altL)+'cm/s')
+##                        ui.label_climb_speed.setText(str(256*hud_climbH+hud_climbL)+'cm/s')
+##                        ui.label_ground_speed.setText(str(256*hud_groundspeedH+hud_groundspeedL)+'cm/s')
+
                 except Exception as err:
                     ui.textBrowser.append("Receive_server: Disconnected!")
-                    ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
                     break
 
 
     def send_server():
         global send_sock
-        send_sock=ServerSocket(('192.168.1.100',8000))
+        send_sock=ServerSocket(('127.0.0.1',8000))
         send_sock.listen(2)
         
         while True:
             c, client = send_sock.accept()
             ui.textBrowser.append('Send_server: Connected!')
-            ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
-            
             while True:
                 try:
-                    by=struct.pack("BBBBBBBBB",0xff,0xaa,0x2,0x5,pitch/10,roll/10,throttle/10,yaw/10,mode)
+                    by=struct.pack("BBBBBBBBB",0xff,0xaa,0x2,0x9,throttle/10,roll/10,pitch/10,yaw/10,mode)
                     time.sleep(0.1)
                     send_sock.sendall(by)
                     #print 'sended!'
                 except Exception as err:
                     ui.textBrowser.append("Send_server: Disconnected!!")
-                    ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
                     break
 
 
     def ctrl_joystick():
+        pygame.joystick.init()
+        pygame.init()
+        _joystick = pygame.joystick.Joystick(0)
+        _joystick.init()
+ 
+        print "Get joystick" + str(_joystick.get_name())
+        
         while True:
             try:
-                pygame.joystick.init()
-                pygame.init()
-                _joystick = pygame.joystick.Joystick(0)
-                _joystick.init()
-                ui.textBrowser.append("Get joystick" + str(_joystick.get_name()))
-                ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
-                #print "Get joystick" + str(_joystick.get_name())
-                
-                while True:
-                    try:
-                        time.sleep(0.1)
-                        pygame.event.get()
-                        throttle=int(_joystick.get_axis(0)*400+1500)         
-                        pygame.event.get()
-                        pitch=int(_joystick.get_axis(1)*400+1500)       
-                        pygame.event.get()
-                        yaw=int(_joystick.get_axis(2)*400+1500)        
-                        pygame.event.get()
-                        roll=int(_joystick.get_axis(3)*400+1500)          
-
-                        pygame.event.get()
-                        btn1=_joystick.get_button(0)
-                        pygame.event.get()
-                        btn2=_joystick.get_button(1)
-                        
-                        set_button(btn1,btn2)
-                        set_slider(throttle,roll,pitch,yaw)
-                        
-                    except Exception as err:
-                        ui.textBrowser.append("Joystick err: Disconnected!")
-                        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
-                        #print "Joystick err: Disconnected!"
-                        break
-                    
+                time.sleep(0.1)
+                pygame.event.get()
+                throttle=int(_joystick.get_axis(0)*400+1500)
+                #print "Axis 0 (throttle) value is:" + str(throttle)           
+                pygame.event.get()
+                pitch=int(_joystick.get_axis(1)*400+1500)
+                #print "Axis 1 (pitch) value is:" + str(pitch)        
+                pygame.event.get()
+                yaw=int(_joystick.get_axis(2)*400+1500)
+                #print "Axis 2 (yaw) value is:" + str(yaw)          
+                pygame.event.get()
+                roll=int(_joystick.get_axis(3)*400+1500)
+                #print "Axis 3 (roll) value is:" + str(roll)          
+                pygame.event.get()
+                #print"Button 0 (mix/gear) value is:" + str(_joystick.get_button(0))
+                pygame.event.get()
+                #print "Button 1 (flap gyro) value is:" + str(_joystick.get_button(1))
+##                btn1=_joystick.get_button(0)
+##                btn2=_joystick.get_button(1)
+##                set_button(btn1,btn2)
+                set_slider(throttle,roll,pitch,yaw)            
             except Exception as err:
-                #ui.textBrowser.append("waiting")
-                ui.textBrowser.moveCursor(QtGui.QTextCursor.End) 
-                time.sleep(1)
-                
+                #ui.textBrowser.append("Joystick err: Disconnected!")
+                print "Joystick err: Disconnected!"
+                break
 
                 
     ui_thrd=threading.Thread(target=show_ui)
@@ -363,9 +424,8 @@ if __name__ == "__main__":
     sd_thrd.daemon=True
     sd_thrd.start()
 
-    time.sleep(3)
-    js_thrd=threading.Thread(target=ctrl_joystick)
-    js_thrd.daemon=True
-    js_thrd.start()
+##    js_thrd=threading.Thread(target=ctrl_joystick)
+##    js_thrd.daemon=True
+##    js_thrd.start()
 
 

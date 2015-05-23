@@ -238,7 +238,7 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 
 		while(1)
 		{
-			printf("state_flag=%d\n", state_flag);
+			ST_PRINTF("state_flag=%d\n", state_flag);
 			//[State 0] Receive header
 			if(state_flag == RECV_HEADER)
 			{

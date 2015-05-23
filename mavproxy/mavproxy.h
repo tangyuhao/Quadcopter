@@ -29,6 +29,13 @@
     #define ST_PRINTF(format, ...) 
 #endif
 
+#if STATUS_DEBUG
+    #define STATUS_PRINTF(format, ...) printf(format, ##__VA_ARGS__)
+#else
+    #define STATUS_PRINTF(format, ...) 
+#endif
+
+
 #define CLEAR(x) memset((x), 0, sizeof(x))
 
 /*Define the channel*/

@@ -8,7 +8,6 @@
 #include <sys/stat.h>
 #include <signal.h>
 #include <math.h>
-
 #include "mavproxy.h"
 #include "fifo.h"
 int cmd_fifo_fd;
@@ -76,17 +75,17 @@ int write2mavproxy_status(struct status_struct* sta)
 	}
 	else if(nread == status_len)
 	{
-	printf("********************************status info***********************************\n");
-	printf("motor1:%d\tmotor2:%d\tmotor3:%d\tmotor4:%d\n",(*sta).motor_speed1,(*sta).motor_speed2,
+	STATUS_PRINTF("********************************status info***********************************\n");
+	STATUS_PRINTF("motor1:%d\tmotor2:%d\tmotor3:%d\tmotor4:%d\n",(*sta).motor_speed1,(*sta).motor_speed2,
 		(*sta).motor_speed3,(*sta).motor_speed4);
-	printf("ch1:%d\tch2:%d\tch3:%d\tch4:%d\tch5:%d\tch6:%d\tch7:%d\tch8:%d\n",
+	STATUS_PRINTF("ch1:%d\tch2:%d\tch3:%d\tch4:%d\tch5:%d\tch6:%d\tch7:%d\tch8:%d\n",
 		(*sta).chan1,(*sta).chan2,(*sta).chan3,(*sta).chan4,(*sta).chan5,(*sta).chan6,(*sta).chan7,(*sta).chan8);
-	printf("voltage_remain:%dmV\tcurrent_remain:%dmA\tbattery_remain:%d%%\n",
+	STATUS_PRINTF("voltage_remain:%dmV\tcurrent_remain:%dmA\tbattery_remain:%d%%\n",
 		(*sta).vol_remain,(*sta).cur_remain,(*sta).bat_remain);
-	printf("alttitude:%fm\tclimb_speed:%fm/s\tground_speed:%fm/s\n",
+	STATUS_PRINTF("alttitude:%fm\tclimb_speed:%fm/s\tground_speed:%fm/s\n",
 			(*sta).hud_alt,(*sta).hud_climb,(*sta).hud_groundspeed);
 
-	printf("******************************************************************************\n");
+	STATUS_PRINTF("******************************************************************************\n");
 	}
 	return 0;
 }
