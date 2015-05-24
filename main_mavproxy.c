@@ -60,8 +60,14 @@ static void except_recv(int sock, void *buf, size_t len, int flags, int *state_f
 
 int main(int argc, char *argv[])
 {
+	
+	
 	int i;
 	int motor12,motor13,motor14,motor23,motor24,motor34;
+	unsigned char *chan_p = NULL;
+	struct rc_struct * rc_p = NULL;
+	unsigned char * head_p = NULL;
+	unsigned char * control_p = NULL;
 	int chan[4];
 	char motor_right = 0;
 	int fifo_create;
@@ -74,7 +80,10 @@ int main(int argc, char *argv[])
 	status.head[2] = 0xbb;
 	status.head[3] = 0xcc;
 	status.len = sizeof(status.info);
-	
+	rc_p = &(cmd.data.rc);
+	chan_p = rc_p->chan;
+	head_p = cmd.head;
+	control_p = &(cmd.data.control);
 /*write a test help*/
 	if(argc == 2)
 	{
@@ -243,24 +252,24 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 			if(state_flag == RECV_HEADER)
 			{
 				CLEAR(&cmd);
-				except_recv(client_sockfd_recv, cmd.head, sizeof(cmd.head), 0, &state_flag);
+				except_recv(client_sockfd_recv, head_p, sizeof(head_p), 0, &state_flag);
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
-				if(cmd.head[0] == 0xff && cmd.head[1] == 0xaa)
+				if(head_p[0] == 0xff && head_p[1] == 0xaa)
 				{
 					state_flag = RECV_PARAM;
 				}
 				//If cmd.head[1] receives 0xFF
-				 else if(cmd.head[1] == 0xff)
+				 else if(head_p[1] == 0xff)
 				{
-					cmd.head[0] = cmd.head[1];
-					except_recv(client_sockfd_recv, &cmd.head[1], sizeof(cmd.head[1]), 0, &state_flag);
+					head_p[0] = head_p[1];
+					except_recv(client_sockfd_recv, &head_p[1], sizeof(head_p[1]), 0, &state_flag);
 					if(state_flag == SOCK_TIMEOUT)
 						continue;
-					if(cmd.head[1] == 0xaa)
+					if(head_p[1] == 0xaa)
 						state_flag = RECV_PARAM;
 				}
-				DEBUG_PRINTF("cmd.head[0]=%x cmd.head[1]=%x\n", cmd.head[0], cmd.head[1]);
+				DEBUG_PRINTF("cmd.head[0]=%x cmd.head[1]=%x\n", head_p[0], head_p[1]);
 			}
 		
 			//[State 1] Receive data parameter
@@ -288,9 +297,9 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 			//[State 2] Receive channel values
 			else if(state_flag == RECV_CHANNEL)
 			{
-				if(cmd.len != sizeof(cmd.data.rc))
+				if(cmd.len != sizeof(*rc_p))
 				{
-					DEBUG_PRINTF("Received length are %d, but expected to be %d\n", cmd.len, (int)sizeof(cmd.data.rc));
+					DEBUG_PRINTF("Received length are %d, but expected to be %d\n", cmd.len, (int)sizeof(*rc_p));
 					state_flag = RECV_HEADER;
 					continue;
 				}
@@ -298,18 +307,18 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 				cnt++;
 				CH_PRINTF("cnt:%d\n",cnt);
 
-				except_recv(client_sockfd_recv, &cmd.data.rc, cmd.len, 0, &state_flag);
-				chan[0] = cmd.data.rc.chan[0]*10;
-				chan[1] = cmd.data.rc.chan[1]*10;
-				chan[2] = cmd.data.rc.chan[2]*10;
-				chan[3] = cmd.data.rc.chan[3]*10;
+				except_recv(client_sockfd_recv, rc_p, cmd.len, 0, &state_flag);
+				chan[0] = chan_p[0]*10;
+				chan[1] = chan_p[1]*10;
+				chan[2] = chan_p[2]*10;
+				chan[3] = chan_p[3]*10;
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
 				//Print Received Command
 				CH_PRINTF("***This is COMMAND test from C***\n");
 				CH_PRINTF("chan1:%d, chan2:%d, chan3:%d, chan4:%d\n",
 					chan[0],chan[1],chan[2],chan[3]);
-				//CH_PRINTF("ARM status: %d\n", cmd.data.rc.arm);
+				//CH_PRINTF("ARM status: %d\n", rc_p->arm);
 
 				//write new channel values to Mavproxy
 				//Write the throttle channel, we expect this channel could be updated periodically
@@ -317,9 +326,9 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 					throttl_val = chan[THROTTL];
 				write2mavproxy_rc(THROTTL+1,throttl_val);
 				//Write the mode channel; if mode channel switched, we expect we could use command to control it
-				if(cmd.data.rc.mode != -1)
+				if(rc_p->mode != -1)
 				{
-					switch(cmd.data.rc.mode)
+					switch(rc_p->mode)
 					{
 						case STABILIZE: write2mavproxy_mode(STABILIZE);			break;
 						case LOITER:	write2mavproxy_mode(LOITER);			break;
@@ -349,16 +358,16 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 			{
 
 				
-				if (cmd.len != sizeof(cmd.data.control))
+				if (cmd.len != sizeof(*control_p))
 				{
-					DEBUG_PRINTF("Received length are %d, but expected to be %d\n", cmd.len, (int)sizeof(cmd.data.control));
+					DEBUG_PRINTF("Received length are %d, but expected to be %d\n", cmd.len, (int)sizeof(*control_p));
 					state_flag = RECV_HEADER;
 					continue;
 				}	
-				except_recv(client_sockfd_recv, &cmd.data.control, cmd.len, 0, &state_flag);
+				except_recv(client_sockfd_recv, control_p, cmd.len, 0, &state_flag);
 				if(state_flag == SOCK_TIMEOUT)
 					continue;		
-				control_flag = cmd.data.control;	
+				control_flag = *control_p;	
 				switch(control_flag)
 					{
 						case LEVEL:

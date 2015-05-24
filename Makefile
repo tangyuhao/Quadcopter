@@ -3,7 +3,7 @@ CFLAGS = -g -I./socket -I./mavproxy -I./fifo -I./control_flag
 CC = gcc
 RM = -rm -rf
 main_mavproxy: main_mavproxy.o mavproxy.o fifo.o socket.o
-	${CC} $^ -o $@  
+	${CC} $^ -O2 -o $@  
 %.o:%.c
 	${CC}  -c $(CFLAGS) $< 
 .PHONY:clean
