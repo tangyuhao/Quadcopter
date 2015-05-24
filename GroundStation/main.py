@@ -142,9 +142,11 @@ class main(QtGui.QDialog, Ui_Form):#, Player
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect('127.0.0.1', 22, username='lixin', password='171901')
-        cmd='ls'
-        stdin, stdout, stderr = ssh.exec_command(cmd)
-        print stdout.readlines()
+        cmd='vlc'
+        ssh.exec_command(cmd)
+        print cmd
+##        stdin, stdout, stderr = ssh.exec_command(cmd)
+##        print stdout.readlines()
         ssh.close()
 
     @QtCore.pyqtSlot()
@@ -211,15 +213,19 @@ def set_slider(throttle,roll,pitch,yaw):
 def set_button(btn1,btn2):
     if (btn1==0 and btn2==0):
         ui.radioButton_stablize.setChecked(True)
+        global mode
         mode=0x1
+        print mode
     else:
         if (btn1==1 and btn2==1):
             ui.radioButton_loiter.setChecked(True)
             mode=0x3
+            print mode
         else:
             if (btn1==1 and btn2==0):
                 ui.radioButton_altitude.setChecked(True)
                 mode=0x4
+                print mode
 
   
 if __name__ == "__main__":
@@ -232,7 +238,7 @@ if __name__ == "__main__":
 
     def receive_server():
         global receive_sock
-        receive_sock=ServerSocket(('192.168.1.101',8008))
+        receive_sock=ServerSocket(('10.220.48.111',8008))
         receive_sock.listen(2)
         
         while True:
@@ -307,7 +313,7 @@ if __name__ == "__main__":
 
     def send_server():
         global send_sock
-        send_sock=ServerSocket(('192.168.1.101',8000))
+        send_sock=ServerSocket(('10.220.48.111',8000))
         send_sock.listen(2)
         
         while True:
@@ -322,7 +328,7 @@ if __name__ == "__main__":
 ##                        time.sleep(5)
 ##                        send_sock.sendall(by)
 ##                        ctrl=0x2
-                    by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
+                    by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,pitch/10,roll/10,throttle/10,yaw/10,mode)
                     time.sleep(0.1)
                     send_sock.sendall(by)
                     #print 'sended!'
