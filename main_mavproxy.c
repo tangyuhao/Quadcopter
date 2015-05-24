@@ -221,24 +221,40 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 		write2mavproxy_mode(STABILIZE);
 		sleep(1);
 		//set params and rc channels
-		write2mavproxy_rc(1,1520);
+		write2mavproxy_rc(1,1500);
 		msleep(100);
-		write2mavproxy_rc(2,1510);
+		write2mavproxy_rc(2,1500);
 		msleep(100);
 		write2mavproxy_rc(3,1100);
 		msleep(100);
-		write2mavproxy_rc(4,1510);
+		write2mavproxy_rc(4,1500);
 		msleep(100);
-		write2mavproxy("param set RC1_TRIM 1520");
+		write2mavproxy("param set RC1_TRIM 1500");
 		msleep(50);
-		write2mavproxy("param set RC2_TRIM 1510");
+		write2mavproxy("param set RC2_TRIM 1500");
 		msleep(50);
 		write2mavproxy("param set RC3_TRIM 1100");
 		msleep(50);
-		write2mavproxy("param set RC4_TRIM 1510");
+		write2mavproxy("param set RC4_TRIM 1500");
+		msleep(50);
+		write2mavproxy("param set FENCE_ALT_MAX 12");
+		msleep(50);
+		write2mavproxy("param set FENCE_MARGIN 2");
+		msleep(50);
+		write2mavproxy("param set FENCE_RADIUS 30");
+		msleep(50);
+		write2mavproxy("param set FENCE_TYPE 3");//alt and circle
+		msleep(50);
+		write2mavproxy("param set FENCE_ACTION 1");
+		msleep(50);
+		if (SAFE_HENCE)
+			write2mavproxy("param set FENCE_ENABLE 1");
+		else
+			write2mavproxy("param set FENCE_ENABLE 0");
 		msleep(50);
 		write2mavproxy("level");
 		sleep(10);
+		printf("**********************All ready*************************\n");
 		//while for sending and receiving
 		int ret,status_len;
 		status_len = sizeof(status);
@@ -308,10 +324,33 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 				CH_PRINTF("cnt:%d\n",cnt);
 
 				except_recv(client_sockfd_recv, rc_p, cmd.len, 0, &state_flag);
-				chan[0] = chan_p[0]*10;
-				chan[1] = chan_p[1]*10;
-				chan[2] = chan_p[2]*10;
-				chan[3] = chan_p[3]*10;
+				
+				if (SAFE_CHAN12)//safe mode: ensure chan1 or chan2 is not too excessive
+				{
+					if (chan_p[0] > 170)
+						chan[0] = 1700;
+					else if (chan_p[0] < 130)
+						chan[0] = 1300;
+					else 
+						chan[0] = chan_p[0]*10;
+
+					if (chan_p[1] > 170)
+						chan[1] = 1700;
+					else if (chan_p[1] < 130)
+						chan[1] = 1300;
+					else 
+						chan[1] = chan_p[1]*10;
+					chan[2] = chan_p[2]*10;
+					chan[3] = chan_p[3]*10;
+				}
+				else
+				{
+					chan[0] = chan_p[0]*10;
+					chan[1] = chan_p[1]*10;
+					chan[2] = chan_p[2]*10;
+					chan[3] = chan_p[3]*10;
+				}
+				
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
 				//Print Received Command
@@ -406,81 +445,4 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 		}
 	}
 }
-/*		write2mavproxy("level");
-		sleep(5);
-		write2mavproxy_status(&status);
-		sleep(1);
-		write2mavproxy_rc(1,1516);
-		msleep(100);
-		write2mavproxy_rc(2,1511);
-		msleep(100);
-		write2mavproxy_rc(3,1100);
-		msleep(100);
-		write2mavproxy_rc(4,1508);
-		msleep(100);
-		write2mavproxy_rc(4,1900);
-		sleep(1);
-		write2mavproxy_rc(4,1900);
-		sleep(1);
-		write2mavproxy_rc(4,1900);
-		sleep(1);
-		write2mavproxy_rc(4,1508);
-		msleep(100);
-		int i;
-		int motor12,motor13,motor14,motor23,motor24,motor34;
-		
-		char motor_right = 0;
-		for (i=1;i<9;i++)
-		{
-			write2mavproxy_rc(3,1140+40*i);
-			sleep(1);
-			write2mavproxy_status(&status);
-			motor12 = abs(status.info.motor_speed1 - status.info.motor_speed2);
-			motor13 = abs(status.info.motor_speed1 - status.info.motor_speed3);
-			motor14 = abs(status.info.motor_speed1 - status.info.motor_speed4);
-			motor23 = abs(status.info.motor_speed2 - status.info.motor_speed3);
-			motor24 = abs(status.info.motor_speed2 - status.info.motor_speed4);
-			motor34 = abs(status.info.motor_speed3 - status.info.motor_speed4);
-			if (motor12 < THRESHOLD_TAKEOFF && motor13 < THRESHOLD_TAKEOFF && 
-				motor14 < THRESHOLD_TAKEOFF && motor23 < THRESHOLD_TAKEOFF 
-				&& motor24 < THRESHOLD_TAKEOFF && motor34 < THRESHOLD_TAKEOFF)
-				printf("right speed\t%d\t%d\t%d\t%d\t%d\t%d\n",motor12,motor13,motor14,motor23,motor24,motor34);
-			else 
-			{
-				write2mavproxy_mode(LAND);
-				printf("mode land\n");
-				sleep(10);
-				break;
-			}
-			msleep(100);
-		}
-		sleep(1);
-		write2mavproxy_mode(ALT_HOLD);//if gps signal is good,we change it to LOITER
-		
-		for (i=0;i<9;i++)
-		{
-			write2mavproxy_mode(ALT_HOLD);
-			msleep(500);
-			write2mavproxy_status(&status);
-			motor12 = abs(status.info.motor_speed1 - status.info.motor_speed2);
-			motor13 = abs(status.info.motor_speed1 - status.info.motor_speed3);
-			motor14 = abs(status.info.motor_speed1 - status.info.motor_speed4);
-			motor23 = abs(status.info.motor_speed2 - status.info.motor_speed3);
-			motor24 = abs(status.info.motor_speed2 - status.info.motor_speed4);
-			motor34 = abs(status.info.motor_speed3 - status.info.motor_speed4);
-			if (motor12 < THRESHOLD_FLYING && motor13 < THRESHOLD_FLYING 
-				&& motor14 < THRESHOLD_FLYING && motor23 < THRESHOLD_FLYING 
-				&& motor24 < THRESHOLD_FLYING && motor34 < THRESHOLD_FLYING)
-				printf("right speed\t%d\t%d\t%d\t%d\t%d\t%d\n",motor12,motor13,motor14,motor23,motor24,motor34);
-			else 
-			{
-				write2mavproxy_mode(LAND);
-				printf("mode land\n");
-				sleep(10);
-				break;
-			}
-			msleep(100);
-		}
-		write2mavproxy_mode(LAND);
-		sleep(10);
-*/
+
