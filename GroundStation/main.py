@@ -238,7 +238,7 @@ if __name__ == "__main__":
 
     def receive_server():
         global receive_sock
-        receive_sock=ServerSocket(('10.220.48.111',8008))
+        receive_sock=ServerSocket(('10.222.105.123',8008))
         receive_sock.listen(2)
         
         while True:
@@ -313,7 +313,7 @@ if __name__ == "__main__":
 
     def send_server():
         global send_sock
-        send_sock=ServerSocket(('10.220.48.111',8000))
+        send_sock=ServerSocket(('10.222.105.123',8000))
         send_sock.listen(2)
         
         while True:
@@ -328,7 +328,7 @@ if __name__ == "__main__":
 ##                        time.sleep(5)
 ##                        send_sock.sendall(by)
 ##                        ctrl=0x2
-                    by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,pitch/10,roll/10,throttle/10,yaw/10,mode)
+                    by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
                     time.sleep(0.1)
                     send_sock.sendall(by)
                     #print 'sended!'

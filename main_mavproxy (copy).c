@@ -60,8 +60,14 @@ static void except_recv(int sock, void *buf, size_t len, int flags, int *state_f
 
 int main(int argc, char *argv[])
 {
+	
+	
 	int i;
 	int motor12,motor13,motor14,motor23,motor24,motor34;
+	unsigned char *chan_p = NULL;
+	struct rc_struct * rc_p = NULL;
+	unsigned char * head_p = NULL;
+	unsigned char * control_p = NULL;
 	int chan[4];
 	char motor_right = 0;
 	int fifo_create;
@@ -74,11 +80,10 @@ int main(int argc, char *argv[])
 	status.head[2] = 0xbb;
 	status.head[3] = 0xcc;
 	status.len = sizeof(status.info);
-	unsigned int len_rc = sizeof(cmd.data.rc);
-	unsigned char* chan_p = cmd.data.rc.chan;
-	unsigned char* mode_p = &(cmd.data.rc.mode);
-	unsigned int len_control = sizeof(cmd.data.control);
-	
+	rc_p = &(cmd.data.rc);
+	chan_p = rc_p->chan;
+	head_p = cmd.head;
+	control_p = &(cmd.data.control);
 /*write a test help*/
 	if(argc == 2)
 	{
@@ -246,9 +251,9 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 			write2mavproxy("param set FENCE_ENABLE 1");
 		else
 			write2mavproxy("param set FENCE_ENABLE 0");
- 		msleep(50);
+		msleep(50);
 		write2mavproxy("level");
-		sleep(7);
+		sleep(10);
 		printf("**********************All ready*************************\n");
 		//while for sending and receiving
 		int ret,status_len;
@@ -263,24 +268,24 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 			if(state_flag == RECV_HEADER)
 			{
 				CLEAR(&cmd);
-				except_recv(client_sockfd_recv, cmd.head, sizeof(cmd.head), 0, &state_flag);
+				except_recv(client_sockfd_recv, head_p, sizeof(head_p), 0, &state_flag);
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
-				if(cmd.head[0] == 0xff && cmd.head[1] == 0xaa)
+				if(head_p[0] == 0xff && head_p[1] == 0xaa)
 				{
 					state_flag = RECV_PARAM;
 				}
 				//If cmd.head[1] receives 0xFF
-				 else if(cmd.head[1] == 0xff)
+				 else if(head_p[1] == 0xff)
 				{
-					cmd.head[0] = cmd.head[1];
-					except_recv(client_sockfd_recv, &cmd.head[1], sizeof(cmd.head[1]), 0, &state_flag);
+					head_p[0] = head_p[1];
+					except_recv(client_sockfd_recv, &head_p[1], sizeof(head_p[1]), 0, &state_flag);
 					if(state_flag == SOCK_TIMEOUT)
 						continue;
-					if(cmd.head[1] == 0xaa)
+					if(head_p[1] == 0xaa)
 						state_flag = RECV_PARAM;
 				}
-				DEBUG_PRINTF("cmd.head[0]=%x cmd.head[1]=%x\n", cmd.head[0], cmd.head[1]);
+				DEBUG_PRINTF("cmd.head[0]=%x cmd.head[1]=%x\n", head_p[0], head_p[1]);
 			}
 		
 			//[State 1] Receive data parameter
@@ -308,9 +313,9 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 			//[State 2] Receive channel values
 			else if(state_flag == RECV_CHANNEL)
 			{
-				if(cmd.len != len_rc)
+				if(cmd.len != sizeof(*rc_p))
 				{
-					DEBUG_PRINTF("Received length are %d, but expected to be %d\n", cmd.len, len_rc);
+					DEBUG_PRINTF("Received length are %d, but expected to be %d\n", cmd.len, (int)sizeof(*rc_p));
 					state_flag = RECV_HEADER;
 					continue;
 				}
@@ -318,8 +323,8 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 				cnt++;
 				CH_PRINTF("cnt:%d\n",cnt);
 
-				except_recv(client_sockfd_recv, &cmd.data.rc, cmd.len, 0, &state_flag);
-
+				except_recv(client_sockfd_recv, rc_p, cmd.len, 0, &state_flag);
+				
 				if (SAFE_CHAN12)//safe mode: ensure chan1 or chan2 is not too excessive
 				{
 					if (chan_p[0] > 170)
@@ -345,13 +350,14 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 					chan[2] = chan_p[2]*10;
 					chan[3] = chan_p[3]*10;
 				}
+				
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
 				//Print Received Command
 				CH_PRINTF("***This is COMMAND test from C***\n");
 				CH_PRINTF("chan1:%d, chan2:%d, chan3:%d, chan4:%d\n",
 					chan[0],chan[1],chan[2],chan[3]);
-				//CH_PRINTF("ARM status: %d\n", cmd.data.rc.arm);
+				//CH_PRINTF("ARM status: %d\n", rc_p->arm);
 
 				//write new channel values to Mavproxy
 				//Write the throttle channel, we expect this channel could be updated periodically
@@ -359,9 +365,9 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 					throttl_val = chan[THROTTL];
 				write2mavproxy_rc(THROTTL+1,throttl_val);
 				//Write the mode channel; if mode channel switched, we expect we could use command to control it
-				if(*mode_p != -1)
+				if(rc_p->mode != -1)
 				{
-					switch(*mode_p)
+					switch(rc_p->mode)
 					{
 						case STABILIZE: write2mavproxy_mode(STABILIZE);			break;
 						case LOITER:	write2mavproxy_mode(LOITER);			break;
@@ -391,16 +397,16 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 			{
 
 				
-				if (cmd.len != len_control)
+				if (cmd.len != sizeof(*control_p))
 				{
-					DEBUG_PRINTF("Received length are %d, but expected to be %d\n", cmd.len, len_control);
+					DEBUG_PRINTF("Received length are %d, but expected to be %d\n", cmd.len, (int)sizeof(*control_p));
 					state_flag = RECV_HEADER;
 					continue;
 				}	
-				except_recv(client_sockfd_recv, &cmd.data.control, cmd.len, 0, &state_flag);
+				except_recv(client_sockfd_recv, control_p, cmd.len, 0, &state_flag);
 				if(state_flag == SOCK_TIMEOUT)
 					continue;		
-				control_flag = cmd.data.control;	
+				control_flag = *control_p;	
 				switch(control_flag)
 					{
 						case LEVEL:
@@ -439,81 +445,4 @@ if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 		}
 	}
 }
-/*		write2mavproxy("level");
-		sleep(5);
-		write2mavproxy_status(&status);
-		sleep(1);
-		write2mavproxy_rc(1,1516);
-		msleep(100);
-		write2mavproxy_rc(2,1511);
-		msleep(100);
-		write2mavproxy_rc(3,1100);
-		msleep(100);
-		write2mavproxy_rc(4,1508);
-		msleep(100);
-		write2mavproxy_rc(4,1900);
-		sleep(1);
-		write2mavproxy_rc(4,1900);
-		sleep(1);
-		write2mavproxy_rc(4,1900);
-		sleep(1);
-		write2mavproxy_rc(4,1508);
-		msleep(100);
-		int i;
-		int motor12,motor13,motor14,motor23,motor24,motor34;
-		
-		char motor_right = 0;
-		for (i=1;i<9;i++)
-		{
-			write2mavproxy_rc(3,1140+40*i);
-			sleep(1);
-			write2mavproxy_status(&status);
-			motor12 = abs(status.info.motor_speed1 - status.info.motor_speed2);
-			motor13 = abs(status.info.motor_speed1 - status.info.motor_speed3);
-			motor14 = abs(status.info.motor_speed1 - status.info.motor_speed4);
-			motor23 = abs(status.info.motor_speed2 - status.info.motor_speed3);
-			motor24 = abs(status.info.motor_speed2 - status.info.motor_speed4);
-			motor34 = abs(status.info.motor_speed3 - status.info.motor_speed4);
-			if (motor12 < THRESHOLD_TAKEOFF && motor13 < THRESHOLD_TAKEOFF && 
-				motor14 < THRESHOLD_TAKEOFF && motor23 < THRESHOLD_TAKEOFF 
-				&& motor24 < THRESHOLD_TAKEOFF && motor34 < THRESHOLD_TAKEOFF)
-				printf("right speed\t%d\t%d\t%d\t%d\t%d\t%d\n",motor12,motor13,motor14,motor23,motor24,motor34);
-			else 
-			{
-				write2mavproxy_mode(LAND);
-				printf("mode land\n");
-				sleep(10);
-				break;
-			}
-			msleep(100);
-		}
-		sleep(1);
-		write2mavproxy_mode(ALT_HOLD);//if gps signal is good,we change it to LOITER
-		
-		for (i=0;i<9;i++)
-		{
-			write2mavproxy_mode(ALT_HOLD);
-			msleep(500);
-			write2mavproxy_status(&status);
-			motor12 = abs(status.info.motor_speed1 - status.info.motor_speed2);
-			motor13 = abs(status.info.motor_speed1 - status.info.motor_speed3);
-			motor14 = abs(status.info.motor_speed1 - status.info.motor_speed4);
-			motor23 = abs(status.info.motor_speed2 - status.info.motor_speed3);
-			motor24 = abs(status.info.motor_speed2 - status.info.motor_speed4);
-			motor34 = abs(status.info.motor_speed3 - status.info.motor_speed4);
-			if (motor12 < THRESHOLD_FLYING && motor13 < THRESHOLD_FLYING 
-				&& motor14 < THRESHOLD_FLYING && motor23 < THRESHOLD_FLYING 
-				&& motor24 < THRESHOLD_FLYING && motor34 < THRESHOLD_FLYING)
-				printf("right speed\t%d\t%d\t%d\t%d\t%d\t%d\n",motor12,motor13,motor14,motor23,motor24,motor34);
-			else 
-			{
-				write2mavproxy_mode(LAND);
-				printf("mode land\n");
-				sleep(10);
-				break;
-			}
-			msleep(100);
-		}
-		write2mavproxy_mode(LAND);
-		sleep(10);
-*/
+
