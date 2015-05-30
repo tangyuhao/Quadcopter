@@ -62,6 +62,7 @@
 /*Define cmd_type*/
 #define CONTROL_TYPE	0x01
 #define CHANNEL_TYPE	0x02
+#define DATA_STATUS     0X03
 
 
 /*Define State Flag*/

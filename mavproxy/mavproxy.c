@@ -61,19 +61,22 @@ int write2mavproxy_status(struct status_struct* sta)
 	/*read status data from Mavproxy*/
 	int status_len = sizeof(*sta);
 	write2mavproxy("status");
-	int	nread = 0;
-	nread = read(data_fifo_fd, sta, status_len);
-	if(nread == -1 && errno != EAGAIN )
-	{	
-		perror("read data error");
-		return -1;
-	}
-	else if(nread ==0)
+	int nread = 0;
+	int ret;
+	while(nread < status_len)
 	{
-		printf("read data length error");
-		return -2;
+		ret = read(data_fifo_fd, sta, status_len);
+		if(ret == -1 && errno != EAGAIN)
+		{
+			perror("read data error");
+			return -1;
+		}
+		else if(ret >= 0)
+		{
+			nread += ret;
+		}
 	}
-	else if(nread == status_len)
+	if(nread == status_len)
 	{
 	STATUS_PRINTF("********************************status info***********************************\n");
 	STATUS_PRINTF("motor1:%d\tmotor2:%d\tmotor3:%d\tmotor4:%d\n",(*sta).motor_speed1,(*sta).motor_speed2,

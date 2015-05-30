@@ -15,9 +15,11 @@
 #include "socket.h"
 
 pid_t pid_fork;
-int client_sockfd;
+int client_sockfd_recv;
+int client_sockfd_send;
 char buf[BUFSIZ];
 char *ip_addr_recv;
+char *ip_addr_send;
 int auto_flag;
 long nbytes;
 int throttl_val;
@@ -86,27 +88,42 @@ int main(int argc, char *argv[])
 		{
 			printf("This is a test program of receiving channel value 				from GCS and send it to Mavproxy\n");
 			printf("You need to start our VirtualGCS as server at first\n");
-			printf("Usage: (sudo) ./main [xxx.xxx.xxx.xxx:port_recv]\ne.g. 127.0.0.1:8000");
+			printf("Usage: (sudo) ./main [xxx.xxx.xxx.xxx:port_recv] [port_send]\ne.g. 127.0.0.1:8000 8008");
+			return 0;
+		}	
+		else
+		{
+			printf("wrong instrument. Just rerun the program or use '-h','--help' for help\n");
 			return 0;
 		}
-		else if(strlen(argv[1]) <= strlen("127.168.100.100:xxxx\0"))
+	}
+	else if(argc == 3)
+	{
+		if((strlen(argv[1]) <= strlen("127.168.100.100:xxxx\0")) && 
+			(strlen(argv[2]) == strlen("xxxx\0")))
 		{
 			ip_addr_recv = (char *)malloc(sizeof(argv[1]));
 			ip_addr_recv = argv[1];
-			DEBUG_PRINTF("The port is %s\n",argv[1]);
+			mksock_send_ip(argv[1],argv[2]);
+			ip_addr_send = argv[2];
+			DEBUG_PRINTF("The recv port is %s\nThe send port is %s\n",argv[1],argv[2]);
 		}
-		else 
+		else
 		{
-			printf("wrong instrument. Just rerun the program or use '-h','--help' for help\n");
+			printf("a wrong instrument. Just rerun the program or use '-h','--help' for help\n");
 			return 0;
 		}
 	}
 	else if (argc == 1)
 	{
 		char ar1[20]="127.0.0.1:8000";
+		char ar2[20]="8008";
 		ip_addr_recv = (char *)malloc(sizeof(ar1));
 		ip_addr_recv = ar1;
-		DEBUG_PRINTF("The port is %s\n",argv[1]);
+		mksock_send_ip(ar1,ar2);
+		ip_addr_send = ar2;
+		DEBUG_PRINTF("The recv port is %s\nThe send port is %s\n",ar1,ar2);
+
 	}
 	else
 	{
@@ -122,16 +139,25 @@ int main(int argc, char *argv[])
 
 	/*Create a socket*/
 
-    if((client_sockfd = wrap_client(ip_addr_recv))<0)
+    if((client_sockfd_recv = wrap_client(ip_addr_recv))<0)
 	{
-		perror("client_sockfd");
+		perror("client_sockfd_recv");
 		return -1;
 	}
 	else
-		printf("Beaglebone connected to Ground Station(recv), fd = %d\n",client_sockfd);	
+		printf("Beaglebone connected to Ground Station(recv), fd = %d\n",client_sockfd_recv);
+	msleep(200);	
+
+	if((client_sockfd_send = wrap_client(ip_addr_send))<0)
+		{
+			perror("client_sockfd_send");
+			return -1;
+		}
+	else
+		printf("Beaglebone connected to Ground Station(send), fd = %d\n",client_sockfd_send);
 //	printf("status length is%d\n",status_len);
 
-	if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
+if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 	{
 		perror("error create cmd_fifo ");
 		return CMD_FIFO_CREATE_ERROR;
@@ -152,9 +178,30 @@ int main(int argc, char *argv[])
 		execl("/usr/local/bin/mavproxy_pro_forPC.py","mavproxy_pro_forPC.py","--master=/dev/ttyUSB0","--baudrate=57600",NULL);
 		#endif
 	}
+
+	if ((pid_statusSend = fork()) == 0)
+	{
+		int ret,status_len;
+		status_len = sizeof(status);
+		while(1)
+	{
+		msleep(400);
+		//read status data from Mavproxy
+		write2mavproxy_status(&status.info);
+		//Send status data to GCS
+		ret = wrap_send(client_sockfd_send, &status, status_len, 0);
+		if(ret == -1)
+		{
+			perror("wrap_send error");
+			return -1;
+		}
+	}
+
+	}
+
 	else
 	{
-		int nread;
+		int nread, i;
 		int state_flag = RECV_HEADER;
 		char cmd_buf[100],control_flag;
 		int cnt = 0;
@@ -163,8 +210,6 @@ int main(int argc, char *argv[])
 		yaw_val = 0;
 		pitch_val = 0;
 		roll_val = 0;
-		int ret,status_len;
-		status_len = sizeof(status);
 //*******************start arming*************************
 		sleep(10);
 		//Initialze the flying mode to STABILIZE
@@ -206,8 +251,10 @@ int main(int argc, char *argv[])
 		sleep(7);
 		printf("**********************All ready*************************\n");
 		//while for sending and receiving
+		int ret,status_len;
+		status_len = sizeof(status);
 		DEBUG_PRINTF("SIZE of status is:%d\n",status_len);
-		DEBUG_PRINTF("SIZE of status.info is:%ld\n",sizeof(status.info));
+		DEBUG_PRINTF("SIZE of status.info is:%d\n",sizeof(status.info));
 
 		while(1)
 		{
@@ -216,7 +263,7 @@ int main(int argc, char *argv[])
 			if(state_flag == RECV_HEADER)
 			{
 				CLEAR(&cmd);
-				except_recv(client_sockfd, cmd.head, sizeof(cmd.head), 0, &state_flag);
+				except_recv(client_sockfd_recv, cmd.head, sizeof(cmd.head), 0, &state_flag);
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
 				if(cmd.head[0] == 0xff && cmd.head[1] == 0xaa)
@@ -227,7 +274,7 @@ int main(int argc, char *argv[])
 				 else if(cmd.head[1] == 0xff)
 				{
 					cmd.head[0] = cmd.head[1];
-					except_recv(client_sockfd, &cmd.head[1], sizeof(cmd.head[1]), 0, &state_flag);
+					except_recv(client_sockfd_recv, &cmd.head[1], sizeof(cmd.head[1]), 0, &state_flag);
 					if(state_flag == SOCK_TIMEOUT)
 						continue;
 					if(cmd.head[1] == 0xaa)
@@ -239,7 +286,7 @@ int main(int argc, char *argv[])
 			//[State 1] Receive data parameter
 			else if(state_flag == RECV_PARAM)
 			{
-				except_recv(client_sockfd, &cmd.type, sizeof(cmd.type), 0, &state_flag);
+				except_recv(client_sockfd_recv, &cmd.type, sizeof(cmd.type), 0, &state_flag);
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
 				DEBUG_PRINTF("cmd.type=%d\n", cmd.type);
@@ -249,13 +296,11 @@ int main(int argc, char *argv[])
 						state_flag = RECV_CONTROL; break;
 					case CHANNEL_TYPE:
 						state_flag = RECV_CHANNEL; break;
-					case DATA_STATUS:
-						state_flag = DATA_STATUS; break;
 					default:
 						state_flag = RECV_HEADER;
 				}
 				//Receive data length
-				except_recv(client_sockfd, &cmd.len, sizeof(cmd.len), 0, &state_flag);
+				except_recv(client_sockfd_recv, &cmd.len, sizeof(cmd.len), 0, &state_flag);
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
 				DEBUG_PRINTF("cmd.len:%d\n", cmd.len);
@@ -273,7 +318,7 @@ int main(int argc, char *argv[])
 				cnt++;
 				CH_PRINTF("cnt:%d\n",cnt);
 
-				except_recv(client_sockfd, &cmd.data.rc, cmd.len, 0, &state_flag);
+				except_recv(client_sockfd_recv, &cmd.data.rc, cmd.len, 0, &state_flag);
 
 				if (SAFE_CHAN12)//safe mode: ensure chan1 or chan2 is not too excessive
 				{
@@ -341,30 +386,7 @@ int main(int argc, char *argv[])
 			
 				state_flag = RECV_HEADER;
 			}
-		    //[State 3] Receive state_asking commands
-			else if(state_flag == DATA_STATUS)
-			{
-				
-
-				if(cmd.len != len_rc)
-				{
-					DEBUG_PRINTF("Received length are %d, but expected to be %d\n", cmd.len, (int)status_len);
-					state_flag = RECV_HEADER;
-				}
-				else
-				{
-					write2mavproxy_status(&status.info);
-					/*Send status data to GCS*/
-					ret = wrap_send(client_sockfd, &status, status_len, 0);
-					if(ret == -1)
-					{
-						perror("wrap_send error");
-						return -1;
-					}
-					state_flag = RECV_HEADER;
-				}
-			}
-			//[State 4] Receive control commands
+			//[State 3] Receive control commands
 			else if (state_flag == RECV_CONTROL)  
 			{
 
@@ -375,7 +397,7 @@ int main(int argc, char *argv[])
 					state_flag = RECV_HEADER;
 					continue;
 				}	
-				except_recv(client_sockfd, &cmd.data.control, cmd.len, 0, &state_flag);
+				except_recv(client_sockfd_recv, &cmd.data.control, cmd.len, 0, &state_flag);
 				if(state_flag == SOCK_TIMEOUT)
 					continue;		
 				control_flag = cmd.data.control;	
@@ -394,7 +416,7 @@ int main(int argc, char *argv[])
 					}
 				state_flag = RECV_HEADER;
 			}
-		   	//[State 5] Receive error commands
+		   	//[State 4] Receive error commands
         	else if(state_flag == SOCK_TIMEOUT || state_flag == SOCK_ERROR)
 			{
 				DEBUG_PRINTF("Entering Timeout State\n");
@@ -417,4 +439,81 @@ int main(int argc, char *argv[])
 		}
 	}
 }
-
+/*		write2mavproxy("level");
+		sleep(5);
+		write2mavproxy_status(&status);
+		sleep(1);
+		write2mavproxy_rc(1,1516);
+		msleep(100);
+		write2mavproxy_rc(2,1511);
+		msleep(100);
+		write2mavproxy_rc(3,1100);
+		msleep(100);
+		write2mavproxy_rc(4,1508);
+		msleep(100);
+		write2mavproxy_rc(4,1900);
+		sleep(1);
+		write2mavproxy_rc(4,1900);
+		sleep(1);
+		write2mavproxy_rc(4,1900);
+		sleep(1);
+		write2mavproxy_rc(4,1508);
+		msleep(100);
+		int i;
+		int motor12,motor13,motor14,motor23,motor24,motor34;
+		
+		char motor_right = 0;
+		for (i=1;i<9;i++)
+		{
+			write2mavproxy_rc(3,1140+40*i);
+			sleep(1);
+			write2mavproxy_status(&status);
+			motor12 = abs(status.info.motor_speed1 - status.info.motor_speed2);
+			motor13 = abs(status.info.motor_speed1 - status.info.motor_speed3);
+			motor14 = abs(status.info.motor_speed1 - status.info.motor_speed4);
+			motor23 = abs(status.info.motor_speed2 - status.info.motor_speed3);
+			motor24 = abs(status.info.motor_speed2 - status.info.motor_speed4);
+			motor34 = abs(status.info.motor_speed3 - status.info.motor_speed4);
+			if (motor12 < THRESHOLD_TAKEOFF && motor13 < THRESHOLD_TAKEOFF && 
+				motor14 < THRESHOLD_TAKEOFF && motor23 < THRESHOLD_TAKEOFF 
+				&& motor24 < THRESHOLD_TAKEOFF && motor34 < THRESHOLD_TAKEOFF)
+				printf("right speed\t%d\t%d\t%d\t%d\t%d\t%d\n",motor12,motor13,motor14,motor23,motor24,motor34);
+			else 
+			{
+				write2mavproxy_mode(LAND);
+				printf("mode land\n");
+				sleep(10);
+				break;
+			}
+			msleep(100);
+		}
+		sleep(1);
+		write2mavproxy_mode(ALT_HOLD);//if gps signal is good,we change it to LOITER
+		
+		for (i=0;i<9;i++)
+		{
+			write2mavproxy_mode(ALT_HOLD);
+			msleep(500);
+			write2mavproxy_status(&status);
+			motor12 = abs(status.info.motor_speed1 - status.info.motor_speed2);
+			motor13 = abs(status.info.motor_speed1 - status.info.motor_speed3);
+			motor14 = abs(status.info.motor_speed1 - status.info.motor_speed4);
+			motor23 = abs(status.info.motor_speed2 - status.info.motor_speed3);
+			motor24 = abs(status.info.motor_speed2 - status.info.motor_speed4);
+			motor34 = abs(status.info.motor_speed3 - status.info.motor_speed4);
+			if (motor12 < THRESHOLD_FLYING && motor13 < THRESHOLD_FLYING 
+				&& motor14 < THRESHOLD_FLYING && motor23 < THRESHOLD_FLYING 
+				&& motor24 < THRESHOLD_FLYING && motor34 < THRESHOLD_FLYING)
+				printf("right speed\t%d\t%d\t%d\t%d\t%d\t%d\n",motor12,motor13,motor14,motor23,motor24,motor34);
+			else 
+			{
+				write2mavproxy_mode(LAND);
+				printf("mode land\n");
+				sleep(10);
+				break;
+			}
+			msleep(100);
+		}
+		write2mavproxy_mode(LAND);
+		sleep(10);
+*/

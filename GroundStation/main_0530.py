@@ -236,47 +236,29 @@ if __name__ == "__main__":
         ui.show()
         sys.exit(app.exec_())
 
-    def server():
-        global sock
-        sock=ServerSocket(('127.0.0.1',8000))
-        sock.listen(2)
+    def receive_server():
+        global receive_sock
+        receive_sock=ServerSocket(('10.42.0.1',8008))
+        receive_sock.listen(2)
         
         while True:
-            c, client = sock.accept()
-            ui.textBrowser.append('Server:     Connected!')
+            c, client = receive_sock.accept()
+            ui.textBrowser.append('Receive_server:     Connected!')
             ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
             
             while True:
                 try:
-                    by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,pitch/10,roll/10,throttle/10,yaw/10,mode)
-                    time.sleep(0.01)
-                    sock.sendall(by)
-                    by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,pitch/10,roll/10,throttle/10,yaw/10,mode)
-                    time.sleep(0.01)
-                    sock.sendall(by)
-                    by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,pitch/10,roll/10,throttle/10,yaw/10,mode)
-                    time.sleep(0.01)
-                    sock.sendall(by)
-                    by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,pitch/10,roll/10,throttle/10,yaw/10,mode)
-                    time.sleep(0.01)
-                    sock.sendall(by)
-                    by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,pitch/10,roll/10,throttle/10,yaw/10,mode)
-                    time.sleep(0.01)
-                    sock.sendall(by)
-                    by=struct.pack("BBBBBBBBB",0xff,0xaa,0X3,0x5,pitch/10,roll/10,throttle/10,yaw/10,mode)
-                    sock.sendall(by)
-					#time.sleep(0.1)
-                    recv_bytes=sock.recv(4)
+                    recv_bytes=receive_sock.recv(4)
                     parity_bit=struct.unpack("BBBB", recv_bytes)
                     #print parity_bit                   
                     if ((parity_bit[0]==0xff)and(parity_bit[1]==0xaa)\
                         and(parity_bit[2]==0xbb)and(parity_bit[3]==0xcc)):  #FFAABBCC
                         #ui.textBrowser.append('Receive_server: get head!')
-                        recv_bytes=sock.recv(4)
+                        recv_bytes=receive_sock.recv(4)
                         length=struct.unpack("i", recv_bytes)  #length=120
                         #ui.textBrowser.append('Receive_server: get len!')
                         #print length[0]
-                        recv_bytes=sock.recv(length[0])
+                        recv_bytes=receive_sock.recv(length[0])
                         
                         #t=struct.unpack("iiiiiiiiiiiiiiiiiiiiiiiiffffff", recv_bytes)
                         #print t
@@ -321,10 +303,37 @@ if __name__ == "__main__":
                         s=str(hud_climb)
                         ui.label_climb_speed.setText(s[0:5]+'cm/s')
                         s=str(hud_groundspeed)
-                        ui.label_ground_speed.setText(s[0:5]+'cm/s')              
+                        ui.label_ground_speed.setText(s[0:5]+'cm/s')
                         
                 except Exception as err:
-                    ui.textBrowser.append("Server:     Disconnected!")
+                    ui.textBrowser.append("Receive_server:     Disconnected!")
+                    ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
+                    break
+
+
+    def send_server():
+        global send_sock
+        send_sock=ServerSocket(('10.42.0.1',8000))
+        send_sock.listen(2)
+        
+        while True:
+            c, client = send_sock.accept()
+            ui.textBrowser.append('Send_server:     Connected!')
+            ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
+            
+            while True:
+                try:
+##                    if ctrl!=0x2:
+##                        by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,pitch/10,roll/10,throttle/10,yaw/10,mode)
+##                        time.sleep(5)
+##                        send_sock.sendall(by)
+##                        ctrl=0x2
+                    by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
+                    time.sleep(0.1)
+                    send_sock.sendall(by)
+                    #print 'sended!'
+                except Exception as err:
+                    ui.textBrowser.append("Send_server:     Disconnected!")
                     ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
                     break
 
@@ -383,9 +392,13 @@ if __name__ == "__main__":
     ui_thrd=threading.Thread(target=show_ui)
     ui_thrd.start()
 
-    soc_thrd=threading.Thread(target=server)
-    soc_thrd.daemon=True
-    soc_thrd.start()
+    rcv_thrd=threading.Thread(target=receive_server)
+    rcv_thrd.daemon=True
+    rcv_thrd.start()
+
+    sd_thrd=threading.Thread(target=send_server)
+    sd_thrd.daemon=True
+    sd_thrd.start()
 
     time.sleep(3)
     js_thrd=threading.Thread(target=ctrl_joystick)
