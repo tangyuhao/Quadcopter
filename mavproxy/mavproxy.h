@@ -62,14 +62,15 @@
 /*Define cmd_type*/
 #define CONTROL_TYPE	0x01
 #define CHANNEL_TYPE	0x02
-#define DATA_STATUS     0X03
+#define STATUS_TYPE     0X03
 
 
 /*Define State Flag*/
 #define RECV_HEADER		0
 #define RECV_PARAM      1
 #define RECV_CONTROL	2
-#define RECV_CHANNEL	3
+#define SEND_STATUS		3
+#define RECV_CHANNEL	4
 #define SOCK_TIMEOUT	-1
 #define SOCK_ERROR		-2
 #define MAV_TIMEOUT		-3

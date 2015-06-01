@@ -4,7 +4,7 @@ import sys,socket,struct,time
 
 if __name__=='__main__':
     s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(('127.0.0.1',8008))
+    s.connect(('192.168.7.1',8008))
     #i=5
     while True:
         #i=i-1

@@ -6,6 +6,7 @@ import threading
 class ServerSocket:
     def __init__(self, address, queue=5):
         self.sock=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind(address)
         self.sock.listen(queue)
         return

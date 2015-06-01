@@ -147,6 +147,7 @@ int main(int argc, char *argv[])
 	else
 		printf("Beaglebone connected to Ground Station(recv), fd = %d\n",client_sockfd_recv);	
 //	printf("status length is%d\n",status_len);
+	msleep(100);
 	if((client_sockfd_send = wrap_client(ip_addr_send))<0)
 	{
 		perror("client_sockfd_send");
@@ -273,8 +274,8 @@ int main(int argc, char *argv[])
 						state_flag = RECV_CONTROL; break;
 					case CHANNEL_TYPE:
 						state_flag = RECV_CHANNEL; break;
-					case DATA_STATUS:
-						state_flag = DATA_STATUS; break;
+					case STATUS_TYPE:
+						state_flag = SEND_STATUS; break;
 					default:
 						state_flag = RECV_HEADER;
 				}
@@ -366,7 +367,7 @@ int main(int argc, char *argv[])
 				state_flag = RECV_HEADER;
 			}
 		    //[State 3] Receive state_asking commands
-			else if(state_flag == DATA_STATUS)
+			else if(state_flag == SEND_STATUS)
 			{
 				
 
@@ -418,7 +419,7 @@ int main(int argc, char *argv[])
 					}
 				state_flag = RECV_HEADER;
 			}
-		   	//[State 5] Receive error commands
+		   	//[State -1] Receive error commands
         	else if(state_flag == SOCK_TIMEOUT || state_flag == SOCK_ERROR)
 			{
 				DEBUG_PRINTF("Entering Timeout State\n");
