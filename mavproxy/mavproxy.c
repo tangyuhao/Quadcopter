@@ -12,7 +12,101 @@
 #include "fifo.h"
 int cmd_fifo_fd;
 int data_fifo_fd;
+extern int client_sockfd_send;
+extern int status_len;
+int sendSta()
+{
+	int ret;
+	ret = wrap_send(client_sockfd_send, &status, status_len, 0);
+	if(ret == -1)
+	{
+		perror("wrap_send error");
+		return -1;
+	}
+}
 
+short autoTakeoff(unsigned short height,unsigned short step, unsigned short throttle_max, unsigned short fail_threshold)
+{
+	int i,chan = 1100;
+	write2mavproxy_rc(1,1500);
+	msleep(50);
+	write2mavproxy_rc(2,1500);
+	msleep(50);
+	write2mavproxy_rc(4,1500);	
+	msleep(50);
+	write2mavproxy_mode(STABILIZE);
+	msleep(50);
+	char motor_right = 0;
+	struct status_struct * sta = &status.info;
+	for (i=1;chan < throttle_max;i++)
+	{
+		if (sta->xacc > fail_threshold || sta->xacc <-fail_threshold || sta->yacc > fail_threshold || sta->yacc <-fail_threshold )
+		{
+			if (sta->hud_alt > 1.0)
+				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
+			else 
+				{write2mavproxy_rc(3,1100);return FAIL_GROUND;}
+		}
+		if (sta->hud_climb >0.5 && sta->hud_alt >1.0) break;
+		chan += step;	
+		write2mavproxy_rc(3,chan);
+		msleep(100);
+		write2mavproxy_status(sta);
+		sendSta();
+		if (sta->xacc > fail_threshold || sta->xacc <-fail_threshold || sta->yacc > fail_threshold || sta->yacc <-fail_threshold )
+		{
+			if (sta->hud_alt > 1.0)
+				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
+			else 
+				{write2mavproxy_rc(3,1100);return FAIL_GROUND;}
+		}
+		if (sta->hud_climb >0.5 && sta->hud_alt >1.0) break;
+		msleep(100);
+		write2mavproxy_status(sta);
+		sendSta();
+		if (sta->xacc > fail_threshold || sta->xacc <-fail_threshold || sta->yacc > fail_threshold || sta->yacc <-fail_threshold )
+		{
+			if (sta->hud_alt > 1.0)
+				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
+			else 
+				{write2mavproxy_rc(3,1100);return FAIL_GROUND;}
+		}
+		if (sta->hud_climb >0.5 && sta->hud_alt >1.0) break;
+		msleep(100);
+		write2mavproxy_status(sta);
+		sendSta();
+		if (sta->xacc > fail_threshold || sta->xacc <-fail_threshold || sta->yacc > fail_threshold || sta->yacc <-fail_threshold )
+		{
+			if (sta->hud_alt > 1.0)
+				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
+			else 
+				{write2mavproxy_rc(3,1100);return FAIL_GROUND;}
+		}		
+		if (sta->hud_climb >0.5 && sta->hud_alt >1.0) break;
+		msleep(100);
+		write2mavproxy_status(sta);
+		sendSta();
+		if (sta->xacc > fail_threshold || sta->xacc <-fail_threshold || sta->yacc > fail_threshold || sta->yacc <-fail_threshold )
+		{
+			if (sta->hud_alt > 1.0)
+				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
+			else 
+				{write2mavproxy_rc(3,1100);return FAIL_GROUND;}
+		}
+		if (sta->hud_climb >0.5 && sta->hud_alt >1.0) break;		
+		msleep(100);
+		write2mavproxy_status(sta);
+		sendSta();
+	}
+	while(1)
+	{
+		msleep(100);
+		write2mavproxy_status(sta);
+		if (sta->hud_alt >3.0) break;		
+	}
+	write2mavproxy_mode(LOITER);
+	return 0;
+}
 void write2mavproxy(char *cmd_buf)
 {
     write(cmd_fifo_fd, cmd_buf, strlen(cmd_buf));

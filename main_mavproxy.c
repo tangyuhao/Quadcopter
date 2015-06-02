@@ -28,6 +28,9 @@ int pitch_val;
 int roll_val;
 int delay_cnt;
 int arm_state;
+extern int cmd_fifo_fd;
+extern int data_fifo_fd;
+int status_len = sizeof(status);
 /*Interupt Handle*/
 static void sigint_handler(int signo)
 {
@@ -35,7 +38,8 @@ static void sigint_handler(int signo)
 	wait(NULL);
 	printf("\n[%d]Caught SIGINT!\n", getpid());
 	printf("[%d]MAVPROXY PROC killed\n", pid_fork);
-	system("rm -rf *.fifo *.tlog*");
+	close_rm_fifo(data_fifo_fd,DATA_FIFO_NAME);
+	close_rm_fifo(cmd_fifo_fd,CMD_FIFO_NAME);
 	exit(EXIT_SUCCESS);
 }
 
@@ -63,17 +67,15 @@ int main(int argc, char *argv[])
 	int i;
 	int motor12,motor13,motor14,motor23,motor24,motor34;
 	int chan[4];
+	int autotkof_ret;
 	char motor_right = 0;
 	int fifo_create;
-	pid_t pid_fork;
-	pid_t pid_statusSend;
-	extern int cmd_fifo_fd;
-	extern int data_fifo_fd;
 	status.head[0] = 0xff;
 	status.head[1] = 0xaa;
 	status.head[2] = 0xbb;
-	status.head[3] = 0xcc;
+	status.flag = 0x00;
 	status.len = sizeof(status.info);
+	struct status_struct *status_p = &status.info;
 	unsigned int len_rc = sizeof(cmd.data.rc);
 	unsigned char* chan_p = cmd.data.rc.chan;
 	unsigned char* mode_p = &(cmd.data.rc.mode);
@@ -157,8 +159,8 @@ int main(int argc, char *argv[])
 		execl("/usr/local/bin/mavproxy_pro.py","mavproxy_pro.py","--master=/dev/ttyO1","--baudrate=57600",NULL);
 		#else 
 		dup2(cmd_fifo_fd, STDIN_FILENO);
-	//	execl("/usr/local/bin/mavproxy_pro_forPC.py","mavproxy_pro_forPC.py","--master=/dev/ttyUSB0","--baudrate=57600",NULL);
 		execl("/usr/local/bin/mavproxy_pro_forPC.py","mavproxy_pro_forPC.py","--master=/dev/ttyUSB0","--baudrate=57600",NULL);
+	//	execl("/usr/local/bin/mavproxy_pro_forPC.py","mavproxy_pro_forPC.py","--master=/dev/ttyUSB1","--baudrate=57600",NULL);
 		#endif
 	}
 	else
@@ -172,8 +174,7 @@ int main(int argc, char *argv[])
 		yaw_val = 0;
 		pitch_val = 0;
 		roll_val = 0;
-		int ret,status_len;
-		status_len = sizeof(status);
+		int ret;
 //*******************start arming*************************
 		sleep(10);
 		//Initialze the flying mode to STABILIZE
@@ -213,8 +214,10 @@ int main(int argc, char *argv[])
  		msleep(50);
 		write2mavproxy("level");
 		sleep(7);
-			/*Create a socket*/
+		write2mavproxy("calpress");
+		sleep(1);
 
+		
    		if((client_sockfd_recv = wrap_client(ip_addr_recv))<0)
 		{
 			perror("client_sockfd_recv");
@@ -235,7 +238,7 @@ int main(int argc, char *argv[])
 		//while for sending and receiving
 		DEBUG_PRINTF("SIZE of status is:%d\n",status_len);
 		DEBUG_PRINTF("SIZE of status.info is:%ld\n",sizeof(status.info));
-
+			/*Create a socket*/
 		while(1)
 		{
 			ST_PRINTF("state_flag=%d\n", state_flag);
@@ -278,6 +281,8 @@ int main(int argc, char *argv[])
 						state_flag = RECV_CHANNEL; break;
 					case STATUS_TYPE:
 						state_flag = SEND_STATUS; break;
+					case AUTOFLY_TYPE:
+						state_flag = AUTO_TAKEOFF; break;
 					default:
 						state_flag = RECV_HEADER;
 				}
@@ -371,25 +376,15 @@ int main(int argc, char *argv[])
 		    //[State 3] Receive state_asking commands
 			else if(state_flag == SEND_STATUS)
 			{
-				
-
-				if(cmd.len != len_rc)
+				write2mavproxy_status(&status.info);
+				/*Send status data to GCS*/
+				ret = wrap_send(client_sockfd_send, &status, status_len, 0);
+				if(ret == -1)
 				{
-					DEBUG_PRINTF("Received length are %d, but expected to be %d\n", cmd.len, (int)status_len);
-					state_flag = RECV_HEADER;
+					perror("wrap_send error");
+					return -1;
 				}
-				else
-				{
-					write2mavproxy_status(&status.info);
-					/*Send status data to GCS*/
-					ret = wrap_send(client_sockfd_send, &status, status_len, 0);
-					if(ret == -1)
-					{
-						perror("wrap_send error");
-						return -1;
-					}
-					state_flag = RECV_HEADER;
-				}
+				state_flag = RECV_HEADER;
 			}
 			//[State 4] Receive control commands
 			else if (state_flag == RECV_CONTROL)  
@@ -421,6 +416,30 @@ int main(int argc, char *argv[])
 					}
 				state_flag = RECV_HEADER;
 			}
+		    //[State 5] Auto Take Off
+			else if(state_flag == AUTO_TAKEOFF)
+			{
+				write2mavproxy_status(&status.info);
+				if (status_p->hud_alt > 0.5) 
+				{	
+					state_flag = SEND_STATUS;
+					status.flag = 0x00;
+					continue;
+				}
+				else
+				{
+					status.flag = 0x01;
+				//function:
+				//short autoTakeoff(unsigned short height,unsigned short step, unsigned short throttle_max, unsigned short fail_threshold)
+					autotkof_ret = autoTakeoff(1.8,50,1440,250);
+					if (autotkof_ret == 0) status.flag = 0x00;
+					else  status.flag = 0x02;
+					state_flag = SEND_STATUS;
+					continue;					
+				}				
+
+
+			}
 		   	//[State -1] Receive error commands
         	else if(state_flag == SOCK_TIMEOUT || state_flag == SOCK_ERROR)
 			{
@@ -434,10 +453,6 @@ int main(int argc, char *argv[])
 					perror("kill cmd_fork_pid failed");
 				else
 					printf("kill %d complete!\n ",pid_fork);
-				if (kill(pid_statusSend, SIGKILL) != SIGKILL_SUCCEED) 
-					perror("kill cmd_statusSend_pid failed");
-				else
-					printf("kill %d complete!\n ",pid_statusSend);
 				pause();
 				kill(getpid(), SIGINT);
 			}

@@ -63,6 +63,10 @@
 #define CONTROL_TYPE	0x01
 #define CHANNEL_TYPE	0x02
 #define STATUS_TYPE     0X03
+#define AUTOFLY_TYPE	0x04
+#define LAND_TYPE	0x05
+#define LEVEL_TYPE	0x06
+#define DISARM_TYPE	0x07
 
 
 /*Define State Flag*/
@@ -71,6 +75,7 @@
 #define RECV_CONTROL	2
 #define SEND_STATUS		3
 #define RECV_CHANNEL	4
+#define AUTO_TAKEOFF    5
 #define SOCK_TIMEOUT	-1
 #define SOCK_ERROR		-2
 #define MAV_TIMEOUT		-3
@@ -93,6 +98,9 @@
 #define THRESHOLD_TAKEOFF 150
 #define THRESHOLD_FLYING 250
 
+/*Define the error for auto take off*/
+#define FAIL_ALOFT -1
+#define FAIL_GROUND -2
 /*Creat a structure to store data info*/
 
 
@@ -113,7 +121,8 @@ struct status_struct
 /*Creat a structure for sending the status*/
 struct send_status
 {
-	unsigned char head[4];
+	unsigned char head[3];
+	unsigned char flag;
 	int len;
 	struct status_struct info;
 }status;
@@ -144,6 +153,7 @@ struct cmd_struct
 struct cmd_struct cmd;
 
 /*Define Functions*/
+short autoTakeoff(unsigned short height,unsigned short step, unsigned short throttle_max, unsigned short fail_threshold);
 void write2mavproxy(char *cmd_buf);
 int write2mavproxy_rc(int channel,int chan_value);
 int write2mavproxy_mode(int mav_mode);

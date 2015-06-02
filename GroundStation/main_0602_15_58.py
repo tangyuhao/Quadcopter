@@ -201,23 +201,19 @@ class main(QtGui.QDialog, Ui_Form):#, Player
 ##        ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
 
 def set_slider(throttle,roll,pitch,yaw):
-    try:
-        #ui.slider_throto.setValue(throttle)
-        ui.label_throto.setText(str(throttle))
-       # ui.slider_roll.setValue(roll)
-        ui.label_roll.setText(str(roll))
-        #ui.slider_pitch.setValue(pitch)
-        ui.label_pitch.setText(str(pitch))
-       # ui.slider_yaw.setValue(yaw)
-        ui.label_yaw.setText(str(yaw))
-    except Exception as err:
-        time.sleep(0.01)
-        
+     ui.slider_throto.setValue(throttle)
+     ui.label_throto.setText(str(throttle))
+     ui.slider_roll.setValue(roll)
+     ui.label_roll.setText(str(roll))
+     ui.slider_pitch.setValue(pitch)
+     ui.label_pitch.setText(str(pitch))
+     ui.slider_yaw.setValue(yaw)
+     ui.label_yaw.setText(str(yaw))
 
 def set_button(btn1,btn2):
-    global mode
     if (btn1==0 and btn2==0):
         ui.radioButton_stablize.setChecked(True)
+        global mode
         mode=0x1
         #print mode
     else:
@@ -332,25 +328,23 @@ if __name__ == "__main__":
 ##                        time.sleep(5)
 ##                        send_sock.sendall(by)
 ##                        ctrl=0x2
-                    time.sleep(0.1)
-                    if ctrl!=0x2:
-                        by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
-                        send_sock.sendall(by)   
-                        time.sleep(0.05)                   
-                        by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
-                        send_sock.sendall(by)   
-                        time.sleep(0.05)
-                        by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
-                        send_sock.sendall(by)   
-                        time.sleep(0.05)
-                        by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
-                        send_sock.sendall(by)   
-                        time.sleep(0.05)
-                        #request for status
-                        by=struct.pack("BBBBBBBBB",0xff,0xaa,0x3,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
-                        send_sock.sendall(by)   
-                        time.sleep(0.05) 
-                        #print 'sended!'
+                    by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
+                    send_sock.sendall(by)   
+                    time.sleep(0.05)                   
+                    by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
+                    send_sock.sendall(by)   
+                    time.sleep(0.05)
+                    by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
+                    send_sock.sendall(by)   
+                    time.sleep(0.05)
+                    by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
+                    send_sock.sendall(by)   
+                    time.sleep(0.05)
+                    #request for status
+                    by=struct.pack("BBBBBBBBB",0xff,0xaa,0x3,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
+                    send_sock.sendall(by)   
+                    time.sleep(0.05) 
+                    #print 'sended!'
                 except Exception as err:
                     ui.textBrowser.append("Send_server:     Disconnected!")
                     ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
@@ -358,7 +352,6 @@ if __name__ == "__main__":
 
 
     def ctrl_joystick():
-        global throttle,pitch,roll,yaw
         while True:
             try:
                 pygame.joystick.init()
