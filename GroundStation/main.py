@@ -25,6 +25,10 @@ global joystick,joystick_nameoutput
 joystick=0
 joystick_nameoutput=0
 
+global state,bf_state
+state=0
+bf_state=0
+
 send_sock=None
 
 ui=None
@@ -65,7 +69,7 @@ class main(QtGui.QDialog, Ui_Form):#, Player
     
     @QtCore.pyqtSlot()
     def on_radioButton_loiter_clicked(self):
-        self.textBrowser.append('Mode: loiter')
+        self.textBrowser.append('Mode:     loiter')
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global mode
         mode=0x3  #loiter
@@ -73,7 +77,7 @@ class main(QtGui.QDialog, Ui_Form):#, Player
     
     @QtCore.pyqtSlot()
     def on_radioButton_auto_clicked(self):
-        self.textBrowser.append('Mode: auto')
+        self.textBrowser.append('Mode:     auto')
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global mode
         mode=0x5  #auto
@@ -81,7 +85,7 @@ class main(QtGui.QDialog, Ui_Form):#, Player
     
     @QtCore.pyqtSlot()
     def on_radioButton_land_clicked(self):
-        self.textBrowser.append('Mode: land')
+        self.textBrowser.append('Mode:     land')
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global mode
         mode=0x2  #land
@@ -89,7 +93,7 @@ class main(QtGui.QDialog, Ui_Form):#, Player
     
     @QtCore.pyqtSlot()
     def on_radioButton_stablize_clicked(self):
-        self.textBrowser.append('Mode: stablize')
+        self.textBrowser.append('Mode:     stablize')
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global mode
         mode=0x1  #stablize
@@ -97,42 +101,43 @@ class main(QtGui.QDialog, Ui_Form):#, Player
     
     @QtCore.pyqtSlot()
     def on_radioButton_altitude_clicked(self):
-        self.textBrowser.append('Mode: altitude')
+        self.textBrowser.append('Mode:     altitude')
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global mode
         mode=0x4  #alt_hold
         #send_CHANNEL(throttle,roll,pitch,yaw,mode)
 
     @QtCore.pyqtSlot()
-    def on_pushButton_level_clicked(self):
-        self.textBrowser.setText('Restart...level')
+    def on_pushButton_takeoff_clicked(self):
+        self.textBrowser.append('CTRL:     takeoff')
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global ctrl
-        ctrl=0xa  #level
+        ctrl=0x4  #takeoff
         #send_CONTROL(ctrl)
-
+   
     @QtCore.pyqtSlot()
-    def on_pushButton_arm_clicked(self):
-        self.textBrowser.append('CTRL: arm')
+    def on_pushButton_land_clicked(self):
+        self.textBrowser.append('CTRL:     land')
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global ctrl
-        ctrl=0xb  #arm
+        ctrl=0x5  #land
+        ui.radioButton_land.setChecked(True)
+        #send_CONTROL(ctrl)
+        
+    @QtCore.pyqtSlot()
+    def on_pushButton_level_clicked(self):
+        self.textBrowser.setText('Restart:     level')
+        self.textBrowser.moveCursor(QtGui.QTextCursor.End)
+        global ctrl
+        ctrl=0x6  #level
         #send_CONTROL(ctrl)
 
     @QtCore.pyqtSlot()
     def on_pushButton_disarm_clicked(self):
-        self.textBrowser.append('CTRL: disarm')
+        self.textBrowser.append('CTRL:     disarm')
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global ctrl
-        ctrl=0xc  #disarm
-        #send_CONTROL(ctrl)
-
-    @QtCore.pyqtSlot()
-    def on_pushButton_takeoff_clicked(self):
-        self.textBrowser.append('CTRL: takeoff')
-        self.textBrowser.moveCursor(QtGui.QTextCursor.End)
-        global ctrl
-        ctrl=0xd  #takeoff
+        ctrl=0x7  #disarm
         #send_CONTROL(ctrl)
 
     @QtCore.pyqtSlot()
@@ -204,11 +209,11 @@ def set_slider(throttle,roll,pitch,yaw):
     try:
         #ui.slider_throto.setValue(throttle)
         ui.label_throto.setText(str(throttle))
-       # ui.slider_roll.setValue(roll)
+        #ui.slider_roll.setValue(roll)
         ui.label_roll.setText(str(roll))
         #ui.slider_pitch.setValue(pitch)
         ui.label_pitch.setText(str(pitch))
-       # ui.slider_yaw.setValue(yaw)
+        #ui.slider_yaw.setValue(yaw)
         ui.label_yaw.setText(str(yaw))
     except Exception as err:
         time.sleep(0.01)
@@ -252,12 +257,21 @@ if __name__ == "__main__":
             
             while True:
                 try:
-                    recv_bytes=receive_sock.recv(4)
-                    parity_bit=struct.unpack("BBBB", recv_bytes)
+                    recv_bytes=receive_sock.recv(3)
+                    parity_bit=struct.unpack("BBB", recv_bytes)
                     #print parity_bit                   
                     if ((parity_bit[0]==0xff)and(parity_bit[1]==0xaa)\
-                        and(parity_bit[2]==0xbb)and(parity_bit[3]==0xcc)):  #FFAABBCC
+                        and(parity_bit[2]==0xbb)):  #head:ffaabb
                         #ui.textBrowser.append('Receive_server: get head!')
+
+                        recv_bytes=receive_sock.recv(1)
+                        global state,bf_state,ctrl,chan3,throttle
+                        bf_state=state
+                        state=struct.unpack("B", recv_bytes)
+                        if (bf_state==1 and state==0 and ctrl==4):  #finished taking off
+                            ctrl=2
+                            throttle=chan3
+                        
                         recv_bytes=receive_sock.recv(4)
                         length=struct.unpack("i", recv_bytes)  #length=120
                         #ui.textBrowser.append('Receive_server: get len!')

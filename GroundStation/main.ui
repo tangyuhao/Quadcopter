@@ -1045,14 +1045,14 @@
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
-            <item row="1" column="6">
+            <item row="1" column="10">
              <widget class="QPushButton" name="pushButton_joystick">
               <property name="text">
                <string>joystick</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="0" colspan="7">
+            <item row="0" column="0" colspan="11">
              <widget class="QTextBrowser" name="textBrowser">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -1068,42 +1068,7 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QPushButton" name="pushButton_connect">
-              <property name="text">
-               <string>connect</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QPushButton" name="pushButton_arm">
-              <property name="text">
-               <string>arm</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QPushButton" name="pushButton_level">
-              <property name="text">
-               <string>level</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="3">
-             <widget class="QPushButton" name="pushButton_takeoff">
-              <property name="text">
-               <string>take off</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="4">
-             <widget class="QPushButton" name="pushButton_disarm">
-              <property name="text">
-               <string>disarm</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0" colspan="7">
+            <item row="2" column="0" colspan="11">
              <layout class="QHBoxLayout" name="horizontalLayout_2">
               <item>
                <widget class="QLabel" name="label_15">
@@ -1153,7 +1118,7 @@
               </item>
              </layout>
             </item>
-            <item row="3" column="0" colspan="5">
+            <item row="3" column="0" colspan="9">
              <layout class="QGridLayout" name="gridLayout_8">
               <item row="0" column="0">
                <widget class="QLabel" name="label_longtitude">
@@ -1198,7 +1163,7 @@
               </item>
              </layout>
             </item>
-            <item row="1" column="5">
+            <item row="1" column="9">
              <spacer name="horizontalSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -1211,15 +1176,50 @@
               </property>
              </spacer>
             </item>
+            <item row="1" column="2">
+             <widget class="QPushButton" name="pushButton_connect">
+              <property name="text">
+               <string>connect</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="3">
+             <widget class="QPushButton" name="pushButton_level">
+              <property name="text">
+               <string>level</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="7">
+             <widget class="QPushButton" name="pushButton_takeoff">
+              <property name="text">
+               <string>take off</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="5">
+             <widget class="QPushButton" name="pushButton_disarm">
+              <property name="text">
+               <string>disarm</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="8">
+             <widget class="QPushButton" name="pushButton_land">
+              <property name="text">
+               <string>land</string>
+              </property>
+             </widget>
+            </item>
            </layout>
            <zorder>textBrowser</zorder>
-           <zorder>pushButton_connect</zorder>
-           <zorder>pushButton_takeoff</zorder>
-           <zorder>pushButton_disarm</zorder>
-           <zorder>pushButton_level</zorder>
-           <zorder>pushButton_arm</zorder>
            <zorder>pushButton_joystick</zorder>
            <zorder>horizontalSpacer</zorder>
+           <zorder>pushButton_connect</zorder>
+           <zorder>pushButton_level</zorder>
+           <zorder>pushButton_takeoff</zorder>
+           <zorder>pushButton_disarm</zorder>
+           <zorder>pushButton_land</zorder>
           </widget>
          </item>
         </layout>
