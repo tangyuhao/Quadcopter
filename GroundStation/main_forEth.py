@@ -300,7 +300,7 @@ if __name__ == "__main__":
                         ui.label_yawspeed.setText(s[0:5]+'cm/s')
                         s=str(hud_alt)
                         ui.label_altitude.setText(s[0:5]+'m')
-                        s=str(hud_climb)
+                        s=str(hud_climb*100)
                         ui.label_climb_speed.setText(s[0:5]+'cm/s')
                         s=str(hud_groundspeed)
                         ui.label_ground_speed.setText(s[0:5]+'cm/s')

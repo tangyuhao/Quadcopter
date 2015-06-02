@@ -116,7 +116,8 @@ int main(int argc, char *argv[])
 	}
 	else if (argc == 1)
 	{
-		char ar1[20]="10.42.0.1:8000";
+		char ar1[20]="127.0.0.1:8000";
+	//	char ar1[20]="10.42.0.1:8000";
 		char ar2[20]="8008";
 		ip_addr_recv = (char *)malloc(sizeof(ar1));
 		ip_addr_recv = ar1;
@@ -137,24 +138,7 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	/*Create a socket*/
-
-    if((client_sockfd_recv = wrap_client(ip_addr_recv))<0)
-	{
-		perror("client_sockfd_recv");
-		return -1;
-	}
-	else
-		printf("Beaglebone connected to Ground Station(recv), fd = %d\n",client_sockfd_recv);	
-//	printf("status length is%d\n",status_len);
-	msleep(100);
-	if((client_sockfd_send = wrap_client(ip_addr_send))<0)
-	{
-		perror("client_sockfd_send");
-		return -1;
-	}
-	else
-		printf("Beaglebone connected to Ground Station(send), fd = %d\n",client_sockfd_send);	
+	
 
 	if ((cmd_fifo_fd = fifo_create_read(CMD_FIFO_NAME)) < 0)
 	{
@@ -229,6 +213,24 @@ int main(int argc, char *argv[])
  		msleep(50);
 		write2mavproxy("level");
 		sleep(7);
+			/*Create a socket*/
+
+   		if((client_sockfd_recv = wrap_client(ip_addr_recv))<0)
+		{
+			perror("client_sockfd_recv");
+			return -1;
+		}
+		else
+			printf("Beaglebone connected to Ground Station(recv), fd = %d\n",client_sockfd_recv);	
+		//	printf("status length is%d\n",status_len);
+		msleep(100);
+		if((client_sockfd_send = wrap_client(ip_addr_send))<0)
+		{
+			perror("client_sockfd_send");
+			return -1;
+		}
+		else
+			printf("Beaglebone connected to Ground Station(send), fd = %d\n",client_sockfd_send);
 		printf("**********************All ready*************************\n");
 		//while for sending and receiving
 		DEBUG_PRINTF("SIZE of status is:%d\n",status_len);
