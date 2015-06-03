@@ -99,7 +99,7 @@ ssize_t wrap_recv(int sock, void *buf, size_t len, int flags)
 		{
 			usleep(10000);
 			printf("TimeoutCnt=%d\n",timeout_cnt);
-			if(timeout_cnt++ >= 50)
+			if(timeout_cnt++ >= SOCKET_TIMEOUT_CNT)
 			{
 				printf("recv timeout\n");
 				return 0;

@@ -38,6 +38,9 @@
 
 #define CLEAR(x) memset((x), 0, sizeof(x))
 
+/*Define the safe parameters*/
+#define SAFE_DOWN_HEIGHT	1.5
+
 /*Define the channel*/
 #define ROLL		0
 #define PITCH		1
@@ -76,6 +79,9 @@
 #define SEND_STATUS		3
 #define RECV_CHANNEL	4
 #define AUTO_TAKEOFF    5
+#define RECV_LAND       6
+#define RECV_LEVEL      7
+#define RECV_DISARM	    8
 #define SOCK_TIMEOUT	-1
 #define SOCK_ERROR		-2
 #define MAV_TIMEOUT		-3
@@ -153,7 +159,7 @@ struct cmd_struct
 struct cmd_struct cmd;
 
 /*Define Functions*/
-short autoTakeoff(unsigned short height,unsigned short step, unsigned short throttle_max, unsigned short fail_threshold);
+short autoTakeoff(float height,unsigned short step, unsigned short throttle_max, unsigned short fail_threshold);
 void write2mavproxy(char *cmd_buf);
 int write2mavproxy_rc(int channel,int chan_value);
 int write2mavproxy_mode(int mav_mode);

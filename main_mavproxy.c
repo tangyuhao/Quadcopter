@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
 	int autotkof_ret;
 	char motor_right = 0;
 	int fifo_create;
+	char ar1[20],ar2[20];
 	status.head[0] = 0xff;
 	status.head[1] = 0xaa;
 	status.head[2] = 0xbb;
@@ -92,6 +93,17 @@ int main(int argc, char *argv[])
 			printf("You need to start our VirtualGCS as server at first\n");
 			printf("Usage: (sudo) ./main [xxx.xxx.xxx.xxx:port_recv] [port_send]\ne.g. 127.0.0.1:8000 8008");
 			return 0;
+		}
+		else if(strcmp(argv[1], "--pc") == 0)
+		{
+
+			strcpy(ar1, "127.0.0.1:8000");
+			strcpy(ar2, "8008");
+			ip_addr_recv = (char *)malloc(sizeof(ar1));
+			ip_addr_recv = ar1;
+			mksock_send_ip(ar1,ar2);
+			ip_addr_send = ar2;
+			DEBUG_PRINTF("The recv port is %s\nThe send port is %s\n",ar1,ar2);
 		}	
 		else
 		{
@@ -118,9 +130,8 @@ int main(int argc, char *argv[])
 	}
 	else if (argc == 1)
 	{
-		char ar1[20]="127.0.0.1:8000";
-	//	char ar1[20]="10.42.0.1:8000";
-		char ar2[20]="8008";
+		strcpy(ar1, "10.42.0.1:8000");
+		strcpy(ar2, "8008");
 		ip_addr_recv = (char *)malloc(sizeof(ar1));
 		ip_addr_recv = ar1;
 		mksock_send_ip(ar1,ar2);
@@ -307,7 +318,7 @@ int main(int argc, char *argv[])
 				CH_PRINTF("cnt:%d\n",cnt);
 
 				except_recv(client_sockfd_recv, &cmd.data.rc, cmd.len, 0, &state_flag);
-
+				
 				if (SAFE_CHAN12)//safe mode: ensure chan1 or chan2 is not too excessive
 				{
 					if (chan_p[0] > 170)
@@ -323,16 +334,27 @@ int main(int argc, char *argv[])
 						chan[1] = 1300;
 					else 
 						chan[1] = chan_p[1]*10;
-					chan[2] = chan_p[2]*10;
-					chan[3] = chan_p[3]*10;
+							
 				}
 				else
 				{
 					chan[0] = chan_p[0]*10;
 					chan[1] = chan_p[1]*10;
-					chan[2] = chan_p[2]*10;
-					chan[3] = chan_p[3]*10;
 				}
+				if (SAFE_DOWN) //safe mode: ensure chan3 >1300 when higher than SAFE_DOWN_HEIGHT
+				{
+					write2mavproxy_status(&status.info);
+					if (status_p->hud_alt > SAFE_DOWN_HEIGHT && chan_p[2] < 135)
+						chan[2] = 1350;
+					else
+						chan[2] = chan_p[2]*10;
+				}
+				else
+				{
+					chan[2] = chan_p[2]*10;
+				}
+				chan[3] = chan_p[3]*10;
+				
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
 				//Print Received Command
@@ -392,7 +414,8 @@ int main(int argc, char *argv[])
 			else if (state_flag == RECV_CONTROL)  
 			{
 				DEBUG_PRINTF("************************Entering RECV_CONTROL!***********************\n");
-				
+				DEBUG_PRINTF("****************************Nothing to do!**************************\n");
+				/*
 				if (cmd.len != len_control)
 				{
 					DEBUG_PRINTF("Received length are %d, but expected to be %d\n", cmd.len, len_control);
@@ -416,6 +439,7 @@ int main(int argc, char *argv[])
 						default:
 							continue;
 					}
+				*/
 				state_flag = RECV_HEADER;
 			}
 		    //[State 5] Auto Take Off
@@ -423,7 +447,8 @@ int main(int argc, char *argv[])
 			{
 				DEBUG_PRINTF("************************Entering AUTO_TAKEOFF!***********************\n");
 				write2mavproxy_status(&status.info);
-				if (status_p->hud_alt > 0.5) 
+				if (status_p->hud_alt > 0.5||status_p->xacc > 100 || status_p->xacc <-100 || 
+					status_p->yacc > 100 || status_p->yacc <-100 ||status_p->hud_climb >0.1) 
 				{	
 					state_flag = SEND_STATUS;
 					status.flag = 0x00;
@@ -434,7 +459,7 @@ int main(int argc, char *argv[])
 					status.flag = 0x01;
 				//function:
 				//short autoTakeoff(unsigned short height,unsigned short step, unsigned short throttle_max, unsigned short fail_threshold)
-					autotkof_ret = autoTakeoff(1.8,50,1440,250);
+					autotkof_ret = autoTakeoff(2.5,50,1440,450);
 					if (autotkof_ret == 0) status.flag = 0x00;
 					else  {
 						status.flag = 0x00;

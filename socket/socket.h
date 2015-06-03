@@ -4,6 +4,7 @@
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#define SOCKET_TIMEOUT_CNT    50
 typedef struct sockaddr SA;
 int wrap_client_ip(const struct in_addr *addr, int port);
 int wrap_client_str(const char *ip, int port);
