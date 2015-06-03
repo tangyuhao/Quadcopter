@@ -38,6 +38,7 @@ short autoTakeoff(unsigned short height,unsigned short step, unsigned short thro
 	msleep(50);
 	char motor_right = 0;
 	struct status_struct * sta = &status.info;
+	DEBUG_PRINTF("************************Entering AUTO_TAKEOFF_STATE  11111!***********************\n");
 	for (i=1;chan < throttle_max;i++)
 	{
 		if (sta->xacc > fail_threshold || sta->xacc <-fail_threshold || sta->yacc > fail_threshold || sta->yacc <-fail_threshold )
@@ -45,7 +46,7 @@ short autoTakeoff(unsigned short height,unsigned short step, unsigned short thro
 			if (sta->hud_alt > 1.0)
 				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
 			else 
-				{write2mavproxy_rc(3,1100);return FAIL_GROUND;}
+				{write2mavproxy_mode(LAND);return FAIL_GROUND;}
 		}
 		if (sta->hud_climb >0.5 && sta->hud_alt >1.0) break;
 		chan += step;	
@@ -58,7 +59,7 @@ short autoTakeoff(unsigned short height,unsigned short step, unsigned short thro
 			if (sta->hud_alt > 1.0)
 				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
 			else 
-				{write2mavproxy_rc(3,1100);return FAIL_GROUND;}
+				{write2mavproxy_mode(LAND);return FAIL_GROUND;}
 		}
 		if (sta->hud_climb >0.5 && sta->hud_alt >1.0) break;
 		msleep(100);
@@ -69,7 +70,7 @@ short autoTakeoff(unsigned short height,unsigned short step, unsigned short thro
 			if (sta->hud_alt > 1.0)
 				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
 			else 
-				{write2mavproxy_rc(3,1100);return FAIL_GROUND;}
+				{write2mavproxy_mode(LAND);return FAIL_GROUND;}
 		}
 		if (sta->hud_climb >0.5 && sta->hud_alt >1.0) break;
 		msleep(100);
@@ -80,7 +81,7 @@ short autoTakeoff(unsigned short height,unsigned short step, unsigned short thro
 			if (sta->hud_alt > 1.0)
 				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
 			else 
-				{write2mavproxy_rc(3,1100);return FAIL_GROUND;}
+				{write2mavproxy_mode(LAND);return FAIL_GROUND;}
 		}		
 		if (sta->hud_climb >0.5 && sta->hud_alt >1.0) break;
 		msleep(100);
@@ -91,19 +92,27 @@ short autoTakeoff(unsigned short height,unsigned short step, unsigned short thro
 			if (sta->hud_alt > 1.0)
 				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
 			else 
-				{write2mavproxy_rc(3,1100);return FAIL_GROUND;}
+				{write2mavproxy_mode(LAND);return FAIL_GROUND;}
 		}
 		if (sta->hud_climb >0.5 && sta->hud_alt >1.0) break;		
 		msleep(100);
 		write2mavproxy_status(sta);
 		sendSta();
 	}
+	DEBUG_PRINTF("************************Entering AUTO_TAKEOFF_STATE  22222!***********************\n");
 	while(1)
 	{
 		msleep(100);
 		write2mavproxy_status(sta);
-		if (sta->hud_alt >3.0) break;		
+		sendSta();
+		if (sta->xacc > fail_threshold || sta->xacc <-fail_threshold || sta->yacc > fail_threshold || sta->yacc <-fail_threshold )
+		{
+			write2mavproxy_mode(LAND);
+			return FAIL_ALOFT;
+		}
+		if (sta->hud_alt >1.0) break;		
 	}
+	DEBUG_PRINTF("************************Exiting AUTO_TAKEOFF_STATE!***********************\n");
 	write2mavproxy_mode(LOITER);
 	return 0;
 }

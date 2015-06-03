@@ -346,8 +346,8 @@ if __name__ == "__main__":
 ##                        time.sleep(5)
 ##                        send_sock.sendall(by)
 ##                        ctrl=0x2
-                    time.sleep(0.1)
-                    if ctrl!=0x2:
+                    print ctrl
+                    if ctrl==0x2:
                         by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
                         send_sock.sendall(by)   
                         time.sleep(0.05)                   
@@ -365,6 +365,10 @@ if __name__ == "__main__":
                         send_sock.sendall(by)   
                         time.sleep(0.05) 
                         #print 'sended!'
+                    else:
+                        by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
+                        send_sock.sendall(by) 
+                        time.sleep(5)
                 except Exception as err:
                     ui.textBrowser.append("Send_server:     Disconnected!")
                     ui.textBrowser.moveCursor(QtGui.QTextCursor.End)

@@ -295,6 +295,7 @@ int main(int argc, char *argv[])
 			//[State 2] Receive channel values
 			else if(state_flag == RECV_CHANNEL)
 			{
+				DEBUG_PRINTF("************************Entering RECV_CHANNEL!***********************\n");
 				if(cmd.len != len_rc)
 				{
 					DEBUG_PRINTF("Received length are %d, but expected to be %d\n", cmd.len, len_rc);
@@ -376,6 +377,7 @@ int main(int argc, char *argv[])
 		    //[State 3] Receive state_asking commands
 			else if(state_flag == SEND_STATUS)
 			{
+				DEBUG_PRINTF("************************Entering SEND_STATUS!***********************\n");
 				write2mavproxy_status(&status.info);
 				/*Send status data to GCS*/
 				ret = wrap_send(client_sockfd_send, &status, status_len, 0);
@@ -389,7 +391,7 @@ int main(int argc, char *argv[])
 			//[State 4] Receive control commands
 			else if (state_flag == RECV_CONTROL)  
 			{
-
+				DEBUG_PRINTF("************************Entering RECV_CONTROL!***********************\n");
 				
 				if (cmd.len != len_control)
 				{
@@ -419,6 +421,7 @@ int main(int argc, char *argv[])
 		    //[State 5] Auto Take Off
 			else if(state_flag == AUTO_TAKEOFF)
 			{
+				DEBUG_PRINTF("************************Entering AUTO_TAKEOFF!***********************\n");
 				write2mavproxy_status(&status.info);
 				if (status_p->hud_alt > 0.5) 
 				{	
@@ -433,7 +436,10 @@ int main(int argc, char *argv[])
 				//short autoTakeoff(unsigned short height,unsigned short step, unsigned short throttle_max, unsigned short fail_threshold)
 					autotkof_ret = autoTakeoff(1.8,50,1440,250);
 					if (autotkof_ret == 0) status.flag = 0x00;
-					else  status.flag = 0x02;
+					else  {
+						status.flag = 0x00;
+						DEBUG_PRINTF("************************AUTO TAKE OFF FAILED!***********************\n");
+					}
 					state_flag = SEND_STATUS;
 					continue;					
 				}				
