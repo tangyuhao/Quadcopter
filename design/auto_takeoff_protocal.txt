@@ -1,0 +1,54 @@
+takeoff协议：
+当正常起飞后，飞机传回flag从1变成0，说明起飞过程成功完成，地面站：将ctrl变为2，但是joystick部分需要加上判断，此时如果遥控器对应的mode为loiter且throttle>1400方可解锁遥控器控制
+当起飞后，飞机传回flag从1变成3，说明起飞过程中失败，地面站：将ctrl变为2，但是joystick部分需要加上判断，此时如果遥控器对应的mode为land且throttle<1400，视为可以解锁（实现方法可以载ctrl变为2后将某一个新的标志位 置成 某个数字，之后joystick内部用该数字来判断到底什么情况下解锁遥控器控制
+当发送起飞指令后，有可能飞机姿态不好或者没有GPS信号，那么飞机会采取忽略该命令的措施，之后，飞机会先发送flag为0x02，然后发送0x00(相当于发0发0.。。。收到信号。。发2发0发0发0.。。。），这种情况下遥控器不会锁定，地面站收到该信号后，继续正常发送指令
+
+
+
+
+
+
+
+
+
+
+附：take off部分代码
+//[State 5] Auto Take Off
+			else if(state_flag == AUTO_TAKEOFF)
+			{
+				DEBUG_PRINTF("************************Entering AUTO_TAKEOFF!***********************\n");
+				write2mavproxy_status(&status.info);
+				if (status_p-> satellites_visible < 4 || 
+					status_p->hud_alt > 0.5||status_p->roll_degree > 10.0 || status_p->roll_degree <-10.0 || 
+					status_p->pitch_degree > 10.0 || status_p->pitch_degree <-10.0 || status_p->hud_climb >0.1) 
+				{	
+					status.flag = 0x02;
+					sendSta();//send status
+					status.flag = 0x00;
+					state_flag = SEND_STATUS;//enter sending status 
+					continue;
+				}
+				else
+				{
+					DEBUG_PRINTF("************************Entering function of AUTO_TAKEOFF!***********************\n");			
+					status.flag = 0x01;
+				//function:
+				//short autoTakeoff(float height,unsigned short step, unsigned short throttle_max, unsigned short fail_threshold)
+					autotkof_ret = autoTakeoff(2.5,50,1440,35);
+					if (autotkof_ret == 0) 
+					{
+						status.flag = 0x00;
+						DEBUG_PRINTF("************************AUTO TAKE OFF SUCCESSED!***********************\n");
+					}
+					else  {
+						status.flag = 0x03;
+						write2mavproxy_status(&status.info);
+						sendSta();//send status
+						DEBUG_PRINTF("************************AUTO TAKE OFF FAILED!***********************\n");
+					}
+					state_flag = SEND_STATUS;
+					count_takeoff ++;
+				}				
+
+
+			}

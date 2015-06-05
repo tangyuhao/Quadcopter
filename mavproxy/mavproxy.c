@@ -25,7 +25,7 @@ int sendSta()
 	}
 }
 
-short autoTakeoff(float height,unsigned short step, unsigned short throttle_max, unsigned short fail_threshold)
+short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,float fail_threshold)
 {
 	int i,chan = 1100;
 	write2mavproxy_rc(1,1500);
@@ -38,14 +38,16 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 	msleep(50);
 	char motor_right = 0;
 	float height_fail = 0.5,height_1to2 = 1.0,climb_max = 0.5;
+	float fail_threshold_neg = -fail_threshold;
 	struct status_struct * sta = &status.info;
 	DEBUG_PRINTF("************************Entering AUTO_TAKEOFF_STATE  11111!***********************\n");
-		write2mavproxy_status(sta);//only for test
-		sendSta();//only for test
+	write2mavproxy_status(sta);
+	sendSta();
 
 	for (i=1;chan < throttle_max;i++)
 	{
-		if (sta->xacc > fail_threshold || sta->xacc <-fail_threshold || sta->yacc > fail_threshold || sta->yacc <-fail_threshold )
+		if (sta->roll_degree > fail_threshold || sta->roll_degree < fail_threshold_neg || 
+			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg )
 		{
 			if (sta->hud_alt > height_fail)
 				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
@@ -58,7 +60,8 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 		msleep(100);
 		write2mavproxy_status(sta);
 		sendSta();
-		if (sta->xacc > fail_threshold || sta->xacc <-fail_threshold || sta->yacc > fail_threshold || sta->yacc <-fail_threshold )
+		if (sta->roll_degree > fail_threshold || sta->roll_degree < fail_threshold_neg || 
+			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg )
 		{
 			if (sta->hud_alt > height_fail)
 				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
@@ -69,7 +72,8 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 		msleep(100);
 		write2mavproxy_status(sta);
 		sendSta();
-		if (sta->xacc > fail_threshold || sta->xacc <-fail_threshold || sta->yacc > fail_threshold || sta->yacc <-fail_threshold )
+		if (sta->roll_degree > fail_threshold || sta->roll_degree < fail_threshold_neg || 
+			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg )
 		{
 			if (sta->hud_alt > height_fail)
 				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
@@ -80,7 +84,8 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 		msleep(100);
 		write2mavproxy_status(sta);
 		sendSta();
-		if (sta->xacc > fail_threshold || sta->xacc <-fail_threshold || sta->yacc > fail_threshold || sta->yacc <-fail_threshold )
+		if (sta->roll_degree > fail_threshold || sta->roll_degree < fail_threshold_neg || 
+			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg )
 		{
 			if (sta->hud_alt > height_fail)
 				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
@@ -91,7 +96,8 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 		msleep(100);
 		write2mavproxy_status(sta);
 		sendSta();
-		if (sta->xacc > fail_threshold || sta->xacc <-fail_threshold || sta->yacc > fail_threshold || sta->yacc <-fail_threshold )
+		if (sta->roll_degree > fail_threshold || sta->roll_degree < fail_threshold_neg || 
+			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg )
 		{
 			if (sta->hud_alt > height_fail)
 				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
@@ -103,24 +109,25 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 		write2mavproxy_status(sta);
 		sendSta();
 	}
-/*
+
 	DEBUG_PRINTF("************************Entering AUTO_TAKEOFF_STATE  22222!***********************\n");
 	while(1)
 	{
 		msleep(100);
 		write2mavproxy_status(sta);
 		sendSta();
-		if (sta->xacc > fail_threshold || sta->xacc <-fail_threshold || sta->yacc > fail_threshold || sta->yacc <-fail_threshold )
+		if (sta->roll_degree > fail_threshold || sta->roll_degree < fail_threshold_neg || 
+			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg )
 		{
 			write2mavproxy_mode(LAND);
 			return FAIL_ALOFT;
 		}
 		break;
-	//	if (sta->hud_alt >height) break;		
+		if (sta->hud_alt >height) break;		
 	}
 	DEBUG_PRINTF("************************Exiting AUTO_TAKEOFF_STATE!***********************\n");
 	write2mavproxy_mode(LOITER);
-*/
+
 	return 0;
 }
 void write2mavproxy(char *cmd_buf)
@@ -186,6 +193,9 @@ int write2mavproxy_status(struct status_struct* sta)
 			nread += ret;
 		}
 	}
+	sta->roll_degree = sta->roll_degree/(2*PI)*360.0;
+	sta->pitch_degree = sta->pitch_degree/(2*PI)*360.0;
+	sta->yaw_degree = sta->yaw_degree/(2*PI)*360.0;
 	if(nread == status_len)
 	{
 	STATUS_PRINTF("********************************status info***********************************\n");

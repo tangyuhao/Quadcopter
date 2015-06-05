@@ -120,17 +120,23 @@ class main(QtGui.QDialog, Ui_Form):#, Player
     def on_pushButton_land_clicked(self):
         self.textBrowser.append('CTRL:     land')
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
-        global ctrl
-        ctrl=0x5  #land
+        global ctrl,mode,joystick
+        ctrl=0x2
+        mode=0x2  #land
+        joystick=0x0  #disable joystick
         ui.radioButton_land.setChecked(True)
         #send_CONTROL(ctrl)
         
     @QtCore.pyqtSlot()
     def on_pushButton_level_clicked(self):
-        self.textBrowser.setText('Restart:     level')
-        self.textBrowser.moveCursor(QtGui.QTextCursor.End)
-        global ctrl
-        ctrl=0x6  #level
+        global ctrl,arm
+        if arm==0:
+            ctrl=0x6  #level
+            self.textBrowser.setText('Restart:     level')
+            self.textBrowser.moveCursor(QtGui.QTextCursor.End)
+        else:
+            self.textBrowser.setText('Restart fault')
+            self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         #send_CONTROL(ctrl)
 
     @QtCore.pyqtSlot()
@@ -277,7 +283,9 @@ if __name__ == "__main__":
                         #ui.textBrowser.append('Receive_server: get head!')
 
                         recv_bytes=receive_sock.recv(1)
-                        global state,bf_state,ctrl,chan3,throttle,joy_enable
+                        global state,bf_state
+                        global ctrl,throttle,joy_enable
+                        global chan3,arm
                         bf_state=state
                         state=struct.unpack("B", recv_bytes)
                         state=state[0]
@@ -289,8 +297,7 @@ if __name__ == "__main__":
                             joy_enable = 0
                             ctrl=2
                             throttle=chan3
-                            
-                        
+                                                   
                         recv_bytes=receive_sock.recv(4)
                         length=struct.unpack("i", recv_bytes)  #length=120
                         #ui.textBrowser.append('Receive_server: get len!')
@@ -303,8 +310,9 @@ if __name__ == "__main__":
                         motor_speed3, motor_speed4, heading_north, lat, lon, eph, \
                         satellites_visible, chan1, chan2, chan3, chan4, chan5, \
                         chan6, chan7, chan8, vol_remain, cur_remain, bat_remain, \
-                        rollspeed,pitchspeed,yawspeed,hud_alt,hud_climb,hud_groundspeed \
-                        = struct.unpack("iiiiiiiiiiiiiiiiiiiiiiiiffffff", recv_bytes)                 
+                        rollspeed,pitchspeed,yawspeed,hud_alt,hud_climb,hud_groundspeed, \
+                        rollangle,pitchangle,yawangle  \
+                        = struct.unpack("iiiiiiiiiiiiiiiiiiiiiiiifffffffff", recv_bytes)                 
                         ui.label_arm.setText(str(arm))
                         ui.label_head_N.setText(str(heading_north))
                         ui.label_satellites.setText(str(satellites_visible))
@@ -330,17 +338,23 @@ if __name__ == "__main__":
                         ui.label_cur_remain.setText(str(cur_remain)+'mA')
                         ui.label_bat_remain.setText(str(bat_remain)+'%')
                         s=str(rollspeed)
-                        ui.label_rollspeed.setText(s[0:5]+'cm/s')
+                        ui.label_rollspeed.setText(s[0:5]+'rad/s')
                         s=str(pitchspeed)
-                        ui.label_pitchspeed.setText(s[0:5]+'cm/s')
+                        ui.label_pitchspeed.setText(s[0:5]+'rad/s')
                         s=str(yawspeed)
-                        ui.label_yawspeed.setText(s[0:5]+'cm/s')
+                        ui.label_yawspeed.setText(s[0:5]+'rad/s')
                         s=str(hud_alt)
-                        ui.label_altitude.setText(s[0:5]+'m')
+                        ui.label_altitude.setText(s[0:6]+'m')
                         s=str(hud_climb*100)
-                        ui.label_climb_speed.setText(s[0:5]+'cm/s')
+                        ui.label_climb_speed.setText(s[0:6]+'cm/s')
                         s=str(hud_groundspeed)
                         ui.label_ground_speed.setText(s[0:5]+'cm/s')
+                        s=str(rollangle)
+                        ui.label_roll_angle.setText(s[0:7]+"'")
+                        s=str(pitchangle)
+                        ui.label_pitch_angle.setText(s[0:7]+"'")
+                        s=str(yawangle)
+                        ui.label_yaw_angle.setText(s[0:7]+"'")
                         
                 except Exception as err:
                     ui.textBrowser.append("Receive_server:     Disconnected!")
@@ -362,23 +376,29 @@ if __name__ == "__main__":
             
             while True:
                 try:
+                    if (state==2 and ctrl==0x4):
+                        ctrl=0x2
+                        
                     if (state==0 and ctrl==0x4):
-                        print 'ctrl:'
+                        print 'ctrl:    ',
                         print ctrl
-                        print 'state:'
+                        print 'state:    ',
                         print state
-                        print  'times:'
+                        print  'times:    ',
                         times_takeoff = times_takeoff +1
                         print times_takeoff
                         #print 'ctrl:  ',
                         #print ctrl
                         #by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x0,0x0,0x0,0x0,0x0,0x0)
-                        by=struct.pack("BBBB",0xff,0xaa,ctrl,0x0)
-                        
-                        
+                        by=struct.pack("BBBB",0xff,0xaa,ctrl,0x0) 
                         send_sock.sendall(by)
                         time.sleep(0.25)
-                    
+
+                    elif ctrl==0x6:    #level
+                        by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
+                        send_sock.sendall(by)
+                        ctrl=0x2
+                        time.sleep(0.05)
                    
                     elif ctrl==0x2:
                         times_sendchan = times_sendchan + 1
@@ -414,7 +434,7 @@ if __name__ == "__main__":
 
 
     def ctrl_joystick():
-        global throttle,pitch,roll,yaw,joy_enable
+        global throttle,pitch,roll,yaw,joy_enable,joystick
         while True:
             try:
                 pygame.joystick.init()
@@ -457,8 +477,7 @@ if __name__ == "__main__":
                         else:
                             if (btn1_temp==1 and btn2_temp ==1 and throttle_temp >1400 ):
                                 joy_enable = 1
-                                
-                        
+                                                     
                         
                     except Exception as err:
                         ui.textBrowser.append("Joystick err:     Disconnected!")

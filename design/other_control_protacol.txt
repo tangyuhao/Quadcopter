@@ -1,0 +1,4 @@
+level指令：
+在飞机未arm使（即arm = 0）时，地面站按下level之后向飞行器发送level指令，即将ctrl变为6发送一次，然后sleep 5秒，然后继续发送正常指令。
+land指令：按下后将joystick关闭，同时将mode改为land以及ctrl变为2
+

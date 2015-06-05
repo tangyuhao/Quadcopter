@@ -38,6 +38,9 @@
 
 #define CLEAR(x) memset((x), 0, sizeof(x))
 
+/*Define the constant*/
+#define PI	3.1415926
+
 /*Define the safe parameters*/
 #define SAFE_DOWN_HEIGHT	1.5
 
@@ -122,6 +125,7 @@ struct status_struct
 	int vol_remain, cur_remain, bat_remain;
 	float rollspeed,pitchspeed,yawspeed;
 	float hud_alt, hud_climb,hud_groundspeed;
+	float roll_degree, pitch_degree,yaw_degree;
 };
 
 /*Creat a structure for sending the status*/
@@ -159,7 +163,7 @@ struct cmd_struct
 struct cmd_struct cmd;
 
 /*Define Functions*/
-short autoTakeoff(float height,unsigned short step, unsigned short throttle_max, unsigned short fail_threshold);
+short autoTakeoff(float height,unsigned short step, unsigned short throttle_max, float fail_threshold);
 void write2mavproxy(char *cmd_buf);
 int write2mavproxy_rc(int channel,int chan_value);
 int write2mavproxy_mode(int mav_mode);

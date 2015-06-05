@@ -167,10 +167,13 @@ int main(int argc, char *argv[])
 	{
 		#if BEAGLEBONE 
 		dup2(cmd_fifo_fd, STDIN_FILENO);
-		execl("/usr/local/bin/mavproxy_pro.py","mavproxy_pro.py","--master=/dev/ttyO1","--baudrate=57600",NULL);
+		execl("/home/debian/quadcopter/Quadcopter/mavproxy_python/bin/mavproxy_pro_forDebian.py","mavproxy_pro_forDebian.py",
+				"--master=/dev/ttyO1","--baudrate=57600",NULL);
 		#else 
 		dup2(cmd_fifo_fd, STDIN_FILENO);
-		execl("/usr/local/bin/mavproxy_pro_forPC.py","mavproxy_pro_forPC.py","--master=/dev/ttyUSB0","--baudrate=57600",NULL);
+		execl("/home/tyh/QUADCOPTER_GIT/Quadcopter/mavproxy_python/bin/mavproxy_pro_forPC.py","mavproxy_pro_forPC.py",
+				"--master=/dev/ttyUSB0","--baudrate=57600",NULL);
+	//	execl("/usr/local/bin/mavproxy_pro_forPC.py","mavproxy_pro_forPC.py","--master=/dev/ttyUSB0","--baudrate=57600",NULL);
 	//	execl("/usr/local/bin/mavproxy_pro_forPC.py","mavproxy_pro_forPC.py","--master=/dev/ttyUSB1","--baudrate=57600",NULL);
 		#endif
 	}
@@ -450,30 +453,32 @@ int main(int argc, char *argv[])
 			{
 				DEBUG_PRINTF("************************Entering AUTO_TAKEOFF!***********************\n");
 				write2mavproxy_status(&status.info);
-				if (status_p->hud_alt > 0.5||status_p->xacc > 100 || status_p->xacc <-100 || 
-					status_p->yacc > 100 || status_p->yacc <-100 ||status_p->hud_climb >0.1) 
+				if (status_p-> satellites_visible < 4 || 
+					status_p->hud_alt > 0.5||status_p->roll_degree > 10.0 || status_p->roll_degree <-10.0 || 
+					status_p->pitch_degree > 10.0 || status_p->pitch_degree <-10.0 || status_p->hud_climb >0.1) 
 				{	
-					state_flag = SEND_STATUS;
+					status.flag = 0x02;
+					sendSta();//send status
 					status.flag = 0x00;
+					state_flag = SEND_STATUS;//enter sending status 
 					continue;
 				}
 				else
 				{
-					//write2mavproxy_status(&status.info);
-					//if (status_p-> satellites_visible < 4)	
-					//	continue;	
 					DEBUG_PRINTF("************************Entering function of AUTO_TAKEOFF!***********************\n");			
 					status.flag = 0x01;
 				//function:
-				//short autoTakeoff(unsigned short height,unsigned short step, unsigned short throttle_max, unsigned short fail_threshold)
-					autotkof_ret = autoTakeoff(2.5,50,1440,450);
+				//short autoTakeoff(float height,unsigned short step, unsigned short throttle_max, unsigned short fail_threshold)
+					autotkof_ret = autoTakeoff(2.5,50,1440,35);
 					if (autotkof_ret == 0) 
 					{
 						status.flag = 0x00;
 						DEBUG_PRINTF("************************AUTO TAKE OFF SUCCESSED!***********************\n");
 					}
 					else  {
-						status.flag = 0x00;
+						status.flag = 0x03;
+						write2mavproxy_status(&status.info);
+						sendSta();//send status
 						DEBUG_PRINTF("************************AUTO TAKE OFF FAILED!***********************\n");
 					}
 					state_flag = SEND_STATUS;
