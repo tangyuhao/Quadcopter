@@ -21,14 +21,18 @@ yaw=0x5DC #1500
 mode=0x1
 ctrl=0x2
 
-global joystick,joystick_nameoutput,joy_enable
+global joystick,joystick_nameoutput,joy_enable,joy_state
 joystick=0
 joystick_nameoutput=0
-joy_enable = 1
+joy_enable=1
+joy_state=0
 
 global state,bf_state
 state=0
 bf_state=0
+
+global arm
+arm=0
 
 send_sock=None
 
@@ -45,28 +49,24 @@ class main(QtGui.QDialog, Ui_Form):#, Player
         self.label_throto.setText(str(value))
         global throttle
         throttle=value
-        #send_CHANNEL(throttle,roll,pitch,yaw,mode)
     
     @QtCore.pyqtSlot(int)
     def on_slider_roll_valueChanged(self, value):
         self.label_roll.setText(str(value))
         global roll
         roll=value
-        #send_CHANNEL(throttle,roll,pitch,yaw,mode)
     
     @QtCore.pyqtSlot(int)
     def on_slider_pitch_valueChanged(self, value):
         self.label_pitch.setText(str(value))
         global pitch
         pitch=value
-        #send_CHANNEL(throttle,roll,pitch,yaw,mode)
     
     @QtCore.pyqtSlot(int)
     def on_slider_yaw_valueChanged(self, value):
         self.label_yaw.setText(str(value))
         global yaw
         yaw=value
-        #send_CHANNEL(throttle,roll,pitch,yaw,mode)
     
     @QtCore.pyqtSlot()
     def on_radioButton_loiter_clicked(self):
@@ -74,7 +74,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global mode
         mode=0x3  #loiter
-        #send_CHANNEL(throttle,roll,pitch,yaw,mode)
     
     @QtCore.pyqtSlot()
     def on_radioButton_auto_clicked(self):
@@ -82,7 +81,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global mode
         mode=0x5  #auto
-        #send_CHANNEL(throttle,roll,pitch,yaw,mode)
     
     @QtCore.pyqtSlot()
     def on_radioButton_land_clicked(self):
@@ -90,7 +88,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global mode
         mode=0x2  #land
-        #send_CHANNEL(throttle,roll,pitch,yaw,mode)
     
     @QtCore.pyqtSlot()
     def on_radioButton_stablize_clicked(self):
@@ -98,7 +95,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global mode
         mode=0x1  #stablize
-        #send_CHANNEL(throttle,roll,pitch,yaw,mode)
     
     @QtCore.pyqtSlot()
     def on_radioButton_altitude_clicked(self):
@@ -106,7 +102,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global mode
         mode=0x4  #alt_hold
-        #send_CHANNEL(throttle,roll,pitch,yaw,mode)
 
     @QtCore.pyqtSlot()
     def on_pushButton_takeoff_clicked(self):
@@ -114,7 +109,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global ctrl
         ctrl=0x4  #takeoff
-        #send_CONTROL(ctrl)
    
     @QtCore.pyqtSlot()
     def on_pushButton_land_clicked(self):
@@ -125,7 +119,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
         mode=0x2  #land
         joystick=0x0  #disable joystick
         ui.radioButton_land.setChecked(True)
-        #send_CONTROL(ctrl)
         
     @QtCore.pyqtSlot()
     def on_pushButton_level_clicked(self):
@@ -137,7 +130,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
         else:
             self.textBrowser.setText('Restart fault')
             self.textBrowser.moveCursor(QtGui.QTextCursor.End)
-        #send_CONTROL(ctrl)
 
     @QtCore.pyqtSlot()
     def on_pushButton_disarm_clicked(self):
@@ -145,7 +137,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global ctrl
         ctrl=0x7  #disarm
-        #send_CONTROL(ctrl)
 
     @QtCore.pyqtSlot()
     def on_pushButton_reset_clicked(self):
@@ -153,7 +144,6 @@ class main(QtGui.QDialog, Ui_Form):#, Player
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global ctrl
         ctrl=0x2  #reset
-        #send_CONTROL(ctrl)
 
     @QtCore.pyqtSlot()
     def on_pushButton_connect_clicked(self):
@@ -284,19 +274,26 @@ if __name__ == "__main__":
 
                         recv_bytes=receive_sock.recv(1)
                         global state,bf_state
-                        global ctrl,throttle,joy_enable
+                        global ctrl,throttle
+                        global joy_enable_finished,joy_enable_error
                         global chan3,arm
                         bf_state=state
                         state=struct.unpack("B", recv_bytes)
+                        print state
                         state=state[0]
                         #print bf_state
                         #print state
                         #print ctrl
                         #print
                         if (bf_state==1 and state==0 and ctrl==4):  #finished taking off
-                            joy_enable = 0
+                            joy_state = 1
                             ctrl=2
                             throttle=chan3
+                        elif (bf_state==1 and state==3):  #error during taking off
+                            joy_state = 2
+                            ctrl=2
+                        elif (state==2 and ctrl == 4):
+                            ctrl = 2
                                                    
                         recv_bytes=receive_sock.recv(4)
                         length=struct.unpack("i", recv_bytes)  #length=120
@@ -338,11 +335,11 @@ if __name__ == "__main__":
                         ui.label_cur_remain.setText(str(cur_remain)+'mA')
                         ui.label_bat_remain.setText(str(bat_remain)+'%')
                         s=str(rollspeed)
-                        ui.label_rollspeed.setText(s[0:5]+'rad/s')
+                        ui.label_rollspeed.setText(s[0:6]+'rad/s')
                         s=str(pitchspeed)
-                        ui.label_pitchspeed.setText(s[0:5]+'rad/s')
+                        ui.label_pitchspeed.setText(s[0:6]+'rad/s')
                         s=str(yawspeed)
-                        ui.label_yawspeed.setText(s[0:5]+'rad/s')
+                        ui.label_yawspeed.setText(s[0:6]+'rad/s')
                         s=str(hud_alt)
                         ui.label_altitude.setText(s[0:6]+'m')
                         s=str(hud_climb*100)
@@ -376,10 +373,7 @@ if __name__ == "__main__":
             
             while True:
                 try:
-                    if (state==2 and ctrl==0x4):
-                        ctrl=0x2
-                        
-                    if (state==0 and ctrl==0x4):
+                    if (state==0 and ctrl==0x4):#send takeoff command
                         print 'ctrl:    ',
                         print ctrl
                         print 'state:    ',
@@ -392,15 +386,15 @@ if __name__ == "__main__":
                         #by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x0,0x0,0x0,0x0,0x0,0x0)
                         by=struct.pack("BBBB",0xff,0xaa,ctrl,0x0) 
                         send_sock.sendall(by)
-                        time.sleep(0.25)
+                        time.sleep(0.05)
 
                     elif ctrl==0x6:    #level
                         by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
                         send_sock.sendall(by)
+                        time.sleep(5)
                         ctrl=0x2
-                        time.sleep(0.05)
                    
-                    elif ctrl==0x2:
+                    elif (state==0 and ctrl==0x2):
                         times_sendchan = times_sendchan + 1
                         if times_sendchan < 5 :
                             by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
@@ -434,7 +428,8 @@ if __name__ == "__main__":
 
 
     def ctrl_joystick():
-        global throttle,pitch,roll,yaw,joy_enable,joystick
+        global throttle,pitch,roll,yaw
+        global joy_enable,joystick,joystick_nameoutput,joy_state
         while True:
             try:
                 pygame.joystick.init()
@@ -442,7 +437,6 @@ if __name__ == "__main__":
                 _joystick = pygame.joystick.Joystick(0)
                 _joystick.init()
                 time.sleep(1)
-                global joystick_nameoutput
                 if joystick_nameoutput==0:
                     ui.textBrowser.append("Get joystick:" + str(_joystick.get_name()))
                     ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
@@ -475,10 +469,17 @@ if __name__ == "__main__":
                             set_slider(throttle,roll,pitch,yaw)
                             print btn1,btn2
                         else:
-                            if (btn1_temp==1 and btn2_temp ==1 and throttle_temp >1400 ):
+                            if (joy_state==1 and btn1_temp==1 and btn2_temp==1\
+                                and throttle_temp>1400):
+                                #state:finished taking off
+                                #mode:loiter,throttle>1400,unlock joystick
                                 joy_enable = 1
-                                                     
-                        
+                            if (joy_state==2 and btn1_temp==0 and btn2_temp==1\
+                                and throttle_temp<1400):
+                                #state:error during taking off
+                                #mode:land,throttle<1400,unlock joystick
+                                joy_enable = 1
+                                                                           
                     except Exception as err:
                         ui.textBrowser.append("Joystick err:     Disconnected!")
                         ui.textBrowser.moveCursor(QtGui.QTextCursor.End)

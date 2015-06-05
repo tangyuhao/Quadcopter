@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/lixin/eric4/GroundStation_eric4/main.ui'
 #
-# Created: Thu Jun  4 10:38:56 2015
+# Created: Fri Jun  5 16:02:52 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
-        Form.resize(1155, 688)
+        Form.resize(1155, 736)
         self.gridLayout_10 = QtGui.QGridLayout(Form)
         self.gridLayout_10.setObjectName(_fromUtf8("gridLayout_10"))
         self.verticalLayout_2 = QtGui.QVBoxLayout()
@@ -656,9 +656,9 @@ class Ui_Form(object):
         self.label_channel2.setText(_translate("Form", "0", None))
         self.label_channel3.setText(_translate("Form", "0", None))
         self.label_channel4.setText(_translate("Form", "0", None))
-        self.label_57.setText(_translate("Form", "rollspeed", None))
-        self.label_58.setText(_translate("Form", "pitchspeed", None))
-        self.label_59.setText(_translate("Form", "yawspeed", None))
+        self.label_57.setText(_translate("Form", "rolls_peed", None))
+        self.label_58.setText(_translate("Form", "pitch_speed", None))
+        self.label_59.setText(_translate("Form", "yaw_speed", None))
         self.label_rollspeed.setText(_translate("Form", "0", None))
         self.label_pitchspeed.setText(_translate("Form", "0", None))
         self.label_yawspeed.setText(_translate("Form", "0", None))

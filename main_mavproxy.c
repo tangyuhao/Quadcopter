@@ -300,6 +300,8 @@ int main(int argc, char *argv[])
 						state_flag = SEND_STATUS; break;
 					case AUTOFLY_TYPE:
 						state_flag = AUTO_TAKEOFF; break;
+					case LEVEL_TYPE:
+						state_flag = RECV_LEVEL;break;
 					default:
 						state_flag = RECV_HEADER;
 				}
@@ -486,6 +488,13 @@ int main(int argc, char *argv[])
 				}				
 
 
+			}
+			else if(state_flag == RECV_LEVEL)
+			{
+				write2mavproxy_status(&status.info);
+				if (status_p->arm == 0)
+					write2mavproxy("level");
+				state_flag = RECV_HEADER;
 			}
 		   	//[State -1] Receive error commands
         	else if(state_flag == SOCK_TIMEOUT || state_flag == SOCK_ERROR)
