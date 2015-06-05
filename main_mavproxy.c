@@ -180,6 +180,7 @@ int main(int argc, char *argv[])
 		int state_flag = RECV_HEADER;
 		char cmd_buf[100],control_flag;
 		int cnt = 0;
+		int count_takeoff = 0;
 		//arm_state = ARM_IDLE;
 		throttl_val = 0;
 		yaw_val = 0;
@@ -252,12 +253,14 @@ int main(int argc, char *argv[])
 			/*Create a socket*/
 		while(1)
 		{
+			DEBUG_PRINTF("TAKEOFF TIMES:%d\n",count_takeoff);
 			ST_PRINTF("state_flag=%d\n", state_flag);
 			//[State 0] Receive header
 			if(state_flag == RECV_HEADER)
 			{
 				CLEAR(&cmd);
 				except_recv(client_sockfd_recv, cmd.head, sizeof(cmd.head), 0, &state_flag);
+				DEBUG_PRINTF("get socket bytes@@@@@@@\n");
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
 				if(cmd.head[0] == 0xff && cmd.head[1] == 0xaa)
@@ -456,17 +459,25 @@ int main(int argc, char *argv[])
 				}
 				else
 				{
+					//write2mavproxy_status(&status.info);
+					//if (status_p-> satellites_visible < 4)	
+					//	continue;	
+					DEBUG_PRINTF("************************Entering function of AUTO_TAKEOFF!***********************\n");			
 					status.flag = 0x01;
 				//function:
 				//short autoTakeoff(unsigned short height,unsigned short step, unsigned short throttle_max, unsigned short fail_threshold)
 					autotkof_ret = autoTakeoff(2.5,50,1440,450);
-					if (autotkof_ret == 0) status.flag = 0x00;
+					if (autotkof_ret == 0) 
+					{
+						status.flag = 0x00;
+						DEBUG_PRINTF("************************AUTO TAKE OFF SUCCESSED!***********************\n");
+					}
 					else  {
 						status.flag = 0x00;
 						DEBUG_PRINTF("************************AUTO TAKE OFF FAILED!***********************\n");
 					}
 					state_flag = SEND_STATUS;
-					continue;					
+					count_takeoff ++;
 				}				
 
 

@@ -40,6 +40,9 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 	float height_fail = 0.5,height_1to2 = 1.0,climb_max = 0.5;
 	struct status_struct * sta = &status.info;
 	DEBUG_PRINTF("************************Entering AUTO_TAKEOFF_STATE  11111!***********************\n");
+		write2mavproxy_status(sta);//only for test
+		sendSta();//only for test
+
 	for (i=1;chan < throttle_max;i++)
 	{
 		if (sta->xacc > fail_threshold || sta->xacc <-fail_threshold || sta->yacc > fail_threshold || sta->yacc <-fail_threshold )
@@ -100,6 +103,7 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 		write2mavproxy_status(sta);
 		sendSta();
 	}
+/*
 	DEBUG_PRINTF("************************Entering AUTO_TAKEOFF_STATE  22222!***********************\n");
 	while(1)
 	{
@@ -111,10 +115,12 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 			write2mavproxy_mode(LAND);
 			return FAIL_ALOFT;
 		}
-		if (sta->hud_alt >height) break;		
+		break;
+	//	if (sta->hud_alt >height) break;		
 	}
 	DEBUG_PRINTF("************************Exiting AUTO_TAKEOFF_STATE!***********************\n");
 	write2mavproxy_mode(LOITER);
+*/
 	return 0;
 }
 void write2mavproxy(char *cmd_buf)

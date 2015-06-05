@@ -21,9 +21,10 @@ yaw=0x5DC #1500
 mode=0x1
 ctrl=0x2
 
-global joystick,joystick_nameoutput
+global joystick,joystick_nameoutput,joy_enable
 joystick=0
 joystick_nameoutput=0
+joy_enable = 1
 
 global state,bf_state
 state=0
@@ -141,6 +142,14 @@ class main(QtGui.QDialog, Ui_Form):#, Player
         #send_CONTROL(ctrl)
 
     @QtCore.pyqtSlot()
+    def on_pushButton_reset_clicked(self):
+        self.textBrowser.append('CTRL:     reset')
+        self.textBrowser.moveCursor(QtGui.QTextCursor.End)
+        global ctrl
+        ctrl=0x2  #reset
+        #send_CONTROL(ctrl)
+
+    @QtCore.pyqtSlot()
     def on_pushButton_connect_clicked(self):
         self.textBrowser.append('Begin ssh')
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
@@ -225,16 +234,19 @@ def set_button(btn1,btn2):
         ui.radioButton_stablize.setChecked(True)
         mode=0x1
         #print mode
-    else:
-        if (btn1==1 and btn2==1):
-            ui.radioButton_loiter.setChecked(True)
-            mode=0x3
-            #print mode
-        else:
-            if (btn1==1 and btn2==0):
-                ui.radioButton_altitude.setChecked(True)
-                mode=0x4
-                #print mode
+    elif (btn1==1 and btn2==1):
+        ui.radioButton_loiter.setChecked(True)
+        mode=0x3
+        #print mode
+    elif (btn1==1 and btn2==0):
+        ui.radioButton_altitude.setChecked(True)
+        mode=0x4
+        #print mode
+    elif (btn1==0 and btn2==1):
+        ui.radioButton_land.setChecked(True)
+        mode=0x2
+        #print mode
+
 
   
 if __name__ == "__main__":
@@ -265,12 +277,19 @@ if __name__ == "__main__":
                         #ui.textBrowser.append('Receive_server: get head!')
 
                         recv_bytes=receive_sock.recv(1)
-                        global state,bf_state,ctrl,chan3,throttle
+                        global state,bf_state,ctrl,chan3,throttle,joy_enable
                         bf_state=state
                         state=struct.unpack("B", recv_bytes)
+                        state=state[0]
+                        #print bf_state
+                        #print state
+                        #print ctrl
+                        #print
                         if (bf_state==1 and state==0 and ctrl==4):  #finished taking off
+                            joy_enable = 0
                             ctrl=2
                             throttle=chan3
+                            
                         
                         recv_bytes=receive_sock.recv(4)
                         length=struct.unpack("i", recv_bytes)  #length=120
@@ -318,7 +337,7 @@ if __name__ == "__main__":
                         ui.label_yawspeed.setText(s[0:5]+'cm/s')
                         s=str(hud_alt)
                         ui.label_altitude.setText(s[0:5]+'m')
-                        s=str(hud_climb)
+                        s=str(hud_climb*100)
                         ui.label_climb_speed.setText(s[0:5]+'cm/s')
                         s=str(hud_groundspeed)
                         ui.label_ground_speed.setText(s[0:5]+'cm/s')
@@ -333,7 +352,9 @@ if __name__ == "__main__":
         global send_sock
         send_sock=ServerSocket(('127.0.0.1',8000))
         send_sock.listen(2)
-        
+        global ctrl,state
+        times_takeoff = 0
+        times_sendchan = 0
         while True:
             c, client = send_sock.accept()
             ui.textBrowser.append('Send_server:     Connected!')
@@ -341,34 +362,51 @@ if __name__ == "__main__":
             
             while True:
                 try:
-##                    if ctrl!=0x2:
-##                        by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,pitch/10,roll/10,throttle/10,yaw/10,mode)
-##                        time.sleep(5)
-##                        send_sock.sendall(by)
-##                        ctrl=0x2
-                    print ctrl
-                    if ctrl==0x2:
-                        by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
-                        send_sock.sendall(by)   
-                        time.sleep(0.05)                   
-                        by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
-                        send_sock.sendall(by)   
-                        time.sleep(0.05)
-                        by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
-                        send_sock.sendall(by)   
-                        time.sleep(0.05)
-                        by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
-                        send_sock.sendall(by)   
-                        time.sleep(0.05)
-                        #request for status
-                        by=struct.pack("BBBBBBBBB",0xff,0xaa,0x3,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
-                        send_sock.sendall(by)   
-                        time.sleep(0.05) 
-                        #print 'sended!'
+                    if (state==0 and ctrl==0x4):
+                        print 'ctrl:'
+                        print ctrl
+                        print 'state:'
+                        print state
+                        print  'times:'
+                        times_takeoff = times_takeoff +1
+                        print times_takeoff
+                        #print 'ctrl:  ',
+                        #print ctrl
+                        #by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x0,0x0,0x0,0x0,0x0,0x0)
+                        by=struct.pack("BBBB",0xff,0xaa,ctrl,0x0)
+                        
+                        
+                        send_sock.sendall(by)
+                        time.sleep(0.25)
+                    
+                   
+                    elif ctrl==0x2:
+                        times_sendchan = times_sendchan + 1
+                        if times_sendchan < 5 :
+                            by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
+                            send_sock.sendall(by)   
+                            time.sleep(0.05)
+                        else :
+                            times_sendchan = 0
+                            by=struct.pack("BBBB",0xff,0xaa,0x3,0x0)
+                            send_sock.sendall(by)
+                            time.sleep(0.05)
+##                        by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
+##                        send_sock.sendall(by)   
+##                        time.sleep(0.05)
+##                        by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
+##                        send_sock.sendall(by)   
+##                        time.sleep(0.05)
+##                        by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
+##                        send_sock.sendall(by)   
+##                        time.sleep(0.05)
+##                        #request for status
+##                        by=struct.pack("BBBB",0xff,0xaa,0x3,0x0)
+##                        send_sock.sendall(by)   
+##                        time.sleep(0.05) 
+##                        #print 'sended!'
                     else:
-                        by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
-                        send_sock.sendall(by) 
-                        time.sleep(5)
+                         time.sleep(0.1)
                 except Exception as err:
                     ui.textBrowser.append("Send_server:     Disconnected!")
                     ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
@@ -376,7 +414,7 @@ if __name__ == "__main__":
 
 
     def ctrl_joystick():
-        global throttle,pitch,roll,yaw
+        global throttle,pitch,roll,yaw,joy_enable
         while True:
             try:
                 pygame.joystick.init()
@@ -394,19 +432,32 @@ if __name__ == "__main__":
                     try:
                         time.sleep(0.05)
                         pygame.event.get()
-                        throttle=int(_joystick.get_axis(0)*400+1500)         			
-                        print throttle
-                        pitch=int(_joystick.get_axis(1)*400+1500)
-                        roll=int(_joystick.get_axis(3)*400+1500) 
-                        yaw=int(_joystick.get_axis(2)*470+1500)
-                        if yaw>1870:
-                            yaw=1900
-                        elif yaw<1100:
-                            yaw=1100
-                        btn1=_joystick.get_button(0)
-                        btn2=_joystick.get_button(1)
-                        set_button(btn1,btn2)
-                        set_slider(throttle,roll,pitch,yaw)
+                        throttle_temp=int(_joystick.get_axis(0)*400+1500)         			
+                        print throttle_temp
+                        pitch_temp=int(_joystick.get_axis(1)*400+1500)
+                        roll_temp=int(_joystick.get_axis(3)*400+1500) 
+                        yaw_temp=int(_joystick.get_axis(2)*470+1500)
+                        btn1_temp=_joystick.get_button(0)
+                        btn2_temp=_joystick.get_button(1)
+                        if (joy_enable ==1):
+                            throttle=throttle_temp
+                            pitch=pitch_temp
+                            roll=roll_temp
+                            if yaw_temp>1870:
+                                yaw=1900
+                            elif yaw_temp<1100:
+                                yaw=1100
+                            else:
+                                yaw=yaw_temp       
+                            btn1=btn1_temp
+                            btn2=btn2_temp
+                            set_button(btn1,btn2)
+                            set_slider(throttle,roll,pitch,yaw)
+                            print btn1,btn2
+                        else:
+                            if (btn1_temp==1 and btn2_temp ==1 and throttle_temp >1400 ):
+                                joy_enable = 1
+                                
                         
                         
                     except Exception as err:
