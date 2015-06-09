@@ -47,7 +47,7 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 	for (i=1;chan < throttle_max;i++)
 	{
 		if (sta->roll_degree > fail_threshold || sta->roll_degree < fail_threshold_neg || 
-			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg )
+			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg || GPS_TEST)
 		{
 			if (sta->hud_alt > height_fail)
 				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
@@ -61,7 +61,7 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 		write2mavproxy_status(sta);
 		sendSta();
 		if (sta->roll_degree > fail_threshold || sta->roll_degree < fail_threshold_neg || 
-			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg )
+			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg || GPS_TEST)
 		{
 			if (sta->hud_alt > height_fail)
 				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
@@ -73,7 +73,7 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 		write2mavproxy_status(sta);
 		sendSta();
 		if (sta->roll_degree > fail_threshold || sta->roll_degree < fail_threshold_neg || 
-			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg )
+			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg || GPS_TEST)
 		{
 			if (sta->hud_alt > height_fail)
 				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
@@ -85,7 +85,7 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 		write2mavproxy_status(sta);
 		sendSta();
 		if (sta->roll_degree > fail_threshold || sta->roll_degree < fail_threshold_neg || 
-			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg )
+			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg || GPS_TEST)
 		{
 			if (sta->hud_alt > height_fail)
 				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
@@ -97,7 +97,7 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 		write2mavproxy_status(sta);
 		sendSta();
 		if (sta->roll_degree > fail_threshold || sta->roll_degree < fail_threshold_neg || 
-			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg )
+			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg || GPS_TEST)
 		{
 			if (sta->hud_alt > height_fail)
 				{write2mavproxy_mode(LAND);return FAIL_ALOFT;}
@@ -117,16 +117,18 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 		write2mavproxy_status(sta);
 		sendSta();
 		if (sta->roll_degree > fail_threshold || sta->roll_degree < fail_threshold_neg || 
-			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg )
+			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg || GPS_TEST)
 		{
 			write2mavproxy_mode(LAND);
 			return FAIL_ALOFT;
 		}
-		break;
 		if (sta->hud_alt >height) break;		
 	}
 	DEBUG_PRINTF("************************Exiting AUTO_TAKEOFF_STATE!***********************\n");
-	write2mavproxy_mode(LOITER);
+	if (NEED_GPS) 
+		write2mavproxy_mode(LOITER);
+	else 
+		write2mavproxy_mode(ALT_HOLD);
 
 	return 0;
 }

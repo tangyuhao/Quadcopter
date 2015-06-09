@@ -108,7 +108,8 @@ class main(QtGui.QDialog, Ui_Form):#, Player
         self.textBrowser.append('CTRL:     takeoff')
         self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         global ctrl
-        ctrl=0x4  #takeoff
+        if arm != 0:
+            ctrl=0x4  #takeoff
    
     @QtCore.pyqtSlot()
     def on_pushButton_land_clicked(self):
@@ -254,6 +255,7 @@ if __name__ == "__main__":
         sys.exit(app.exec_())
 
     def receive_server():
+        global ui
         global receive_sock
         receive_sock=ServerSocket(('127.0.0.1',8008))
         receive_sock.listen(2)
@@ -274,8 +276,8 @@ if __name__ == "__main__":
 
                         recv_bytes=receive_sock.recv(1)
                         global state,bf_state
-                        global ctrl,throttle
-                        global joy_enable_finished,joy_enable_error
+                        global ctrl,throttle,mode
+                        global joy_enable,joy_state
                         global chan3,arm
                         bf_state=state
                         state=struct.unpack("B", recv_bytes)
@@ -286,12 +288,23 @@ if __name__ == "__main__":
                         #print ctrl
                         #print
                         if (bf_state==1 and state==0 and ctrl==4):  #finished taking off
+                            ui.textBrowser.append('finished taking off')
+                            ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
                             joy_state = 1
+                            joy_enable=0
                             ctrl=2
+                            mode = 3 #loiter
+                            ui.radioButton_loiter.setChecked(True)
                             throttle=chan3
                         elif (bf_state==1 and state==3):  #error during taking off
+                            ui.textBrowser.append('error during taking off')
+                            ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
                             joy_state = 2
+                            joy_enable=0
                             ctrl=2
+                            mode = 2 #land
+                            ui.radioButton_land.setChecked(True)
+                            throttle=chan3
                         elif (state==2 and ctrl == 4):
                             ctrl = 2
                                                    
@@ -386,7 +399,7 @@ if __name__ == "__main__":
                         #by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x0,0x0,0x0,0x0,0x0,0x0)
                         by=struct.pack("BBBB",0xff,0xaa,ctrl,0x0) 
                         send_sock.sendall(by)
-                        time.sleep(0.05)
+                        time.sleep(0.35)
 
                     elif ctrl==0x6:    #level
                         by=struct.pack("BBBBBBBBB",0xff,0xaa,ctrl,0x5,roll/10,pitch/10,throttle/10,yaw/10,mode)
@@ -453,6 +466,15 @@ if __name__ == "__main__":
                         yaw_temp=int(_joystick.get_axis(2)*470+1500)
                         btn1_temp=_joystick.get_button(0)
                         btn2_temp=_joystick.get_button(1)
+##                        print 'joy_state ',
+##                        print joy_state
+##                        print 'joy_enable ',
+##                        print joy_enable
+##                        print 'btn1_tmp ',
+##                        print btn1_temp
+##                        print 'btn2_tmp ',
+##                        print btn2_temp
+##                        print
                         if (joy_enable ==1):
                             throttle=throttle_temp
                             pitch=pitch_temp
@@ -467,18 +489,21 @@ if __name__ == "__main__":
                             btn2=btn2_temp
                             set_button(btn1,btn2)
                             set_slider(throttle,roll,pitch,yaw)
-                            print btn1,btn2
+##                            print btn1,btn2
                         else:
                             if (joy_state==1 and btn1_temp==1 and btn2_temp==1\
                                 and throttle_temp>1400):
                                 #state:finished taking off
                                 #mode:loiter,throttle>1400,unlock joystick
                                 joy_enable = 1
+                                joy_state = 0
                             if (joy_state==2 and btn1_temp==0 and btn2_temp==1\
                                 and throttle_temp<1400):
                                 #state:error during taking off
                                 #mode:land,throttle<1400,unlock joystick
                                 joy_enable = 1
+                                joy_state = 0
+
                                                                            
                     except Exception as err:
                         ui.textBrowser.append("Joystick err:     Disconnected!")

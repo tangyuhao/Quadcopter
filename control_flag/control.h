@@ -9,4 +9,5 @@
 #define SAFE_DOWN 1    //ensure chan3 not too low when over X meters
 #define SAFE_CHAN12 1
 #define SAFE_HENCE 0
+#define NEED_GPS 0
 #endif

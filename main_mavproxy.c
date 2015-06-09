@@ -455,15 +455,22 @@ int main(int argc, char *argv[])
 			{
 				DEBUG_PRINTF("************************Entering AUTO_TAKEOFF!***********************\n");
 				write2mavproxy_status(&status.info);
-				if (status_p-> satellites_visible < 4 || 
-					status_p->hud_alt > 0.5||status_p->roll_degree > 10.0 || status_p->roll_degree <-10.0 || 
+				if (status_p->arm == 0 ||status_p->hud_alt > 0.5||status_p->roll_degree > 10.0 || status_p->roll_degree <-10.0 || 
 					status_p->pitch_degree > 10.0 || status_p->pitch_degree <-10.0 || status_p->hud_climb >0.1) 
-				{	
+				{		
 					status.flag = 0x02;
 					sendSta();//send status
 					status.flag = 0x00;
 					state_flag = SEND_STATUS;//enter sending status 
 					continue;
+				}
+				else if (NEED_GPS && status_p-> satellites_visible < 4)
+				{
+					status.flag = 0x02;
+					sendSta();//send status
+					status.flag = 0x00;
+					state_flag = SEND_STATUS;//enter sending status 
+					continue;				
 				}
 				else
 				{
@@ -471,16 +478,17 @@ int main(int argc, char *argv[])
 					status.flag = 0x01;
 				//function:
 				//short autoTakeoff(float height,unsigned short step, unsigned short throttle_max, unsigned short fail_threshold)
-					autotkof_ret = autoTakeoff(2.5,50,1440,35);
+					autotkof_ret = autoTakeoff(2.0,50,1440,35);
 					if (autotkof_ret == 0) 
 					{
-						status.flag = 0x00;
+						status.flag = 0x00;	
 						DEBUG_PRINTF("************************AUTO TAKE OFF SUCCESSED!***********************\n");
 					}
 					else  {
 						status.flag = 0x03;
 						write2mavproxy_status(&status.info);
 						sendSta();//send status
+						status.flag = 0x00;
 						DEBUG_PRINTF("************************AUTO TAKE OFF FAILED!***********************\n");
 					}
 					state_flag = SEND_STATUS;

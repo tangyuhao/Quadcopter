@@ -35,6 +35,11 @@
     #define STATUS_PRINTF(format, ...) 
 #endif
 
+#if NEED_GPS
+    #define GPS_TEST sta->satellites_visible<4
+#else
+    #define GPS_TEST 0 
+#endif
 
 #define CLEAR(x) memset((x), 0, sizeof(x))
 
