@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/lixin/eric4/GroundStation_eric4/main.ui'
 #
-# Created: Fri Jun  5 16:02:52 2015
+# Created: Tue Jun  9 19:54:01 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -513,9 +513,11 @@ class Ui_Form(object):
         self.groupBox_4.setObjectName(_fromUtf8("groupBox_4"))
         self.gridLayout_2 = QtGui.QGridLayout(self.groupBox_4)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
+        spacerItem7 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_2.addItem(spacerItem7, 1, 11, 1, 1)
         self.pushButton_joystick = QtGui.QPushButton(self.groupBox_4)
         self.pushButton_joystick.setObjectName(_fromUtf8("pushButton_joystick"))
-        self.gridLayout_2.addWidget(self.pushButton_joystick, 1, 12, 1, 1)
+        self.gridLayout_2.addWidget(self.pushButton_joystick, 1, 13, 1, 1)
         self.textBrowser = QtGui.QTextBrowser(self.groupBox_4)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -524,7 +526,7 @@ class Ui_Form(object):
         self.textBrowser.setSizePolicy(sizePolicy)
         self.textBrowser.setMaximumSize(QtCore.QSize(16777215, 100))
         self.textBrowser.setObjectName(_fromUtf8("textBrowser"))
-        self.gridLayout_2.addWidget(self.textBrowser, 0, 0, 1, 13)
+        self.gridLayout_2.addWidget(self.textBrowser, 0, 0, 1, 14)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.label_15 = QtGui.QLabel(self.groupBox_4)
@@ -536,8 +538,8 @@ class Ui_Form(object):
         self.lineEdit_start2 = QtGui.QLineEdit(self.groupBox_4)
         self.lineEdit_start2.setObjectName(_fromUtf8("lineEdit_start2"))
         self.horizontalLayout_2.addWidget(self.lineEdit_start2)
-        spacerItem7 = QtGui.QSpacerItem(13, 52, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem7)
+        spacerItem8 = QtGui.QSpacerItem(13, 52, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem8)
         self.label_16 = QtGui.QLabel(self.groupBox_4)
         self.label_16.setObjectName(_fromUtf8("label_16"))
         self.horizontalLayout_2.addWidget(self.label_16)
@@ -550,7 +552,7 @@ class Ui_Form(object):
         self.pushButton_Ok = QtGui.QPushButton(self.groupBox_4)
         self.pushButton_Ok.setObjectName(_fromUtf8("pushButton_Ok"))
         self.horizontalLayout_2.addWidget(self.pushButton_Ok)
-        self.gridLayout_2.addLayout(self.horizontalLayout_2, 2, 0, 1, 13)
+        self.gridLayout_2.addLayout(self.horizontalLayout_2, 2, 0, 1, 14)
         self.gridLayout_8 = QtGui.QGridLayout()
         self.gridLayout_8.setObjectName(_fromUtf8("gridLayout_8"))
         self.label_longtitude = QtGui.QLabel(self.groupBox_4)
@@ -573,8 +575,6 @@ class Ui_Form(object):
         self.label_latitude.setObjectName(_fromUtf8("label_latitude"))
         self.gridLayout_8.addWidget(self.label_latitude, 0, 1, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout_8, 3, 0, 1, 9)
-        spacerItem8 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout_2.addItem(spacerItem8, 1, 11, 1, 1)
         self.pushButton_connect = QtGui.QPushButton(self.groupBox_4)
         self.pushButton_connect.setObjectName(_fromUtf8("pushButton_connect"))
         self.gridLayout_2.addWidget(self.pushButton_connect, 1, 2, 1, 1)
@@ -593,6 +593,9 @@ class Ui_Form(object):
         self.pushButton_reset = QtGui.QPushButton(self.groupBox_4)
         self.pushButton_reset.setObjectName(_fromUtf8("pushButton_reset"))
         self.gridLayout_2.addWidget(self.pushButton_reset, 1, 9, 1, 1)
+        self.pushButton_CV = QtGui.QPushButton(self.groupBox_4)
+        self.pushButton_CV.setObjectName(_fromUtf8("pushButton_CV"))
+        self.gridLayout_2.addWidget(self.pushButton_CV, 1, 12, 1, 1)
         self.verticalLayout_12.addWidget(self.groupBox_4)
         self.horizontalLayout_6.addLayout(self.verticalLayout_12)
         self.gridLayout_10.addWidget(self.splitter_2, 0, 1, 1, 1)
@@ -656,9 +659,9 @@ class Ui_Form(object):
         self.label_channel2.setText(_translate("Form", "0", None))
         self.label_channel3.setText(_translate("Form", "0", None))
         self.label_channel4.setText(_translate("Form", "0", None))
-        self.label_57.setText(_translate("Form", "rolls_peed", None))
-        self.label_58.setText(_translate("Form", "pitch_speed", None))
-        self.label_59.setText(_translate("Form", "yaw_speed", None))
+        self.label_57.setText(_translate("Form", "rollspeed", None))
+        self.label_58.setText(_translate("Form", "pitchspeed", None))
+        self.label_59.setText(_translate("Form", "yawspeed", None))
         self.label_rollspeed.setText(_translate("Form", "0", None))
         self.label_pitchspeed.setText(_translate("Form", "0", None))
         self.label_yawspeed.setText(_translate("Form", "0", None))
@@ -708,6 +711,7 @@ class Ui_Form(object):
         self.pushButton_disarm.setText(_translate("Form", "disarm", None))
         self.pushButton_land.setText(_translate("Form", "land", None))
         self.pushButton_reset.setText(_translate("Form", "reset", None))
+        self.pushButton_CV.setText(_translate("Form", "CV", None))
 
 
 if __name__ == "__main__":

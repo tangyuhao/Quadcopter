@@ -166,6 +166,8 @@ int main(int argc, char *argv[])
 	if ((pid_fork = fork()) == 0)
 	{
 		#if BEAGLEBONE 
+		system("echo BB-UART1 > /sys/devices/bone_capemgr.9/slots");		
+		system("echo BB-UART2 > /sys/devices/bone_capemgr.9/slots");		
 		dup2(cmd_fifo_fd, STDIN_FILENO);
 		execl("/home/debian/quadcopter/Quadcopter/mavproxy_python/bin/mavproxy_pro_forDebian.py","mavproxy_pro_forDebian.py",
 				"--master=/dev/ttyO1","--baudrate=57600",NULL);
@@ -328,8 +330,9 @@ int main(int argc, char *argv[])
 				except_recv(client_sockfd_recv, &cmd.data.rc, cmd.len, 0, &state_flag);
 				write2mavproxy_status(&status.info);
 				//fail-safe for toppling over
-				if ((status_p->hud_alt < 0.5 && status_p->arm == 1) && (status_p->roll_degree > 65.0 || status_p->roll_degree <-65.0 || 
-					status_p->pitch_degree > 65.0 || status_p->pitch_degree <-65.0))
+				if ((status_p->hud_alt < 1 && status_p->arm == 1) && (status_p->roll_degree > 45.0 || status_p->roll_degree <-45.0 || 
+					status_p->pitch_degree > 45.0 || status_p->pitch_degree <-45.0 || status_p->xacc > 700 || status_p->xacc < -700 || 
+					status_p->yacc > 700 || status_p->yacc < -700))
 				{
 					chan[0] = 1500;
 					chan[1] = 1500;

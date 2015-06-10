@@ -47,7 +47,7 @@
 #define PI	3.1415926
 
 /*Define the safe parameters*/
-#define SAFE_DOWN_HEIGHT	1.5
+#define SAFE_DOWN_HEIGHT	3.5
 
 /*Define the channel*/
 #define ROLL		0

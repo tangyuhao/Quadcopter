@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1155</width>
-    <height>688</height>
+    <height>736</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1127,14 +1127,27 @@
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
-            <item row="1" column="12">
+            <item row="1" column="11">
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="13">
              <widget class="QPushButton" name="pushButton_joystick">
               <property name="text">
                <string>joystick</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="0" colspan="13">
+            <item row="0" column="0" colspan="14">
              <widget class="QTextBrowser" name="textBrowser">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -1150,7 +1163,7 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="0" colspan="13">
+            <item row="2" column="0" colspan="14">
              <layout class="QHBoxLayout" name="horizontalLayout_2">
               <item>
                <widget class="QLabel" name="label_15">
@@ -1245,19 +1258,6 @@
               </item>
              </layout>
             </item>
-            <item row="1" column="11">
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
             <item row="1" column="2">
              <widget class="QPushButton" name="pushButton_connect">
               <property name="text">
@@ -1300,6 +1300,13 @@
               </property>
              </widget>
             </item>
+            <item row="1" column="12">
+             <widget class="QPushButton" name="pushButton_CV">
+              <property name="text">
+               <string>CV</string>
+              </property>
+             </widget>
+            </item>
            </layout>
            <zorder>textBrowser</zorder>
            <zorder>pushButton_joystick</zorder>
@@ -1310,6 +1317,7 @@
            <zorder>pushButton_disarm</zorder>
            <zorder>pushButton_land</zorder>
            <zorder>pushButton_reset</zorder>
+           <zorder>pushButton_CV</zorder>
           </widget>
          </item>
         </layout>

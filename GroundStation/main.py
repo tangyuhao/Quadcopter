@@ -161,6 +161,13 @@ class main(QtGui.QDialog, Ui_Form):#, Player
         ssh.close()
 
     @QtCore.pyqtSlot()
+    def on_pushButton_CV_clicked(self):
+        self.textBrowser.append('CV control!')
+        self.textBrowser.moveCursor(QtGui.QTextCursor.End)
+        global ctrl
+        ctrl=0x1  #CV
+
+    @QtCore.pyqtSlot()
     def on_pushButton_joystick_clicked(self):
         global joystick
         joystick=1-joystick
@@ -287,7 +294,7 @@ if __name__ == "__main__":
                         #print state
                         #print ctrl
                         #print
-                        if (bf_state==1 and state==0 and ctrl==4):  #finished taking off
+                        if (bf_state==1 and state==0 and (ctrl==4 or ctrl==1)):  #finished taking off
                             ui.textBrowser.append('finished taking off')
                             ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
                             joy_state = 1
@@ -307,7 +314,7 @@ if __name__ == "__main__":
                             mode = 2 #land
                             ui.radioButton_land.setChecked(True)
                             throttle=chan3
-                        elif (state==2 and ctrl == 4):
+                        elif (state==2 and (ctrl==4 or ctrl==1)):
                             ctrl = 2
                                                    
                         recv_bytes=receive_sock.recv(4)
@@ -388,7 +395,7 @@ if __name__ == "__main__":
             
             while True:
                 try:
-                    if (state==0 and ctrl==0x4):#send takeoff command
+                    if (state==0 and (ctrl==4 or ctrl==1)):#send takeoff/CV command
                         print 'ctrl:    ',
                         print ctrl
                         print 'state:    ',
