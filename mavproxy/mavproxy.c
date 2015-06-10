@@ -125,11 +125,7 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 		if (sta->hud_alt >height) break;		
 	}
 	DEBUG_PRINTF("************************Exiting AUTO_TAKEOFF_STATE!***********************\n");
-	if (NEED_GPS) 
-		write2mavproxy_mode(LOITER);
-	else 
-		write2mavproxy_mode(ALT_HOLD);
-
+	write2mavproxy_mode(LOITER);
 	return 0;
 }
 void write2mavproxy(char *cmd_buf)

@@ -295,6 +295,8 @@ if __name__ == "__main__":
                             ctrl=2
                             mode = 3 #loiter
                             ui.radioButton_loiter.setChecked(True)
+##                            mode = 4 #alt hold
+##                            ui.radioButton_altitude.setChecked(True)
                             throttle=chan3
                         elif (bf_state==1 and state==3):  #error during taking off
                             ui.textBrowser.append('error during taking off')
@@ -492,7 +494,9 @@ if __name__ == "__main__":
 ##                            print btn1,btn2
                         else:
                             if (joy_state==1 and btn1_temp==1 and btn2_temp==1\
-                                and throttle_temp>1400):
+                                and throttle_temp>1400):#loiter
+##                            if (joy_state==1 and btn1_temp==1 and btn2_temp==0\
+##                                and throttle_temp>1400):#alt hold
                                 #state:finished taking off
                                 #mode:loiter,throttle>1400,unlock joystick
                                 joy_enable = 1

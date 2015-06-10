@@ -326,43 +326,55 @@ int main(int argc, char *argv[])
 				CH_PRINTF("cnt:%d\n",cnt);
 
 				except_recv(client_sockfd_recv, &cmd.data.rc, cmd.len, 0, &state_flag);
-				
-				if (SAFE_CHAN12)//safe mode: ensure chan1 or chan2 is not too excessive
+				write2mavproxy_status(&status.info);
+				//fail-safe for toppling over
+				if ((status_p->hud_alt < 0.5 && status_p->arm == 1) && (status_p->roll_degree > 65.0 || status_p->roll_degree <-65.0 || 
+					status_p->pitch_degree > 65.0 || status_p->pitch_degree <-65.0))
 				{
-					if (chan_p[0] > 170)
-						chan[0] = 1700;
-					else if (chan_p[0] < 130)
-						chan[0] = 1300;
-					else 
-						chan[0] = chan_p[0]*10;
+					chan[0] = 1500;
+					chan[1] = 1500;
+					chan[2] = 1100;
+					chan[3] = 1100;			
+				}
+				//normal situation
+				else
+				{				
+					if (SAFE_CHAN12)//safe mode: ensure chan1 or chan2 is not too excessive
+					{
+						if (chan_p[0] > 170)//use char to transfer the channels
+							chan[0] = 1700;
+						else if (chan_p[0] < 130)
+							chan[0] = 1300;
+						else 
+							chan[0] = chan_p[0]*10;
 
-					if (chan_p[1] > 170)
-						chan[1] = 1700;
-					else if (chan_p[1] < 130)
-						chan[1] = 1300;
-					else 
-						chan[1] = chan_p[1]*10;
+						if (chan_p[1] > 170)
+							chan[1] = 1700;
+						else if (chan_p[1] < 130)
+							chan[1] = 1300;
+						else 
+							chan[1] = chan_p[1]*10;
 							
-				}
-				else
-				{
-					chan[0] = chan_p[0]*10;
-					chan[1] = chan_p[1]*10;
-				}
-				if (SAFE_DOWN) //safe mode: ensure chan3 >1300 when higher than SAFE_DOWN_HEIGHT
-				{
-					write2mavproxy_status(&status.info);
-					if (status_p->hud_alt > SAFE_DOWN_HEIGHT && chan_p[2] < 135)
-						chan[2] = 1350;
+					}
 					else
+					{
+						chan[0] = chan_p[0]*10;
+						chan[1] = chan_p[1]*10;
+					}
+					if (SAFE_DOWN) //safe mode: ensure chan3 >1300 when higher than SAFE_DOWN_HEIGHT
+					{
+
+						if (status_p->hud_alt > SAFE_DOWN_HEIGHT && chan_p[2] < 135)
+							chan[2] = 1350;
+						else
+							chan[2] = chan_p[2]*10;
+					}
+					else
+					{
 						chan[2] = chan_p[2]*10;
+					}
+					chan[3] = chan_p[3]*10;
 				}
-				else
-				{
-					chan[2] = chan_p[2]*10;
-				}
-				chan[3] = chan_p[3]*10;
-				
 				if(state_flag == SOCK_TIMEOUT)
 					continue;
 				//Print Received Command
@@ -464,7 +476,8 @@ int main(int argc, char *argv[])
 					state_flag = SEND_STATUS;//enter sending status 
 					continue;
 				}
-				else if (NEED_GPS && status_p-> satellites_visible < 4)
+/*
+				else if (status_p-> satellites_visible < 3)
 				{
 					status.flag = 0x02;
 					sendSta();//send status
@@ -472,6 +485,7 @@ int main(int argc, char *argv[])
 					state_flag = SEND_STATUS;//enter sending status 
 					continue;				
 				}
+*/
 				else
 				{
 					DEBUG_PRINTF("************************Entering function of AUTO_TAKEOFF!***********************\n");			
