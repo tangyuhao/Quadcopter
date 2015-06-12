@@ -10,4 +10,5 @@
 #define SAFE_CHAN12 1
 #define SAFE_HENCE 0
 #define NEED_GPS 0
+#define TEST 1
 #endif

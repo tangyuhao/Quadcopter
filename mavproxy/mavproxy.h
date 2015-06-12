@@ -71,14 +71,13 @@
 
 
 /*Define cmd_type*/
-#define CONTROL_TYPE	0x01
-#define CHANNEL_TYPE	0x02
-#define STATUS_TYPE     0X03
-#define AUTOFLY_TYPE	0x04
-#define LAND_TYPE	0x05
-#define LEVEL_TYPE	0x06
-#define DISARM_TYPE	0x07
-
+#define COMPUTERVISION_TYPE		0x01
+#define CHANNEL_TYPE			0x02
+#define STATUS_TYPE    	 		0X03
+#define AUTOFLY_TYPE			0x04
+#define LAND_TYPE				0x05
+#define LEVEL_TYPE				0x06
+#define DISARM_TYPE				0x07
 
 /*Define State Flag*/
 #define RECV_HEADER		0
@@ -90,6 +89,7 @@
 #define RECV_LAND       6
 #define RECV_LEVEL      7
 #define RECV_DISARM	    8
+#define COMPUTERVISION	9
 #define SOCK_TIMEOUT	-1
 #define SOCK_ERROR		-2
 #define MAV_TIMEOUT		-3
@@ -131,6 +131,7 @@ struct status_struct
 	float rollspeed,pitchspeed,yawspeed;
 	float hud_alt, hud_climb,hud_groundspeed;
 	float roll_degree, pitch_degree,yaw_degree;
+
 };
 
 /*Creat a structure for sending the status*/
@@ -140,6 +141,8 @@ struct send_status
 	unsigned char flag;
 	int len;
 	struct status_struct info;
+	unsigned char cv_command[8];
+	unsigned char car_lisence[8];
 }status;
 
 /*Create a structure to hold channel command value*/

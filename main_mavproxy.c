@@ -13,6 +13,7 @@
 #include "mavproxy.h"
 #include "fifo.h"
 #include "socket.h"
+#include "serial.h"
 
 pid_t pid_fork;
 int client_sockfd_recv;
@@ -64,9 +65,10 @@ static void except_recv(int sock, void *buf, size_t len, int flags, int *state_f
 
 int main(int argc, char *argv[])
 {
-	int i;
+	int i_chan,i_cv,j_cv;//temporate variants for loops
 	int motor12,motor13,motor14,motor23,motor24,motor34;
-	int chan[4];
+	int chan[4],mode_cur = STABILIZE;//current channel and mode
+	int safe_need = 1;
 	int autotkof_ret;
 	char motor_right = 0;
 	int fifo_create;
@@ -81,7 +83,9 @@ int main(int argc, char *argv[])
 	unsigned char* chan_p = cmd.data.rc.chan;
 	unsigned char* mode_p = &(cmd.data.rc.mode);
 	unsigned int len_control = sizeof(cmd.data.control);
-	
+	int serial2_fd;
+	char serial2_buffer[1024] = {};
+	int serial2_opened = 0;
 /*write a test help*/
 	if(argc == 2)
 	{
@@ -255,7 +259,11 @@ int main(int argc, char *argv[])
 		//while for sending and receiving
 		DEBUG_PRINTF("SIZE of status is:%d\n",status_len);
 		DEBUG_PRINTF("SIZE of status.info is:%ld\n",sizeof(status.info));
-			/*Create a socket*/
+		for (i_cv = 0;i_cv < 8; i_cv ++)
+		{
+			status.cv_command[i_cv] = 'f';
+			status.car_lisence[i_cv] = 'f';
+		}
 		while(1)
 		{
 			DEBUG_PRINTF("TAKEOFF TIMES:%d\n",count_takeoff);
@@ -294,8 +302,6 @@ int main(int argc, char *argv[])
 				DEBUG_PRINTF("cmd.type=%d\n", cmd.type);
 				switch(cmd.type)
 				{
-					case CONTROL_TYPE:
-						state_flag = RECV_CONTROL; break;
 					case CHANNEL_TYPE:
 						state_flag = RECV_CHANNEL; break;
 					case STATUS_TYPE:
@@ -304,6 +310,8 @@ int main(int argc, char *argv[])
 						state_flag = AUTO_TAKEOFF; break;
 					case LEVEL_TYPE:
 						state_flag = RECV_LEVEL;break;
+					case COMPUTERVISION_TYPE:
+						state_flag = COMPUTERVISION;break;
 					default:
 						state_flag = RECV_HEADER;
 				}
@@ -330,8 +338,8 @@ int main(int argc, char *argv[])
 				except_recv(client_sockfd_recv, &cmd.data.rc, cmd.len, 0, &state_flag);
 				write2mavproxy_status(&status.info);
 				//fail-safe for toppling over
-				if ((status_p->hud_alt < 1 && status_p->arm == 1) && (status_p->roll_degree > 45.0 || status_p->roll_degree <-45.0 || 
-					status_p->pitch_degree > 45.0 || status_p->pitch_degree <-45.0 || status_p->xacc > 700 || status_p->xacc < -700 || 
+				if ((status_p->hud_alt < 1 && status_p->arm == 1) && (status_p->roll_degree > 40.0 || status_p->roll_degree <-40.0 || 
+					status_p->pitch_degree > 40.0 || status_p->pitch_degree <-40.0 || status_p->xacc > 700 || status_p->xacc < -700 || 
 					status_p->yacc > 700 || status_p->yacc < -700))
 				{
 					chan[0] = 1500;
@@ -341,8 +349,10 @@ int main(int argc, char *argv[])
 				}
 				//normal situation
 				else
-				{				
-					if (SAFE_CHAN12)//safe mode: ensure chan1 or chan2 is not too excessive
+				{	
+					if (mode_cur==LOITER && status_p->satellites_visible>3) safe_need = 0;
+					else safe_need = 1;
+					if (SAFE_CHAN12 && safe_need)//safe mode: ensure chan1 or chan2 is not too excessive
 					{
 						if (chan_p[0] > 170)//use char to transfer the channels
 							chan[0] = 1700;
@@ -364,7 +374,7 @@ int main(int argc, char *argv[])
 						chan[0] = chan_p[0]*10;
 						chan[1] = chan_p[1]*10;
 					}
-					if (SAFE_DOWN) //safe mode: ensure chan3 >1300 when higher than SAFE_DOWN_HEIGHT
+					if (SAFE_DOWN && safe_need) //safe mode: ensure chan3 >1300 when higher than SAFE_DOWN_HEIGHT
 					{
 
 						if (status_p->hud_alt > SAFE_DOWN_HEIGHT && chan_p[2] < 135)
@@ -396,25 +406,26 @@ int main(int argc, char *argv[])
 				{
 					switch(*mode_p)
 					{
-						case STABILIZE: write2mavproxy_mode(STABILIZE);			break;
-						case LOITER:	write2mavproxy_mode(LOITER);			break;
-						case ALT_HOLD:	write2mavproxy_mode(ALT_HOLD);			break;
-						case LAND:		write2mavproxy_mode(LAND);				break;
+						case STABILIZE: write2mavproxy_mode(STABILIZE);mode_cur=STABILIZE;break;
+						case LOITER:	write2mavproxy_mode(LOITER);mode_cur=LOITER;break;
+						case ALT_HOLD:	write2mavproxy_mode(ALT_HOLD);mode_cur=ALT_HOLD;break;
+						case LAND:		write2mavproxy_mode(LAND);mode_cur=LAND;break;
 						case AUTO:		
 										//write2mavproxy_mode(AUTO);	
 										break;
 						default:
 										DEBUG_PRINTF("mode_flag error: VAL not found in <STABILIZE|LOITER|ALT_HOLD|AUTO|LAND>");		
 										write2mavproxy_mode(LAND);
+										mode_cur=LAND;
 										state_flag = MAV_ERROR;	
 										continue;
 					}
 				}
 				//Write other channels if they changed
-				for(i = 0; i <= 3; i++)
+				for(i_chan = 0; i_chan <= 3; i_chan++)
 				{
-					if(i != THROTTL)
-						write2mavproxy_rc(i+1,chan[i]);
+					if(i_chan != THROTTL)
+						write2mavproxy_rc(i_chan+1,chan[i_chan]);
 				}
 			
 				state_flag = RECV_HEADER;
@@ -433,38 +444,6 @@ int main(int argc, char *argv[])
 				}
 				state_flag = RECV_HEADER;
 			}
-			//[State 4] Receive control commands
-			else if (state_flag == RECV_CONTROL)  
-			{
-				DEBUG_PRINTF("************************Entering RECV_CONTROL!***********************\n");
-				DEBUG_PRINTF("****************************Nothing to do!**************************\n");
-				/*
-				if (cmd.len != len_control)
-				{
-					DEBUG_PRINTF("Received length are %d, but expected to be %d\n", cmd.len, len_control);
-					state_flag = RECV_HEADER;
-					continue;
-				}	
-				except_recv(client_sockfd_recv, &cmd.data.control, cmd.len, 0, &state_flag);
-				if(state_flag == SOCK_TIMEOUT)
-					continue;		
-				control_flag = cmd.data.control;	
-				switch(control_flag)
-					{
-						case LEVEL:
-							break;
-						case ARM  :
-							break;
-						case DISARM:
-							break;
-						case TAKEOFF:
-							break;
-						default:
-							continue;
-					}
-				*/
-				state_flag = RECV_HEADER;
-			}
 		    //[State 5] Auto Take Off
 			else if(state_flag == AUTO_TAKEOFF)
 			{
@@ -473,22 +452,24 @@ int main(int argc, char *argv[])
 				if (status_p->arm == 0 ||status_p->hud_alt > 0.5||status_p->roll_degree > 10.0 || status_p->roll_degree <-10.0 || 
 					status_p->pitch_degree > 10.0 || status_p->pitch_degree <-10.0 || status_p->hud_climb >0.1) 
 				{		
-					status.flag = 0x02;
+					status.flag = 0x02;//means quadcopter refuse to take the command
 					sendSta();//send status
 					status.flag = 0x00;
 					state_flag = SEND_STATUS;//enter sending status 
 					continue;
 				}
-/*
-				else if (status_p-> satellites_visible < 3)
+				#if TEST
+				#else
+				else if (status_p-> satellites_visible < 4)
 				{
-					status.flag = 0x02;
+					status.flag = 0x02;//means quadcopter refuse to take the command
 					sendSta();//send status
 					status.flag = 0x00;
 					state_flag = SEND_STATUS;//enter sending status 
 					continue;				
 				}
-*/
+				#endif
+
 				else
 				{
 					DEBUG_PRINTF("************************Entering function of AUTO_TAKEOFF!***********************\n");			
@@ -513,6 +494,71 @@ int main(int argc, char *argv[])
 				}				
 
 
+			}
+			else if(state_flag == RECV_LEVEL)
+			{
+				write2mavproxy_status(&status.info);
+				if (status_p->arm == 0)
+					write2mavproxy("level");
+				state_flag = RECV_HEADER;
+			}
+		    //[State 6] Auto CV
+			else if(state_flag == COMPUTERVISION)
+			{
+				#if BEAGLEBONE 
+				if (serial2_opened == 1) 
+				{
+					/* CAN'T OPEN SERIAL2*/
+					printf(" SERIAL2 ALREADY OPENED！");
+					status.flag = 0x02;//means quadcopter refuse to take the command
+					sendSta();//send status
+					status.flag = 0x00;
+					state_flag = SEND_STATUS;//enter sending status 
+					continue;
+				}
+				serial2_fd = open("/dev/ttyO2", O_RDONLY|O_NONBLOCK);
+				if (serial2_fd == -1 )
+				{
+					/* CAN'T OPEN SERIAL2*/
+					perror(" CAN'T OPEN SERIAL2！");
+					status.flag = 0x02;//means quadcopter refuse to take the command
+					sendSta();//send status
+					status.flag = 0x00;
+					state_flag = SEND_STATUS;//enter sending status 
+					continue;
+				}
+				set_speed(serial2_fd,115200);
+				if (set_Parity(serial2_fd,8,1,'N') == SERIAL_FALSE)  
+    			{
+      				printf("Set Parity Error/n");
+					status.flag = 0x02;//means quadcopter refuse to take the command
+					sendSta();//send status
+					status.flag = 0x00;
+					state_flag = SEND_STATUS;//enter sending status 
+					continue;
+  				}
+				for (i_cv = 0;i_cv < 8; i_cv ++)
+				{
+					status.cv_command[i_cv] = 'f';
+					status.car_lisence[i_cv] = 'f';
+				}
+				nread = read(serial2_fd, serial2_buffer, 1024);
+				printf("*******There are %d characters in buffer and we clear them*****\n",nread);
+				serial2_opened = 1;
+				status.flag = 0x02;//means quadcopter refuse to take the command
+				sendSta();//send status
+				status.flag = 0x00;
+				state_flag = SEND_STATUS;//enter sending status 
+				continue;
+				
+				#else
+					status.flag = 0x02;//means quadcopter refuse to take the command
+					sendSta();//send status
+					status.flag = 0x00;
+					state_flag = SEND_STATUS;//enter sending status 
+					continue;
+				#endif
+				
 			}
 			else if(state_flag == RECV_LEVEL)
 			{
