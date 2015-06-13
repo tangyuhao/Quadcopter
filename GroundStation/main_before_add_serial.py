@@ -264,7 +264,8 @@ if __name__ == "__main__":
     def receive_server():
         global ui
         global receive_sock
-        receive_sock=ServerSocket(('10.42.0.1',8008))
+        receive_sock=ServerSocket(('127.0.0.1',8008))
+#        receive_sock=ServerSocket(('10.42.0.1',8008))
         receive_sock.listen(2)
         
         while True:
@@ -288,7 +289,7 @@ if __name__ == "__main__":
                         global chan3,arm
                         bf_state=state
                         state=struct.unpack("B", recv_bytes)
-                        #print state
+                        print state
                         state=state[0]
                         #print bf_state
                         #print state
@@ -318,7 +319,7 @@ if __name__ == "__main__":
                             ctrl = 2
                                                    
                         recv_bytes=receive_sock.recv(4)
-                        length=struct.unpack("i", recv_bytes)  #length=24(int)*4+9(float)*4
+                        length=struct.unpack("i", recv_bytes)  #length=120
                         #ui.textBrowser.append('Receive_server: get len!')
                         #print length[0]
                         recv_bytes=receive_sock.recv(length[0])
@@ -374,29 +375,6 @@ if __name__ == "__main__":
                         ui.label_pitch_angle.setText(s[0:7]+"'")
                         s=str(yawangle)
                         ui.label_yaw_angle.setText(s[0:7]+"'")
-
-                        recv_bytes=receive_sock.recv(8)
-                        #t=struct.unpack("BBBBBBBB", recv_bytes)
-                        #print '1st instruction :    ',
-                        #print t
-                        a1,a2,a3,a4,a5,a6,a7,a8=struct.unpack("BBBBBBBB", recv_bytes)
-                        if(not(a1==0x66 and a2==0x66 and a3==0x66 and a4==0x66\
-                           and a5==0x66 and a6==0x66 and a7==0x66 and a8==0x66)):
-                            ui.textBrowser.append('1st instruction :    '+chr(a1)+chr(a2)+chr(a3)\
-                                                  +chr(a4)+chr(a5)+chr(a6)+chr(a7)+chr(a8))
-                            ui.textBrowser.moveCursor(QtGui.QTextCursor.End)
-
-                        recv_bytes=receive_sock.recv(8)
-                        #t=struct.unpack("BBBBBBBB", recv_bytes)
-                        #print '2nd instruction :    ',
-                        #print t
-                        a1,a2,a3,a4,a5,a6,a7,a8=struct.unpack("BBBBBBBB", recv_bytes)
-                        if(not(a1==0x66 and a2==0x66 and a3==0x66 and a4==0x66\
-                           and a5==0x66 and a6==0x66 and a7==0x66 and a8==0x66)):
-                            ui.textBrowser.append('2nd instruction :    '+chr(a1)+chr(a2)+chr(a3)\
-                                                  +chr(a4)+chr(a5)+chr(a6)+chr(a7)+chr(a8))
-                            ui.textBrowser.moveCursor(QtGui.QTextCursor.End) 
-                        
                         
                 except Exception as err:
                     ui.textBrowser.append("Receive_server:     Disconnected!")
@@ -406,7 +384,8 @@ if __name__ == "__main__":
 
     def send_server():
         global send_sock
-        send_sock=ServerSocket(('10.42.0.1',8000))
+        send_sock=ServerSocket(('127.0.0.1',8000))
+#        send_sock=ServerSocket(('10.42.0.1',8000))
         send_sock.listen(2)
         global ctrl,state
         times_takeoff = 0
@@ -492,7 +471,7 @@ if __name__ == "__main__":
                         time.sleep(0.05)
                         pygame.event.get()
                         throttle_temp=int(_joystick.get_axis(0)*400+1500)         			
-                        #print throttle_temp
+                        print throttle_temp
                         pitch_temp=int(_joystick.get_axis(1)*400+1500)
                         roll_temp=int(_joystick.get_axis(3)*400+1500) 
                         yaw_temp=int(_joystick.get_axis(2)*470+1500)

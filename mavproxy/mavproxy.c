@@ -112,7 +112,7 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 		time_count100ms ++;
 		write2mavproxy_status(sta);
 		sendSta();
-		if (time_count100ms > 50 || sta->roll_degree > fail_threshold || sta->roll_degree < fail_threshold_neg || 
+		if (time_count100ms > 30 || sta->roll_degree > fail_threshold || sta->roll_degree < fail_threshold_neg || 
 			sta->pitch_degree > fail_threshold || sta->pitch_degree < fail_threshold_neg || GPS_TEST)
 		{
 			write2mavproxy_mode(LAND);

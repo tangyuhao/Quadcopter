@@ -8,12 +8,13 @@
 #include <sys/stat.h>
 #include <signal.h>
 #include <math.h>
+#include <string.h>
 
 //header files except system's ones
 #include "mavproxy.h"
 #include "fifo.h"
 #include "socket.h"
-#include "serial.h"
+#include "serial_func.h"
 
 pid_t pid_fork;
 int client_sockfd_recv;
@@ -336,7 +337,7 @@ int main(int argc, char *argv[])
 				CH_PRINTF("cnt:%d\n",cnt);
 
 				except_recv(client_sockfd_recv, &cmd.data.rc, cmd.len, 0, &state_flag);
-				write2mavproxy_status(&status.info);
+				//write2mavproxy_status(&status.info);
 				//fail-safe for toppling over
 				if ((status_p->hud_alt < 1 && status_p->arm == 1) && (status_p->roll_degree > 40.0 || status_p->roll_degree <-40.0 || 
 					status_p->pitch_degree > 40.0 || status_p->pitch_degree <-40.0 || status_p->xacc > 700 || status_p->xacc < -700 || 
@@ -435,6 +436,65 @@ int main(int argc, char *argv[])
 			{
 				DEBUG_PRINTF("************************Entering SEND_STATUS!***********************\n");
 				write2mavproxy_status(&status.info);
+				nread = read(serial2_fd, serial2_buffer, 1024);
+				if (nread > 0 )
+				{	
+					serial2_buffer[8] = '\0';
+					if (strcmp(serial2_buffer,"*forward") == 0)
+					{
+						for (i_cv = 0;i_cv < 8; i_cv ++)
+						{
+							status.cv_command[i_cv] = serial2_buffer[i_cv];
+							status.car_lisence[i_cv] = 'f';
+						}	
+					}
+					else if (strcmp(serial2_buffer,"*stop   ") == 0)
+					{
+						for (i_cv = 0;i_cv < 8; i_cv ++)
+						{
+							status.cv_command[i_cv] = serial2_buffer[i_cv];
+							status.car_lisence[i_cv] = 'f';
+						}	
+					}
+					else if (strcmp(serial2_buffer,"*down   ") == 0)
+					{		
+						for (i_cv = 0;i_cv < 8; i_cv ++)
+						{
+							status.cv_command[i_cv] = serial2_buffer[i_cv];
+							status.car_lisence[i_cv] = 'f';
+						}	
+					}
+					else if (strcmp(serial2_buffer,"*nocar  ") == 0)
+					{
+						for (i_cv = 0;i_cv < 8; i_cv ++)
+						{
+							status.cv_command[i_cv] = serial2_buffer[i_cv];
+							status.car_lisence[i_cv] = 'f';
+						}	
+					}
+					else if (strcmp(serial2_buffer,"*noplate#") == 0)
+					{
+						for (i_cv = 0;i_cv < 8; i_cv ++)
+						{
+							status.cv_command[i_cv] = serial2_buffer[i_cv];
+							status.car_lisence[i_cv] = 'f';
+						}	
+					}
+					else
+					{
+						for (i_cv = 0;i_cv < 8; i_cv ++)
+						{
+							status.cv_command[i_cv] = 'f';
+							status.car_lisence[i_cv] = serial2_buffer[i_cv];
+						}	
+					}
+				}
+				else
+					for (i_cv = 0;i_cv < 8; i_cv ++)
+					{
+						status.cv_command[i_cv] = 'f';
+						status.car_lisence[i_cv] = 'f';
+					}
 				/*Send status data to GCS*/
 				ret = wrap_send(client_sockfd_send, &status, status_len, 0);
 				if(ret == -1)
@@ -516,7 +576,7 @@ int main(int argc, char *argv[])
 					state_flag = SEND_STATUS;//enter sending status 
 					continue;
 				}
-				serial2_fd = open("/dev/ttyO2", O_RDONLY|O_NONBLOCK);
+				serial2_fd = open("/dev/ttyO2", O_RDWR|O_NONBLOCK);
 				if (serial2_fd == -1 )
 				{
 					/* CAN'T OPEN SERIAL2*/
@@ -527,8 +587,10 @@ int main(int argc, char *argv[])
 					state_flag = SEND_STATUS;//enter sending status 
 					continue;
 				}
-				set_speed(serial2_fd,115200);
-				if (set_Parity(serial2_fd,8,1,'N') == SERIAL_FALSE)  
+				serial_init(serial2_fd);
+				set_baudrate(serial2_fd, 115200);
+				
+				if (set_dataformat(serial2_fd, 8, 'n', 1) < 0)  
     			{
       				printf("Set Parity Error/n");
 					status.flag = 0x02;//means quadcopter refuse to take the command
