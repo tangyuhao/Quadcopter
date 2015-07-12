@@ -10,10 +10,13 @@
 #include <math.h>
 #include "mavproxy.h"
 #include "fifo.h"
-int cmd_fifo_fd;
-int data_fifo_fd;
-extern int client_sockfd_send;
-extern int status_len;
+extern int client_sockfd_send; 	//from main_mavproxy.c
+extern int status_len;			//from main_mavproxy.c
+
+/*Func Name: int sendSta()
+ *Description:  send status to ground station
+ *return: int
+ * */
 int sendSta()
 {
 	int ret;
@@ -24,7 +27,16 @@ int sendSta()
 		return -1;
 	}
 }
-
+/* Func Name: autoTakeoff(float height,unsigned short step, unsigned short throttle_max,float fail_threshold)
+ * Description:  auto takeoff (without control of ground station
+ * Parameters: 
+ *		height: the lowest height when quadcopter start to loiter
+ *		step: the step throttle value each command
+ *		throttle_max: the maximum of the throttle when ascending
+ *		fail_threshold: the threshold to help the quadcopter to determine whether the state is not 
+ *						write and choose to land
+ * return: short
+ * */
 short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,float fail_threshold)
 {
 	int i,chan = 1100;
@@ -127,11 +139,24 @@ short autoTakeoff(float height,unsigned short step, unsigned short throttle_max,
 	write2mavproxy_mode(LOITER);
 	return 0;
 }
+/* Func Name: write2mavproxy(char *cmd_buf)
+ * Description:  write the command to the mavproxy.py to control the aerocraft
+ * Parameters: 
+ * cmd_buf: the command such as "chan 3 1100"
+ * return: void
+ * */
 void write2mavproxy(char *cmd_buf)
 {
     write(cmd_fifo_fd, cmd_buf, strlen(cmd_buf));
     write(cmd_fifo_fd, "\n", 1);	
 }
+/* Func Name: write2mavproxy_rc(int channel,int chan_value)
+ * Description: write command especially for channel regulation
+ * Parameters: 
+ *		channel : such as THROTTL, YAW, PITCH, AND ROLL which defined in mavproxy.h
+ *		chan_value : such as 1100, 1150 and so on 
+ * return: int
+ * */
 int write2mavproxy_rc(int channel,int chan_value)
 {
 	char buffer[20];
@@ -144,7 +169,12 @@ int write2mavproxy_rc(int channel,int chan_value)
 	write2mavproxy(buffer);
 	return 1;
 }
-
+/* Func Name: write2mavproxy_mode(int mav_mode)
+ * Description: write command especially for mode regulation
+ * Parameters: 
+ *		mav_mode : mode such as LOITER which defined in mavproxy.h
+ * return: int
+ * */
 int write2mavproxy_mode(int mav_mode)
 {
 	int returned_value = 1;
@@ -159,7 +189,7 @@ int write2mavproxy_mode(int mav_mode)
 	}
 	return returned_value;
 }
-
+// delay times by the unit of millisecond
 int msleep(int delay_time)
 {
 	if (delay_time > 100000 || delay_time < 0)
@@ -170,6 +200,12 @@ int msleep(int delay_time)
 	usleep(delay_time * 1000);
 	return 1;
 }
+/* Func Name: write2mavproxy_status(struct status_struct* sta)
+ * Description: save the important parameters in the struct of *sta
+ * Parameters: 
+ *		sta : the pointer for status
+ * return: int
+ * */
 int write2mavproxy_status(struct status_struct* sta)
 {
 	/*read status data from Mavproxy*/

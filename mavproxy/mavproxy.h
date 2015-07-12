@@ -117,7 +117,7 @@
 #define FAIL_GROUND -2
 /*Creat a structure to store data info*/
 
-
+/* the struct to save the status information */
 struct status_struct
 {
 	int arm;

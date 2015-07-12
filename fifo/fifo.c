@@ -12,7 +12,12 @@
 #include "mavproxy.h"
 #include "fifo.h"
 
-
+/* Func Name: int fifo_create_read(char * fifo_name)
+ * Description:  create fifo and make it for reading and writing
+ * Parameters: 
+ *		fifo_name : the name of the fifo including the whole path
+ * return: int
+ * */
 int fifo_create_read(char * fifo_name)
 {
 	int fifo_fd_id;
@@ -35,7 +40,13 @@ int fifo_create_read(char * fifo_name)
 			return fifo_fd_id;
 	}
 }
-
+/* Func Name: int close_rm_fifo(int fd,char * file_name)
+ * Description:  close fifo
+ * Parameters:
+ *		fd : the fd number of the fifo created before
+ *		fifo_name : the name of the fifo including the whole path
+ * return: int
+ * */
 int close_rm_fifo(int fd,char * file_name)
 {
 	char buffer1[50],buffer2[50];
